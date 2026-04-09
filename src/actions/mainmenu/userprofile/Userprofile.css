@@ -1,0 +1,247 @@
+.profile-left-top-image {
+    width: 20%;
+    height: 100%;
+    /* height: 182px; */
+    background-size: cover;
+    border-radius: 135px;
+    /* padding: 20px 9px;
+    /* background-repeat: no-repeat; */
+    /* border: 1px solid black; */
+    /* background-position: center; */
+    /* border: 1px solid white; */
+    
+  }  
+.profile-left-top-img {
+    width: 100%;
+    height: 100%;
+    /* height: 182px; */
+    background-size: cover;
+    border-radius: 135px;
+    /* padding: 20px 9px;
+    /* background-repeat: no-repeat; */
+    /* border: 1px solid black; */
+    /* background-position: center; */
+    /* border: 1px solid white; */
+    
+  }  
+.profile-left-top-image img{
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100%;
+    background-size: cover;
+    height: 118px;
+    border-radius: 117px;
+     /* border: 1px solid white;  */
+     padding: 8px;
+}
+.followersandfollowings{
+    display: flex;
+        gap: 10px;
+        align-items: center;
+}
+.profilebox{
+    /* height: 393px; */
+    width: 34%;
+    /* border: 1px solid white; */
+    position: absolute;
+    top: 73px;
+    z-index: 1;
+    top: 50%;
+    left: 50%;
+    /* z-index: 4; */
+    transform: translate(-50%, -50%);
+    background-color: #3f3d3d;
+    color: white;
+    /* padding: 15px 15px; */
+}
+.profilecredential{
+    display: none;
+}
+.profile-box-content{
+    padding: 15px 10px;
+}
+.credentialsline{   
+     display: flex;
+        align-items: center;
+        gap: 5px;
+    position: relative;}
+.credentialsvisible{
+    display: none;
+    position: absolute;
+    top: 10px;
+   /* left: 100%; */
+   right: 0%;
+   /* width: 50%; */
+  }
+
+  .credentialshover:hover + .credentialsvisible {
+    display: block;
+    text-decoration: underline;
+  }
+  .credentialshover{
+    width: 100%;
+    /* width: 50%; */
+  }
+  .employment-credential-box{
+    /* display:  none; */
+   background-color: white;
+   padding: 20px;
+   border-radius : 10px
+  }
+  .location-credential-box{
+    display : none
+  }
+  .profile-left-top1 span {
+    font-size: 14px;
+    color: #ffffff;
+    padding: 4px 8px 3px 8px;
+    background: #0b57d0;
+    border-radius: 10px;
+   
+  }
+
+ /* body{
+background:#f2f5f8;
+font-family:Arial;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+margin:0;
+} */
+
+.chat-container-in{
+width:380px;
+height:600px;
+background:white;
+border-radius:20px;
+box-shadow:0 10px 30px rgba(0,0,0,0.15);
+display:flex;
+flex-direction:column;
+overflow:hidden;
+ position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 4;
+    transform: translate(-50%, -45%);
+}
+
+/* header */
+
+.chat-header{
+    padding: 8px;
+    background: #3f3d3d;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: bold;
+}
+
+.avatar{
+width:48px;
+height:44px;
+border-radius:50%;
+background:white;
+}
+
+/* body */
+
+.chat-body{
+flex:1;
+padding:15px;
+overflow-y:auto;
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.chat-body::-webkit-scrollbar{
+display:none;
+}
+
+/* messages */
+
+.message{
+padding :6px 12px;
+border-radius:20px;
+max-width:70%;
+font-size:14px;
+}
+
+.sent{
+background:#0b57d0;
+color:white;
+align-self:flex-end;
+border-bottom-right-radius: 5px;
+display: flex;
+flex-direction: column;
+}
+
+.received{
+background:#f1f1f1;
+align-self:flex-start;
+border-bottom-left-radius:5px;
+display: flex;
+flex-direction: column;
+color : "black"
+}
+
+/* input */
+
+.chat-input{
+    display: flex;
+    padding: 10px;
+    /* border-top: 1px solid #eee; */
+    align-items: center;
+    gap: 7px;
+}
+
+.chat-input input{
+flex:1;
+padding:10px;
+border-radius:20px;
+border:1px solid #ddd;
+outline:none;
+    /* background: white; */
+}
+
+.chat-input button{
+margin-left:10px;
+padding:10px 18px;
+border:none;
+background:#0b57d0;
+color:white;
+border-radius:20px;
+cursor:pointer;
+}
+
+.react-input-emoji--button{
+  position: relative;
+    display: block;
+    text-align: center;
+    padding: 0 10px;
+    overflow: hidden;
+    transition: color 0.1s ease-out;
+    margin: 0;
+    box-shadow: none;
+    background: none;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    flex-shrink: 0;
+    padding: 1px !important;
+}
+
+.react-input-emoji--button svg {
+    fill: #fffcfc !important;
+}
+
+.react-input-emoji--container{
+      border-radius: 21px;
+    border-color: rgb(204 201 201);
+    font-size: 15px;
+    font-family: sans-serif;
+    background: white;
+    color: black;
+}

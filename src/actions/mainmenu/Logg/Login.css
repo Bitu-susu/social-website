@@ -1,0 +1,123 @@
+.container-signup{
+    display: flex;
+    justify-content: space-between;
+    height: 100vh;
+    /* background-color: #f2f4f7; */
+    background-color: white;
+    padding: 40px;
+    
+ }
+ .leftsection h4{
+   font-weight: 400;
+ }
+ .container-left{
+  height: 80vh;
+  display: flex;
+  align-items: center;
+ }
+ .innerdepthheading{
+  font-size: 4.4em;
+ }
+ .container-right{
+   width: 50%;
+ }
+ .rightsection{
+   width: 70%;
+    margin: auto;
+    padding: 30px;
+    line-height: 14px;
+    /* background: brown; */
+    /* box-shadow: 0 4px 6px rgb(188 181 181 / 10%); */
+ }
+ .mb-3 input{
+   padding:0.875rem .75rem;;
+ }
+ .signup-button{
+   width: 100%;
+   padding: 14px;
+   font-size: 16px;
+ }
+ .google-login{
+   width: 100%;
+   /* padding: 14px; */
+   font-size: 16px;
+   /* background-color: #0866ff; */
+   background-color: #c0cbff;
+   border: none;
+   color: black;
+ }
+ .login-section{
+  padding-top: 10px;
+  display: flex;
+  justify-content: space-between;
+ }
+
+ .loadingstate{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+ transform : translate(-50%,-50%);
+  /* display: flex;
+  align-items: center;
+  width: 100%; */
+ }
+
+ .login-section{
+  padding-top: 10px;
+  display: flex;
+  justify-content: space-between;
+ }
+
+
+ .signuplayouts{
+  /* background-image: url('../../../../images/birendra.png'); */
+  /* background-image: url('../../../images/2149629598.jpg'); */
+  /* background-image: url('../../../images/full-shot-people-cleaning-together.jpg'); */
+  background-image: url('../../../images/social-media-concept-with-device.jpg');
+  height: 100vh;
+    background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: space-between;
+   border-radius: 35px;
+   /* background-position: -364px; */
+ }
+ .layout2{
+     background-color: white;
+     height: 100vh;
+     width: 36%;
+     border-radius: 35px;
+     /* background: linear-gradient(rgba(0,0,0,.4), rgba(0,0,0,.4)), */
+ }
+ .formsection{
+      display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+        line-height: 26px;
+    
+ }
+ .signup-form{
+    width: 60%;
+   line-height: 25px;
+ }
+ .mb-3{
+  margin-bottom:2rem !important; ;
+ }
+ .mb-3 input{
+  padding: 0.9rem .75rem !important;
+ }
+
+ .bothbutton{
+      gap: 12px;
+    display: flex;
+    flex-direction: column;
+ }
+ .content-section{
+      padding-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+ }

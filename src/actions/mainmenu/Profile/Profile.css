@@ -1,0 +1,107 @@
+ .profile-section{
+    padding: 20px 180px;
+    display: flex;
+    justify-content: space-between;
+    min-height: 100vh;
+   
+ }
+
+ .profile-left{
+    width: 46%;
+ }
+ .profile-left-top{
+   display: flex;
+       gap: 8px;
+       /* background: white;
+       /* padding: 20px; */
+       /* align-items: center; */
+ }
+ .profile-left-top-image{
+    width: 40%;
+    /* height: 100%; */
+    background-size: cover;
+    border-radius: 100%;
+    /* padding: 20px 20px; */
+    background-repeat: no-repeat;
+    /* border: 1px solid black; */
+    background-position: center;
+ }
+ .profile-left-topcontent{
+   width: 60%;
+   color: white;
+ }
+ .profile-left-topcontent span{
+   
+    font-size: 14px;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+    font-family: lexend;
+    cursor: pointer;
+ }
+ .profile-left-topcontent h3{
+font-size: 1.6rem;
+ }
+ .profile-left-topcontent span:hover{
+    text-decoration: underline;
+ }
+ .profile-left-posts-about{
+    padding-top: 40px;
+ }
+ .posts-nav ul{
+    display: flex;
+    gap: 23px;
+     list-style: none;
+ }
+ .posts-nav li{
+    padding: 5px;
+}
+.posts-nav li span{
+    padding: 10px;
+}
+.posts-nav li :hover{
+    
+    border-radius: 8px;
+    background: blue;
+    transition: all 0.45s;
+    color: white;
+ }
+ .profile-right-top{
+    display: flex;
+    align-items: center;
+    gap: 30px;
+ }
+ .profile-right-credentials{
+   /* background-color: white; */
+   /* padding: 20px; */
+ }
+ .profile-right-credentials h6{
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: 0.8px;
+    cursor: pointer;
+    line-height: 30px;
+ }
+ .mb-3 input{
+   padding: 0.475rem .75rem;
+ }
+ .education-credential-box{
+   display:  none;
+   background-color: white;
+   padding: 20px;
+   border-radius : 10px
+ }
+  .profile-left-top1{
+   display: flex;
+   align-items: center;
+   gap: 30px;
+  }
+  .profile-left-top1 span{
+   font-size: 15px;
+   color: #ffffff;
+   padding: 7px;
+   background: blue;
+   border-radius: 10px;
+  }
+ .employment-credential-box{
+   /* display:  none; */
+ }
