@@ -10,20 +10,20 @@ import { Client,Storage,ID,Databases, } from 'appwrite'
         const authid = user.$id 
                 
             let updateone = [...Like,authid]
-                console.log(updateone);
+                // console.log(updateone);
                 
      const updateddocument = await databases.updateDocument(conf.appwritedatabaseid,conf.appwritepostcollectionid,docid,{  
                       Like : updateone
                       }   
                      )  
-                     console.log(updateddocument, "update");  
+                    //  console.log(updateddocument, "update");  
                      return updateddocument      
                       
             } catch (error) {
-                  console.log("error in updating likes", error);                                                             
+                  // console.log("error in updating likes", error);                                                             
             }
    }
-   
+    
    export async function likesdecrease({docid, Like}){
                try{
                   const user = await authService.getcurrentuser();
@@ -32,7 +32,7 @@ import { Client,Storage,ID,Databases, } from 'appwrite'
                 return  element!==authid
                 }
                 )
-                console.log(newgetdata); 
+                // console.log(newgetdata); 
                 
                  const updateddocument = await databases.updateDocument(conf.appwritedatabaseid,conf.appwritepostcollectionid,docid,{  
                         Like: newgetdata  
@@ -40,7 +40,8 @@ import { Client,Storage,ID,Databases, } from 'appwrite'
                      ) 
                      return updateddocument
             } catch (error) {
-                 console.log(error);
+                //  console.log(error);
+                 return error
                  
             }
           }
