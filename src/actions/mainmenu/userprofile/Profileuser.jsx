@@ -457,9 +457,9 @@ const[ischange, setischange] = useState("")
     const prevFollowers = queryClient.getQueryData(["followers", selectorid]);
     const prevFollowings = queryClient.getQueryData(["followings", selectorid]);
 
-  if (!ischange =="yes") {
-    queryClient.setQueryData(["followers", selectorid], (old) => (old ?? 0) + 1);
-  }
+  // if (!ischange =="yes") {
+  //   queryClient.setQueryData(["followers", selectorid], (old) => (old ?? 0) + 1);
+  // }
    
     // queryClient.setQueryData(["followings", selectorid], (old) => (old ?? 0) + 1);
 
@@ -498,7 +498,7 @@ const unfollowmutation = useMutation({
     const prevFollowers = queryClient.getQueryData(["followers", selectorid]);
     const prevFollowings = queryClient.getQueryData(["followings", selectorid]);
 
-    queryClient.setQueryData(["followers", selectorid], (old) => Math.max((old ?? 1) - 1, 0));
+    // queryClient.setQueryData(["followers", selectorid], (old) => Math.max((old ?? 1) - 1, 0));
     // queryClient.setQueryData(["followings", currentuserss], (old) => Math.max((old ?? 1) - 1, 0));
 
     return {prevFollowers, prevFollowings};
