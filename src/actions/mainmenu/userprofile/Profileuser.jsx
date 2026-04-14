@@ -1042,7 +1042,7 @@ setopacity({padding:" 20px 180px",
              <div className="followbox">
 {selectorid !== authid && (
    checks.includes(authid) ? ( <button onClick={() => unfollowmutation.mutate()}
-      style={{ backgroundColor :"#0b57d0", fontSize : "13.5px" }}>Unfollow</button>) : (<button onClick={() => followmutation.mutate(selectorid)} style={{ backgroundColor :"white", color : "black", fontSize : "13.5px" }}>Follow
+      style={{ backgroundColor :"#0b57d0", fontSize : "13.5px" }}>Unfollow</button>) : (<button onClick={() => followmutation.mutate(selectorid)} style={{ backgroundColor :"white", color : "black", fontSize : "13.5px" }}>follow
     </button>
     
   )
