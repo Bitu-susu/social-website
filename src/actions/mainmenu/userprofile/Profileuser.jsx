@@ -21,7 +21,7 @@ import '../../mainmenu/dashnew/Newdash.css'
 //  importing custom hooks
 import {likesincrease,likesdecrease} from '../Customs/Increase/increaselikes'
 import { databases } from '../Customs/Increase/appwritesdk'
-
+import { storage } from '../Customs/Increase/appwritesdk'
 const currentuser = async()=>{
     const getuser = await authService.getcurrentuser();
     return getuser;
@@ -44,8 +44,8 @@ function Profileuser() {
            let firstletter = currentusers?.name.charAt(0).toUpperCase() 
           
 let userdocuments = async()=>{
-     const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-    const databases = new Databases(client);
+    //  const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
+    // const databases = new Databases(client);
       const queries = [Query.equal("authid", selectorid)]
        const listuserdocuments = await databases.listDocuments(
         conf.appwritedatabaseid, conf.appwritepostcollectionid, queries 
@@ -65,8 +65,8 @@ let userdocuments = async()=>{
 const [nottrimcontent, setnottrimcontent] = useState("")
 const[gettingid, setgettingid] = useState("")
 async function nottrim(id) {
- const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-const databases = new Databases(client);
+//  const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
+// const databases = new Databases(client);
 try { 
   const nottrimcontent = await databases.listDocuments(
     conf.appwritedatabaseid,conf.appwritepostcollectionid,[Query.equal("$id", id)]
@@ -80,79 +80,11 @@ try {
 }
 }
 
-// const [increaselike, setincreaselike] = useState([])
 
-// async function likesincrease(id) {
-//   const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);                                             
-
-//   // const storage = new Storage(client);
-//   const databases = new Databases(client);
-//   try {
-
-//         const getdocuments = await databases.getDocument(
-//           conf.appwritedatabaseid,conf.appwritepostcollectionid,id
-//         )
-//           let getdata = getdocuments.Like
-//           console.log(getdata);
-          
-//     if (getdata.includes(authid)) {
-//          alert("you already like the post")
-//     }
-//     else{
-//       const updateddocument = await databases.updateDocument(conf.appwritedatabaseid,conf.appwritepostcollectionid,id,{  
-//               "Like" :[...getdata, authid]  
-//             }  
-//            ) 
-//            console.log(updateddocument, "yes updated");
-//             // setincreaselike(updateddocument.Like.length +1)
-//             setincreaselike(prev => [...prev, id]);   
-           
-//     }
-            
-//   } catch (error) {
-//         console.log("error in updating likes", error);
-//   }
-// } 
-
-
-//  increasing likes using react query 
 
     const [increaselike, setincreaselike] = useState([])
 const[likecolor, setlikecolor] = useState() 
-          // async function likesincrease(id) {
-          // const likesincrease = async (id)=>{
-
-          //   const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);                                             
-      
-          //   // const storage = new Storage(client);
-          //   const databases = new Databases(client); 
-          //   try {
-    
-          //         const getdocuments = await databases.getDocument(
-          //           conf.appwritedatabaseid,conf.appwritepostcollectionid,id
-          //         )
-          //           let getdata = getdocuments.Like
-          //         console.log(getdata); 
-          //         setlikecolor(true) 
-          //     if (getdata.includes(authid)) {
-          //          alert("you already like the post")          
-          //     }
-          //     else{
-          //       const updateddocument = await databases.updateDocument(conf.appwritedatabaseid,conf.appwritepostcollectionid,id,{  
-          //               "Like" :[...getdata, authid]  
-          //             }   
-          //            ) 
-          //            console.log(updateddocument, "yes updated");
-          //             // setincreaselike(updateddocument.Like.length +1)
-
-          //             //  for state purpose only 
-          //             setincreaselike(prev => [...prev, id]);         
-          //     }
-                      
-          //   } catch (error) {
-          //         console.log("error in updating likes", error);                                                             
-          //   }
-          // }
+         
 
              const likeMutation = useMutation({
                       mutationFn: likesincrease,
@@ -163,41 +95,7 @@ const[likecolor, setlikecolor] = useState()
                       },
                     }); 
 
-        //   decrease likes using react query
-
-//         async function likesdecrease(id){
-// const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);                                             
-      
-//             // const storage = new Storage(client);
-//             const databases = new Databases(client); 
-//                 const getdocuments = await databases.getDocument(
-//                     conf.appwritedatabaseid,conf.appwritepostcollectionid,id
-//                   )
-//                     let getdata = getdocuments.Like
-
-//             try {
-//                setlikecolor(false) 
-//                if(getdata.includes(authid)) {
-//              let newgetdata = await getdata.filter((element)=> {
-//                 return  element!==authid
-//                 }
-//                 )
-//                 console.log(newgetdata); 
-                
-//                  const updateddocument = await databases.updateDocument(conf.appwritedatabaseid,conf.appwritepostcollectionid,id,{  
-//                         "Like":newgetdata  
-//                        }   
-//                      ) 
-//                      console.log(updateddocument);  
-//                     //   for state purpose only 
-//                     let removelikes = increaselike.filter((element)=> {return element!==id})
-//                       setincreaselike(removelikes)
-//                }
-//             } catch (error) {
-//                  console.log(error);
-                 
-//             }
-//           }
+        
 
           //   linking the mutation with the posts function and the likes decrease function
    
@@ -515,8 +413,8 @@ const unfollowmutation = useMutation({
 //  fetching profile credentials using react query
 
 let fetchprofilecredentials =async()=>{
-     const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-  const databases = new Databases(client);
+  //    const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
+  // const databases = new Databases(client);
   const getcredentials = await databases.listDocuments(
       conf.appwritedatabaseid, conf.appwritebiocollectionid,[Query.equal("authid",selectorid )] 
     )
@@ -586,10 +484,10 @@ function addcomment() {
 //     fetching user comments 
 
 async function fetchcomments(id) {
-  const client = new Client()
-    .setEndpoint(conf.appwriteurl)
-    .setProject(conf.appwriteprojectid);
-  const databases = new Databases(client);
+  // const client = new Client()
+  //   .setEndpoint(conf.appwriteurl)
+  //   .setProject(conf.appwriteprojectid);
+  // const databases = new Databases(client);
   try {
     const fetchingcomments = await databases.listDocuments(conf.appwritedatabaseid, conf.appwritecommentsid, [
       Query.equal("postid", id)
@@ -635,8 +533,8 @@ async function fetchcomments(id) {
   //  fetching education using react query
 
   const fetchingeducation = async()=>{
-    const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-      const databases = new Databases(client);
+    // const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
+    //   const databases = new Databases(client);
       const educationdetails = await databases.listDocuments( conf.appwritedatabaseid, conf.appwriteeducationid,[
         Query.equal("authid", selectorid)])
          let reverseeducation = educationdetails.documents.reverse();
@@ -688,8 +586,8 @@ async function fetchcomments(id) {
 
 
    let fetchingemployment = async()=>{
-     const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-     const databases = new Databases(client);
+    //  const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
+    //  const databases = new Databases(client);
      const employmentdetails = await databases.listDocuments(conf.appwritedatabaseid, conf.appwriteemploymentid,[
        Query.equal("authid", selectorid)]
      )
@@ -738,8 +636,8 @@ async function fetchcomments(id) {
 
  
   let fetchinglocation = async()=>{
-       const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-     const databases = new Databases(client);
+    //    const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
+    //  const databases = new Databases(client);
       const locationdetails = await databases.listDocuments(conf.appwritedatabaseid, conf.appwritelocationid, [
        Query.equal("authid", selectorid)]
      )
@@ -877,8 +775,8 @@ useEffect(() => {
 //  create messages 
 
 async function createmessage() {
-  const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-    const databases = new Databases(client);
+  // const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
+  //   const databases = new Databases(client);
      try {
   const createmessages = await databases.createDocument(
       conf.appwritedatabaseid, conf.appwritechatid, ID.unique(), {   
@@ -900,8 +798,8 @@ async function createmessage() {
   //   fetching chats according to the roomid
 
   async function fetchingchats() {
-      const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-    const databases = new Databases(client);
+    //   const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
+    // const databases = new Databases(client);
      try {
                if (chatrun === true && rooms.length > 0) {
                  const listingchats =  await databases.listDocuments( conf.appwritedatabaseid, conf.appwritechatid,[Query.equal("roomid", rooms)
