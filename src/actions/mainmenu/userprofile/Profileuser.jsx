@@ -17,7 +17,10 @@ import './Userprofile.css'
  import InputEmoji from 'react-input-emoji'
 //   fetching current user from the react query 
 import '../../mainmenu/dashnew/Newdash.css'
- 
+
+//  importing custom hooks
+import {likesincrease,likesdecrease} from '../Customs/Increase/increaselikes'
+import { databases } from '../Customs/Increase/appwritesdk'
 
 const currentuser = async()=>{
     const getuser = await authService.getcurrentuser();
@@ -117,84 +120,84 @@ try {
     const [increaselike, setincreaselike] = useState([])
 const[likecolor, setlikecolor] = useState() 
           // async function likesincrease(id) {
-          const likesincrease = async (id)=>{
+          // const likesincrease = async (id)=>{
 
-            const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);                                             
+          //   const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);                                             
       
-            // const storage = new Storage(client);
-            const databases = new Databases(client); 
-            try {
+          //   // const storage = new Storage(client);
+          //   const databases = new Databases(client); 
+          //   try {
     
-                  const getdocuments = await databases.getDocument(
-                    conf.appwritedatabaseid,conf.appwritepostcollectionid,id
-                  )
-                    let getdata = getdocuments.Like
-                  console.log(getdata); 
-                  setlikecolor(true) 
-              if (getdata.includes(authid)) {
-                   alert("you already like the post")          
-              }
-              else{
-                const updateddocument = await databases.updateDocument(conf.appwritedatabaseid,conf.appwritepostcollectionid,id,{  
-                        "Like" :[...getdata, authid]  
-                      }   
-                     ) 
-                     console.log(updateddocument, "yes updated");
-                      // setincreaselike(updateddocument.Like.length +1)
+          //         const getdocuments = await databases.getDocument(
+          //           conf.appwritedatabaseid,conf.appwritepostcollectionid,id
+          //         )
+          //           let getdata = getdocuments.Like
+          //         console.log(getdata); 
+          //         setlikecolor(true) 
+          //     if (getdata.includes(authid)) {
+          //          alert("you already like the post")          
+          //     }
+          //     else{
+          //       const updateddocument = await databases.updateDocument(conf.appwritedatabaseid,conf.appwritepostcollectionid,id,{  
+          //               "Like" :[...getdata, authid]  
+          //             }   
+          //            ) 
+          //            console.log(updateddocument, "yes updated");
+          //             // setincreaselike(updateddocument.Like.length +1)
 
-                      //  for state purpose only 
-                      setincreaselike(prev => [...prev, id]);         
-              }
+          //             //  for state purpose only 
+          //             setincreaselike(prev => [...prev, id]);         
+          //     }
                       
-            } catch (error) {
-                  console.log("error in updating likes", error);                                                             
-            }
-          }
+          //   } catch (error) {
+          //         console.log("error in updating likes", error);                                                             
+          //   }
+          // }
 
              const likeMutation = useMutation({
                       mutationFn: likesincrease,
                     
                       onSuccess: () => {
                         // 🔥 THIS triggers posts API again
-                        queryClient.invalidateQueries({ queryKey: ["documentss", selectorid] });
+                        queryClient.invalidateQueries({ queryKey: ["documentss",selectorid] });
                       },
                     }); 
 
         //   decrease likes using react query
 
-        async function likesdecrease(id){
-const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);                                             
+//         async function likesdecrease(id){
+// const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);                                             
       
-            // const storage = new Storage(client);
-            const databases = new Databases(client); 
-                const getdocuments = await databases.getDocument(
-                    conf.appwritedatabaseid,conf.appwritepostcollectionid,id
-                  )
-                    let getdata = getdocuments.Like
+//             // const storage = new Storage(client);
+//             const databases = new Databases(client); 
+//                 const getdocuments = await databases.getDocument(
+//                     conf.appwritedatabaseid,conf.appwritepostcollectionid,id
+//                   )
+//                     let getdata = getdocuments.Like
 
-            try {
-               setlikecolor(false) 
-               if(getdata.includes(authid)) {
-             let newgetdata = await getdata.filter((element)=> {
-                return  element!==authid
-                }
-                )
-                console.log(newgetdata); 
+//             try {
+//                setlikecolor(false) 
+//                if(getdata.includes(authid)) {
+//              let newgetdata = await getdata.filter((element)=> {
+//                 return  element!==authid
+//                 }
+//                 )
+//                 console.log(newgetdata); 
                 
-                 const updateddocument = await databases.updateDocument(conf.appwritedatabaseid,conf.appwritepostcollectionid,id,{  
-                        "Like":newgetdata  
-                       }   
-                     ) 
-                     console.log(updateddocument);  
-                    //   for state purpose only 
-                    let removelikes = increaselike.filter((element)=> {return element!==id})
-                      setincreaselike(removelikes)
-               }
-            } catch (error) {
-                 console.log(error);
+//                  const updateddocument = await databases.updateDocument(conf.appwritedatabaseid,conf.appwritepostcollectionid,id,{  
+//                         "Like":newgetdata  
+//                        }   
+//                      ) 
+//                      console.log(updateddocument);  
+//                     //   for state purpose only 
+//                     let removelikes = increaselike.filter((element)=> {return element!==id})
+//                       setincreaselike(removelikes)
+//                }
+//             } catch (error) {
+//                  console.log(error);
                  
-            }
-          }
+//             }
+//           }
 
           //   linking the mutation with the posts function and the likes decrease function
    
@@ -203,31 +206,27 @@ const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwri
 
   onSuccess: () => {
     // 🔥 THIS triggers posts API again
-    queryClient.invalidateQueries({queryKey: ["documentss",selectorid]});
+    queryClient.invalidateQueries({queryKey: ["documentss", selectorid]});
   },
 }); 
 
 
 const[followers, setfollowers] = useState("")
 const [followinglist, setfollowinglist] = useState("")
+const[checks, setchecks] = useState([])
  
   //    fetching followings using react query
     let fetchingfollowings = async(id)=>{
-       const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-const databases = new Databases(client);
      const getfollowings = await databases.listDocuments(
    conf.appwritedatabaseid, conf.appwritefollowersid,[Query.equal("giver", id)])
-   let followinglist  = getfollowings.documents
-  let listmapping = followinglist.map((list) => list.reciever);
-  setfollowinglist(listmapping.length)
-  return listmapping.length
+   let followinglist  = getfollowings.documents.map((list) => list.reciever);
+  // followinglist(followinglist.length)
+  return followinglist.length
     } 
- 
       const {data :fetchfollowings, isLoading :followingsloading, error : followingserror} = useQuery({
                     queryKey:["followings", selectorid],
                     queryFn : ()=> fetchingfollowings(selectorid),
-                   
-                     
+                      
                     staleTime :  5 * 60 * 1000,
                  }) 
         //  let followinglist = fetchfollowings
@@ -235,15 +234,15 @@ const databases = new Databases(client);
         //   fetching followers by react query 
   
   let fetchingfollowers = async(id)=>{
-      const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-const databases = new Databases(client);
 const getfollowers = await databases.listDocuments(
    conf.appwritedatabaseid, conf.appwritefollowersid,[Query.equal("reciever",id)]   
  )
-  let followerslist = getfollowers.documents
-     let listmapping = followerslist.map((list) => list.giver);
-     setfollowers(listmapping.length)
-     return listmapping.length
+  // let followerslist = getfollowers.documents
+  //    let listmapping = followerslist.map((list) => list.giver);
+  let followerslist = getfollowers.documents.map((list) => list.giver);
+      setchecks(followerslist)
+     return followerslist.length
+    
   }
 
    const {data :fetchfollowers, isLoading :followersloading, error : followerserror} = useQuery({
@@ -252,7 +251,7 @@ const getfollowers = await databases.listDocuments(
                  staleTime :  5 * 60 * 1000,
               }) 
       //  let followers = fetchfollowers
-
+             
   
 
 
@@ -387,70 +386,71 @@ const getfollowers = await databases.listDocuments(
 //  }  
 
 //   increasing followers and followings using react query 
-const checkfollowing = async()=>{
- const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-    const databases = new Databases(client);
+// const checkfollowing = async()=>{
+//  const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
+//     const databases = new Databases(client);
 
-    try {
-    const check = await databases.listDocuments(
-      conf.appwritedatabaseid, conf.appwritefollowersid,[ 
-  Query.equal("reciever", selectorid),
-  Query.equal("giver", authid)
-]
-    )
-    // let givenusers =  check.documents.some((list)=> list.giver === currentuserss)
-    return check.documents.length > 0;
+//     try {
+//     const check = await databases.listDocuments(
+//       conf.appwritedatabaseid, conf.appwritefollowersid,[ 
+//   Query.equal("reciever", selectorid),
+//   Query.equal("giver", authid)
+// ]
+//     )
+//     // let givenusers =  check.documents.some((list)=> list.giver === currentuserss)
+//     return check.documents.length > 0;
 
         
-   } catch (error) {
-         console.log(error);
+//    } catch (error) {
+//          console.log(error);
          
-    }
-}
-// let[ischecking ,setischecking] = useState()
-const {data :checking, isLoading :checkingloading, error : checkingerror} = useQuery({
-                 queryKey:["checking", selectorid, authid],
-                 queryFn : ()=> checkfollowing(),
-                 staleTime :  5 * 60 * 1000,
-              }) 
+//     }
+// }
+// // let[ischecking ,setischecking] = useState()
+// const {data :checking, isLoading :checkingloading, error : checkingerror} = useQuery({
+//                  queryKey:["checking", selectorid, authid],
+//                  queryFn : ()=> checkfollowing(),
+              //   staleTime :  5 * 60 * 1000,
+              // }) 
 
 const[ischange, setischange] = useState("")
 
   async function increasefollowers(data){
-       const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-    const databases = new Databases(client);
     try {
               setischange("yes")
       const getfollowers = await databases.listDocuments(
               conf.appwritedatabaseid, conf.appwritefollowersid,[Query.equal("reciever", data)] 
             )
             console.log(getfollowers.documents)  
-            // setfollowerslist(getfollowers.documents) 
             let followerslist = getfollowers.documents   
             let listmapping = followerslist.map((list) => list.giver);
             console.log(listmapping.length); 
             // setfollowers(listmapping.length)
             if (!listmapping.includes(authid)) {
-              
+            
               const addfollowers = await databases.createDocument(conf.appwritedatabaseid, conf.appwritefollowersid,ID.unique(),{
                        //  "giver": authid,
                         "giver": authid,
                         "reciever": data,
-                        "name":  currentname
-                       })
+                        // "name":  currentname
+                        "name" : user
+               
+
+                      })
                        return addfollowers;          
             }
 
 
     } catch (error) {
-        return error;
+       console.log(error);
+       
     }
     }
 
         const followmutation = useMutation({
         mutationFn : increasefollowers,
 
-         onMutate: async () => {
+        onMutate: async () => {
     await queryClient.cancelQueries(["followers", selectorid]);
     await queryClient.cancelQueries(["followings",selectorid]);
 
@@ -475,8 +475,6 @@ const[ischange, setischange] = useState("")
 )
 
 async function decreasefollowers(){
-       const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-    const databases = new Databases(client);
     try {
         const check = await databases.listDocuments(
       conf.appwritedatabaseid, conf.appwritefollowersid,[Query.equal("reciever",selectorid)]
@@ -1040,14 +1038,10 @@ setopacity({padding:" 20px 180px",
     justifyContent: "center",
     alignItems : "center",
     gap: "10px"}}>
-
-
-
-
-                      
+                
              <div className="followbox">
 {selectorid !== authid && (
-  checking ? ( <button onClick={() => unfollowmutation.mutate()}
+   checks.includes(authid) ? ( <button onClick={() => unfollowmutation.mutate()}
       style={{ backgroundColor :"#0b57d0", fontSize : "13.5px" }}>Unfollow</button>) : (<button onClick={() => followmutation.mutate(selectorid)} style={{ backgroundColor :"white", color : "black", fontSize : "13.5px" }}>Follow
     </button>
     
@@ -1079,7 +1073,7 @@ setopacity({padding:" 20px 180px",
                        <div className="followersandfollowings">
                        <span>{fetchfollowings} Followings</span> 
                        <span>{fetchfollowers} followers </span> <br /></div>
-                        
+                      
                      </div>
                    </div>
 
@@ -1134,16 +1128,18 @@ setopacity({padding:" 20px 180px",
                           {/* {listings.Like.includes(authid)?<h6 style={{color : "blue", fontSize : "13px", cursor : "pointer"}} onClick={()=>decreaselikeMutation.mutate(listings.$id)}>Like</h6> : <h6 style={{color : "white", fontSize : "13px", cursor : "pointer"}} onClick={()=>likeMutation.mutate(listings.$id)}>Like</h6>}  */}
                           
 
-                           {listings.Like.includes(authid)?<i class="fa-solid fa-heart" style={{color:"#d7329a", fontSize  : "14px", cursor : "pointer"}} onClick={()=>decreaselikeMutation.mutate(listings.$id)}></i> : <i class="fa-solid fa-heart" style={{color : "white", fontSize : "14px", cursor : "pointer"}} onClick={()=>likeMutation.mutate(listings.$id)}></i>}
+                           {/* {listings.Like.includes(authid)?<i class="fa-solid fa-heart" style={{color:"#d7329a", fontSize  : "14px", cursor : "pointer"}} onClick={()=>decreaselikeMutation.mutate(listings.$id)}></i> : <i class="fa-solid fa-heart" style={{color : "white", fontSize : "14px", cursor : "pointer"}} onClick={()=>likeMutation.mutate(listings.$id)}></i>} */}
+
+                            {listings.Like.includes(authid)?<i class="fa-solid fa-heart" style={{color:"#d7329a", fontSize  : "14px", cursor : "pointer"}} onClick={()=>decreaselikeMutation.mutate({docid : listings.$id, Like : listings.Like})}></i> : <i class="fa-solid fa-heart" style={{color : "white", fontSize : "14px", cursor : "pointer"}} onClick={()=>likeMutation.mutate({ docid :listings.$id, Like : listings.Like})}></i>}
                                
                         <div className="like-right" style={{color : "white"}}>
   {/* {increaselike.includes(listings.$id)
     ? listings.Like.length + 1 
     : listings.Like.length}  */}
-  {listings.Like.includes(authid)
+  {/* {listings.Like.includes(authid)
     ? listings.Like.length 
-    : listings.Like.length} 
-     
+    : listings.Like.length}  */}
+     {listings.Like.length}
   {/* {increaselike === listings.$id ? listings.Like.length +1 : listings.Like.length} */}    
                         </div>
                         </div> 
