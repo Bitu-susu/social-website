@@ -176,7 +176,7 @@ function Newdash({network}) {
           //   linking the mutation with the posts function and the likes decrease function
    
  const decreaselikeMutation = useMutation({
-  mutationFn: likesdecrease,
+  mutationFn: likesdecrease, 
 
   onSuccess: () => {
     // 🔥 THIS triggers posts API again
@@ -328,7 +328,7 @@ if (aibot) {setaibot({ display  :"block"})}}
                     // console.error("Error:", error);
                     setresult("error in generating response", error)
                     console.log(error, "this is the error ");
-                    
+                       
                   }
                 }
 
@@ -714,7 +714,7 @@ if (aibot) {setaibot({ display  :"block"})}}
     ? listings.Like.length + 1    
     : listings.Like.length}  */}  
   {/* {listings.Like.includes(authid)
-    ? listings.Like.length 
+    ? listings.Like.length    
     : listings.Like.length}  */}
     {listings.Like.length}
      
