@@ -27,7 +27,7 @@ async function submitpost({title,category,authid,user,content}){
                const postContent = tempElement.innerText;   
                let url = `https://cloud.appwrite.io/v1/storage/buckets/677eb5a00022f1981a75/files/${result.$id}/view?project=677eb42f003e041a0476`; 
                
-         const newdocument =  await databases.createDocument(conf.appwritedatabaseid,conf.appwritepostcollectionid,ID.unique(),{
+      const newdocument =  await databases.createDocument(conf.appwritedatabaseid,conf.appwritepostcollectionid,ID.unique(),{
                     "posttitle" :title,
                     "postcontent" :postContent,
                     "featuredimage" :url,

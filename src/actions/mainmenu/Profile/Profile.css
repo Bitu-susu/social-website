@@ -27,7 +27,7 @@
     background-position: center;
  }
  .profile-left-topcontent{
-   width: 60%;
+   width: 100%;
    color: white;
  }
  .profile-left-topcontent span{
@@ -94,6 +94,7 @@ font-size: 1.6rem;
    display: flex;
    align-items: center;
    gap: 30px;
+   justify-content: space-between;
   }
   .profile-left-top1 span{
    font-size: 15px;
