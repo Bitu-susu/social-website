@@ -17,8 +17,11 @@ import './Userprofile.css'
  import InputEmoji from 'react-input-emoji'
 //   fetching current user from the react query 
 import '../../mainmenu/dashnew/Newdash.css'
- 
 
+//  importing custom hooks
+import {likesincrease,likesdecrease} from '../Customs/Increase/increaselikes'
+import { databases } from '../Customs/Increase/appwritesdk'
+import { storage } from '../Customs/Increase/appwritesdk'
 const currentuser = async()=>{
     const getuser = await authService.getcurrentuser();
     return getuser;
@@ -41,8 +44,7 @@ function Profileuser() {
            let firstletter = currentusers?.name.charAt(0).toUpperCase() 
           
 let userdocuments = async()=>{
-     const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-    const databases = new Databases(client);
+
       const queries = [Query.equal("authid", selectorid)]
        const listuserdocuments = await databases.listDocuments(
         conf.appwritedatabaseid, conf.appwritepostcollectionid, queries 
@@ -62,8 +64,7 @@ let userdocuments = async()=>{
 const [nottrimcontent, setnottrimcontent] = useState("")
 const[gettingid, setgettingid] = useState("")
 async function nottrim(id) {
- const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-const databases = new Databases(client);
+
 try { 
   const nottrimcontent = await databases.listDocuments(
     conf.appwritedatabaseid,conf.appwritepostcollectionid,[Query.equal("$id", id)]
@@ -77,124 +78,20 @@ try {
 }
 }
 
-// const [increaselike, setincreaselike] = useState([])
-
-// async function likesincrease(id) {
-//   const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);                                             
-
-//   // const storage = new Storage(client);
-//   const databases = new Databases(client);
-//   try {
-
-//         const getdocuments = await databases.getDocument(
-//           conf.appwritedatabaseid,conf.appwritepostcollectionid,id
-//         )
-//           let getdata = getdocuments.Like
-//           console.log(getdata);
-          
-//     if (getdata.includes(authid)) {
-//          alert("you already like the post")
-//     }
-//     else{
-//       const updateddocument = await databases.updateDocument(conf.appwritedatabaseid,conf.appwritepostcollectionid,id,{  
-//               "Like" :[...getdata, authid]  
-//             }  
-//            ) 
-//            console.log(updateddocument, "yes updated");
-//             // setincreaselike(updateddocument.Like.length +1)
-//             setincreaselike(prev => [...prev, id]);   
-           
-//     }
-            
-//   } catch (error) {
-//         console.log("error in updating likes", error);
-//   }
-// } 
-
-
-//  increasing likes using react query 
-
     const [increaselike, setincreaselike] = useState([])
 const[likecolor, setlikecolor] = useState() 
-          // async function likesincrease(id) {
-          const likesincrease = async (id)=>{
-
-            const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);                                             
-      
-            // const storage = new Storage(client);
-            const databases = new Databases(client); 
-            try {
-    
-                  const getdocuments = await databases.getDocument(
-                    conf.appwritedatabaseid,conf.appwritepostcollectionid,id
-                  )
-                    let getdata = getdocuments.Like
-                  console.log(getdata); 
-                  setlikecolor(true) 
-              if (getdata.includes(authid)) {
-                   alert("you already like the post")          
-              }
-              else{
-                const updateddocument = await databases.updateDocument(conf.appwritedatabaseid,conf.appwritepostcollectionid,id,{  
-                        "Like" :[...getdata, authid]  
-                      }   
-                     ) 
-                     console.log(updateddocument, "yes updated");
-                      // setincreaselike(updateddocument.Like.length +1)
-
-                      //  for state purpose only 
-                      setincreaselike(prev => [...prev, id]);         
-              }
-                      
-            } catch (error) {
-                  console.log("error in updating likes", error);                                                             
-            }
-          }
+         
 
              const likeMutation = useMutation({
                       mutationFn: likesincrease,
                     
                       onSuccess: () => {
                         // 🔥 THIS triggers posts API again
-                        queryClient.invalidateQueries({ queryKey: ["documentss", selectorid] });
+                        queryClient.invalidateQueries({ queryKey: ["documentss",selectorid] });
                       },
                     }); 
 
-        //   decrease likes using react query
-
-        async function likesdecrease(id){
-const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);                                             
-      
-            // const storage = new Storage(client);
-            const databases = new Databases(client); 
-                const getdocuments = await databases.getDocument(
-                    conf.appwritedatabaseid,conf.appwritepostcollectionid,id
-                  )
-                    let getdata = getdocuments.Like
-
-            try {
-               setlikecolor(false) 
-               if(getdata.includes(authid)) {
-             let newgetdata = await getdata.filter((element)=> {
-                return  element!==authid
-                }
-                )
-                console.log(newgetdata); 
-                
-                 const updateddocument = await databases.updateDocument(conf.appwritedatabaseid,conf.appwritepostcollectionid,id,{  
-                        "Like":newgetdata  
-                       }   
-                     ) 
-                     console.log(updateddocument);  
-                    //   for state purpose only 
-                    let removelikes = increaselike.filter((element)=> {return element!==id})
-                      setincreaselike(removelikes)
-               }
-            } catch (error) {
-                 console.log(error);
-                 
-            }
-          }
+        
 
           //   linking the mutation with the posts function and the likes decrease function
    
@@ -203,31 +100,27 @@ const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwri
 
   onSuccess: () => {
     // 🔥 THIS triggers posts API again
-    queryClient.invalidateQueries({queryKey: ["documentss",selectorid]});
+    queryClient.invalidateQueries({queryKey: ["documentss", selectorid]});
   },
 }); 
 
 
 const[followers, setfollowers] = useState("")
 const [followinglist, setfollowinglist] = useState("")
+const[checks, setchecks] = useState([])
  
   //    fetching followings using react query
     let fetchingfollowings = async(id)=>{
-       const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-const databases = new Databases(client);
      const getfollowings = await databases.listDocuments(
    conf.appwritedatabaseid, conf.appwritefollowersid,[Query.equal("giver", id)])
-   let followinglist  = getfollowings.documents
-  let listmapping = followinglist.map((list) => list.reciever);
-  setfollowinglist(listmapping.length)
-  return listmapping.length
+   let followinglist  = getfollowings.documents.map((list) => list.reciever);
+  // followinglist(followinglist.length)
+  return followinglist.length
     } 
- 
       const {data :fetchfollowings, isLoading :followingsloading, error : followingserror} = useQuery({
                     queryKey:["followings", selectorid],
                     queryFn : ()=> fetchingfollowings(selectorid),
-                   
-                     
+                      
                     staleTime :  5 * 60 * 1000,
                  }) 
         //  let followinglist = fetchfollowings
@@ -235,15 +128,15 @@ const databases = new Databases(client);
         //   fetching followers by react query 
   
   let fetchingfollowers = async(id)=>{
-      const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-const databases = new Databases(client);
 const getfollowers = await databases.listDocuments(
    conf.appwritedatabaseid, conf.appwritefollowersid,[Query.equal("reciever",id)]   
  )
-  let followerslist = getfollowers.documents
-     let listmapping = followerslist.map((list) => list.giver);
-     setfollowers(listmapping.length)
-     return listmapping.length
+  // let followerslist = getfollowers.documents
+  //    let listmapping = followerslist.map((list) => list.giver);
+  let followerslist = getfollowers.documents.map((list) => list.giver);
+      setchecks(followerslist)
+     return followerslist.length
+    
   }
 
    const {data :fetchfollowers, isLoading :followersloading, error : followerserror} = useQuery({
@@ -253,213 +146,51 @@ const getfollowers = await databases.listDocuments(
               }) 
       //  let followers = fetchfollowers
 
-  
-
-
-//   followings and followers section
-    //  get current user
-    // const [currentuserss, setcurrentusers] = useState("")
-    // const [currentname, setcurrentname] = useState("")
-    // const [followbutton, setfollowbutton] = useState("")
-    // const[firstletter, setfirstletter] = useState()
-    // async function currentuser() {
-    //   try {
-    //     const getuser = await authService.getcurrentuser();
-    //     console.log(getuser, "geting user");
-    //     setcurrentusers(getuser.$id)
-    //     setcurrentname(getuser.name)
-    //     setfirstletter(getuser?.name.charAt(0).toUpperCase())
-    //   } catch (error) {
-    //     console.log("error in getting user", error);
-        
-    //   }
-    // }
-    // useEffect(()=>{
-    //   currentuser()
-    // },[])
-
-
-    //  initially  check whether the current user follow the profile , or not 
-
-//       const [checkfollow, setcheckfollow] = useState(false) 
-//       // const [deleteid, setdeleteid] = useState("")
-      // const [senddelete, setsenddelete] = useState("")
-//    const  checkfollowings = useCallback(async()=> {
-//        const client = new Client()
-//       .setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-//     const databases = new Databases(client);
-    
-//     try {  
-//       const check = await databases.listDocuments(
-//       conf.appwritedatabaseid, conf.appwritefollowersid,[Query.equal("reciever", selectorid)]
-
-//     )
-//     console.log(check, "ccccccc");
-//       let givenusers = check.documents.find((list)=> list.giver === currentuserss)
-//       // let givenusers = check.documents.find((list)=> list.giver === authid)
-//     console.log(givenusers, "given");
-    
-
-    
-//     // setsenddelete(givenusers ? givenusers.$id : "");   
-//     // setsenddelete(newgiver ? newgiver.$id : ""); 
-  
-    
-//     if (givenusers) {
-//       setcheckfollow(true)}
-//       console.log(senddelete, "deleted id");
-//     // }    else{ 
-//     //   setcheckfollow(false)
-//     // }
-//               }
-//     catch (error) {
-//        console.log(error, "error in filtering the giver");
-//     }
-// },[selectorid,currentuserss,increasefollowers,decreasefollowers])
-
-//  useEffect(()=>{ 
-//     checkfollowings()
-//  },[checkfollowings])
-
-// async function increasefollowers(data) {
-//     const client = new Client()
-//       .setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-//     const databases = new Databases(client);
-//           try {   
-//              const getfollowers = await databases.listDocuments(
-//               conf.appwritedatabaseid, conf.appwritefollowersid,[Query.equal("reciever", data)] 
-//             )
-//             console.log(getfollowers.documents)  
-//             // setfollowerslist(getfollowers.documents) 
-//             let followerslist = getfollowers.documents   
-//             let listmapping = followerslist.map((list) => list.giver);
-//             console.log(listmapping.length); 
-//             // setfollowers(listmapping.length)
-            
-//             // if (listmapping.includes(authid)) {
-//             if (listmapping.includes(currentuserss)) {
-             
-//               alert("you already follow this profile")  
-//             } 
-//             else{
-//               const addfollowers = await databases.createDocument( 
-//                 conf.appwritedatabaseid, conf.appwritefollowersid,ID.unique(),{
-//                 //  "giver": authid,
-//                  "giver": currentuserss,
-//                  "reciever": data,
-//                  "name":  currentname
-//                 })
-//                 console.log(addfollowers.length);
-//                 // Manually update the state without refetching
-//                 setfollowers((prev) => prev + 1); 
-//                 setcheckfollow(true)
-//                 //  followers = followers + 1
-                
-//             } 
- 
-//           } catch (error) {
-//               console.log(error, "error in fetching followers"); 
-              
-//           }
-//   }
- 
-
-  //  decrease followers  or unfollow the current user
-
-//  async function decreasefollowers(data) {
-//     const client = new Client()
-//       .setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-//     const databases = new Databases(client);
-//     console.log(data, 'ddddddd');
-    
-//     try {
-//            let deleteid =  await databases.deleteDocument(conf.appwritedatabaseid, conf.appwritefollowersid,data)
-//            console.log(data, 'the data');
-           
-//              console.log(deleteid, "you unfollow this id");
-//          setfollowers((prev)=> prev-1)
-//          setcheckfollow(false)
-//         // followers = followers -1     
-//     } catch (error) { 
-//       console.log(error, "error in unfollowing user");
-      
-//     }
-//  }  
-
-//   increasing followers and followings using react query 
-const checkfollowing = async()=>{
- const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-    const databases = new Databases(client);
-
-    try {
-    const check = await databases.listDocuments(
-      conf.appwritedatabaseid, conf.appwritefollowersid,[ 
-  Query.equal("reciever", selectorid),
-  Query.equal("giver", authid)
-]
-    )
-    // let givenusers =  check.documents.some((list)=> list.giver === currentuserss)
-    return check.documents.length > 0;
-
-        
-   } catch (error) {
-         console.log(error);
-         
-    }
-}
-// let[ischecking ,setischecking] = useState()
-const {data :checking, isLoading :checkingloading, error : checkingerror} = useQuery({
-                 queryKey:["checking", selectorid, authid],
-                 queryFn : ()=> checkfollowing(),
-                 staleTime :  5 * 60 * 1000,
-              }) 
-
 const[ischange, setischange] = useState("")
 
   async function increasefollowers(data){
-       const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-    const databases = new Databases(client);
     try {
               setischange("yes")
       const getfollowers = await databases.listDocuments(
               conf.appwritedatabaseid, conf.appwritefollowersid,[Query.equal("reciever", data)] 
             )
             console.log(getfollowers.documents)  
-            // setfollowerslist(getfollowers.documents) 
             let followerslist = getfollowers.documents   
             let listmapping = followerslist.map((list) => list.giver);
             console.log(listmapping.length); 
             // setfollowers(listmapping.length)
             if (!listmapping.includes(authid)) {
-              
+            
               const addfollowers = await databases.createDocument(conf.appwritedatabaseid, conf.appwritefollowersid,ID.unique(),{
                        //  "giver": authid,
                         "giver": authid,
                         "reciever": data,
-                        "name":  currentname
-                       })
+                        "name" : user
+               
+                      })
                        return addfollowers;          
             }
 
 
     } catch (error) {
-        return error;
+       console.log(error);
+       
     }
     }
 
         const followmutation = useMutation({
         mutationFn : increasefollowers,
 
-         onMutate: async () => {
+        onMutate: async () => {
     await queryClient.cancelQueries(["followers", selectorid]);
     await queryClient.cancelQueries(["followings",selectorid]);
 
     const prevFollowers = queryClient.getQueryData(["followers", selectorid]);
     const prevFollowings = queryClient.getQueryData(["followings", selectorid]);
 
-  if (!ischange =="yes") {
-    queryClient.setQueryData(["followers", selectorid], (old) => (old ?? 0) + 1);
-  }
+  // if (!ischange =="yes") {
+  //   queryClient.setQueryData(["followers", selectorid], (old) => (old ?? 0) + 1);
+  // }
    
     // queryClient.setQueryData(["followings", selectorid], (old) => (old ?? 0) + 1);
 
@@ -475,8 +206,6 @@ const[ischange, setischange] = useState("")
 )
 
 async function decreasefollowers(){
-       const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-    const databases = new Databases(client);
     try {
         const check = await databases.listDocuments(
       conf.appwritedatabaseid, conf.appwritefollowersid,[Query.equal("reciever",selectorid)]
@@ -500,7 +229,7 @@ const unfollowmutation = useMutation({
     const prevFollowers = queryClient.getQueryData(["followers", selectorid]);
     const prevFollowings = queryClient.getQueryData(["followings", selectorid]);
 
-    queryClient.setQueryData(["followers", selectorid], (old) => Math.max((old ?? 1) - 1, 0));
+    // queryClient.setQueryData(["followers", selectorid], (old) => Math.max((old ?? 1) - 1, 0));
     // queryClient.setQueryData(["followings", currentuserss], (old) => Math.max((old ?? 1) - 1, 0));
 
     return {prevFollowers, prevFollowings};
@@ -517,8 +246,6 @@ const unfollowmutation = useMutation({
 //  fetching profile credentials using react query
 
 let fetchprofilecredentials =async()=>{
-     const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-  const databases = new Databases(client);
   const getcredentials = await databases.listDocuments(
       conf.appwritedatabaseid, conf.appwritebiocollectionid,[Query.equal("authid",selectorid )] 
     )
@@ -588,10 +315,7 @@ function addcomment() {
 //     fetching user comments 
 
 async function fetchcomments(id) {
-  const client = new Client()
-    .setEndpoint(conf.appwriteurl)
-    .setProject(conf.appwriteprojectid);
-  const databases = new Databases(client);
+ 
   try {
     const fetchingcomments = await databases.listDocuments(conf.appwritedatabaseid, conf.appwritecommentsid, [
       Query.equal("postid", id)
@@ -608,41 +332,13 @@ async function fetchcomments(id) {
 
   }
 }
-     //   fetching the educational credentials of the user
-  // const [fetchingeducations, setfetchingeducations] = useState(null)
-  // async function fetchingeducation() {
-  //   try {
-  //     const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-  //     const databases = new Databases(client);
-  //     const educationdetails = await databases.listDocuments( conf.appwritedatabaseid, conf.appwriteeducationid,[
-  //       Query.equal("authid", selectorid)]
-  //     )
-  //     let reverseeducation = educationdetails.documents.reverse()
-  //     console.log("education details", reverseeducation[0]);
-  //     setfetchingeducations(reverseeducation[0])
-  //     // console.log("here is the fetching details", fetchingeducations);
-
-
-  //   } catch (error) {
-  //     console.log(error);
-
-  //   }
-  // }
-  // useEffect(() => {
-  //   if (selectorid) {
-  //     fetchingeducation()
-  //   }
-  // }, [selectorid]) 
-
-  //  fetching education using react query
+    
 
   const fetchingeducation = async()=>{
-    const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-      const databases = new Databases(client);
       const educationdetails = await databases.listDocuments( conf.appwritedatabaseid, conf.appwriteeducationid,[
         Query.equal("authid", selectorid)])
          let reverseeducation = educationdetails.documents.reverse();
-         return reverseeducation[0]
+         return reverseeducation[0] ||null
   }
 
   //  using react query 
@@ -658,45 +354,12 @@ async function fetchcomments(id) {
                let   gradutionpassout = educationcredentials?.gradutionpassout
 
 
- //   fetching the employment credentials of the user
-//  const [fetchingemployment, setfetchingemployment] = useState({})
-//  async function Fetchingemployment() {
-//    try {
-//      const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-//      const databases = new Databases(client);
-//      const employmentdetails = await databases.listDocuments(conf.appwritedatabaseid, conf.appwriteemploymentid,[
-//        Query.equal("authid", selectorid)]
-//      )
-//      let reverseemployment = employmentdetails.documents.reverse()
-//      console.log("employment details", reverseemployment);
-//      setfetchingemployment(reverseemployment[0])
-//      // console.log("here is the fetching details", fetchingeducations);
-
-
-//    } catch (error) {
-//      console.log(error);
-
-//    }
-//  }
-//  useEffect(() => {
-//    if (selectorid) {
-//      Fetchingemployment()
-//    }
-//  }, [selectorid])
-
-//   fetching employment with the react query 
-
-
-
-
    let fetchingemployment = async()=>{
-     const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-     const databases = new Databases(client);
      const employmentdetails = await databases.listDocuments(conf.appwritedatabaseid, conf.appwriteemploymentid,[
        Query.equal("authid", selectorid)]
      )
       let reverseemployment = employmentdetails.documents.reverse()
-      return reverseemployment[0]
+      return reverseemployment[0] || null
    }
 
   //   with react query 
@@ -709,44 +372,15 @@ async function fetchcomments(id) {
               let employment = employmentcredentials?.employment
               let experiance = employmentcredentials?.experiance
 
- // fetching location credentials
-//  const [fetchinglocation, setfetchinglocation] = useState({})
-
-//  async function Fetchinglocation() {
-//    try {
-//      const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-//      const databases = new Databases(client);
-//      const locationdetails = await databases.listDocuments(conf.appwritedatabaseid, conf.appwritelocationid, [
-//        Query.equal("authid", selectorid)]
-//      )
-//      let reverselocation = locationdetails.documents.reverse()
-//      console.log("employment details", reverselocation);
-//      setfetchinglocation(reverselocation[0])
-//      // console.log("here is the fetching details", fetchingeducations);
-
-
-//    } catch (error) {
-//      console.log(error);
-
-//    }
-//  }
-//  useEffect(() => {
-//    if (selectorid) {
-//      Fetchinglocation()
-//    }
-//  }, [selectorid])
-
-//  fetching location with react query
 
  
   let fetchinglocation = async()=>{
-       const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-     const databases = new Databases(client);
+
       const locationdetails = await databases.listDocuments(conf.appwritedatabaseid, conf.appwritelocationid, [
        Query.equal("authid", selectorid)]
      )
      let reverselocation = locationdetails.documents.reverse()
-     return reverselocation[0]
+     return reverselocation[0] || null
   }
 
   //  with react query
@@ -762,13 +396,13 @@ async function fetchcomments(id) {
 //   fetching profile pic 
 // const[profilepic, setprofilepic] = useState(null)
  async function getprofilepic() {
-    const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-       const storage = new Storage(client);
-       const databases = new Databases(client);
+    // const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
+    //    const storage = new Storage(client);
+    //    const databases = new Databases(client);
       
               const getprofilepic = await databases.listDocuments( conf.appwritedatabaseid, conf.appwritebiocollectionid,[Query.equal("authid", selectorid)
              ])
-             console.log(getprofilepic, "getprofilepic");
+            //  console.log(getprofilepic, "getprofilepic");
              
              return getprofilepic.documents.reverse()
              
@@ -845,8 +479,7 @@ const {data :gettingprofilepic} = useQuery({
 //  useeffect with the chat for websocket connection 
     
 useEffect(() => {
-     const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-    const databases = new Databases(client);
+  const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
   if (chatrun === true && rooms.length > 0) {
 //  reference.current?.scrollIntoView({ behavior: "smooth" });
     const unsubscribe = client.subscribe(
@@ -879,8 +512,7 @@ useEffect(() => {
 //  create messages 
 
 async function createmessage() {
-  const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-    const databases = new Databases(client);
+ 
      try {
   const createmessages = await databases.createDocument(
       conf.appwritedatabaseid, conf.appwritechatid, ID.unique(), {   
@@ -902,8 +534,7 @@ async function createmessage() {
   //   fetching chats according to the roomid
 
   async function fetchingchats() {
-      const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-    const databases = new Databases(client);
+
      try {
                if (chatrun === true && rooms.length > 0) {
                  const listingchats =  await databases.listDocuments( conf.appwritedatabaseid, conf.appwritechatid,[Query.equal("roomid", rooms)
@@ -1040,15 +671,11 @@ setopacity({padding:" 20px 180px",
     justifyContent: "center",
     alignItems : "center",
     gap: "10px"}}>
-
-
-
-
-                      
+                
              <div className="followbox">
 {selectorid !== authid && (
-  checking ? ( <button onClick={() => unfollowmutation.mutate()}
-      style={{ backgroundColor :"#0b57d0", fontSize : "13.5px" }}>Unfollow</button>) : (<button onClick={() => followmutation.mutate(selectorid)} style={{ backgroundColor :"white", color : "black", fontSize : "13.5px" }}>Follow
+   checks.includes(authid) ? ( <button onClick={() => unfollowmutation.mutate()}
+      style={{ backgroundColor :"#0b57d0", fontSize : "13.5px" }}>Unfollow</button>) : (<button onClick={() => followmutation.mutate(selectorid)} style={{ backgroundColor :"white", color : "black", fontSize : "13.5px" }}>follow
     </button>
     
   )
@@ -1079,7 +706,7 @@ setopacity({padding:" 20px 180px",
                        <div className="followersandfollowings">
                        <span>{fetchfollowings} Followings</span> 
                        <span>{fetchfollowers} followers </span> <br /></div>
-                        
+                      
                      </div>
                    </div>
 
@@ -1102,7 +729,7 @@ setopacity({padding:" 20px 180px",
                           <h5 style={{color : "white"}}>{listings.posttitle}</h5> 
                           <div className="incdate" style={{display: "flex", justifyContent: "space-between"}}> 
                           <span style={{fontWeight: "400", fontSize: "14px", color: "white",textDecoration : "underline"}}>{listings.postcategory ? "category - " + listings.postcategory :listings.postcategory} </span>
-                          <span style={{fontWeight: "400", fontSize: "14px", color: "white",background:"#0b57d0", borderRadius:"20px", padding : "7px 7px"}} >{listings.Date}</span>
+                          <span style={{fontWeight: "400", fontSize: "14px", color: "white", borderRadius:"20px", padding : "7px 7px"}} >{listings.Date}</span>
                           </div> 
                         </div> 
                          {/* <div className="post-category">
@@ -1134,16 +761,18 @@ setopacity({padding:" 20px 180px",
                           {/* {listings.Like.includes(authid)?<h6 style={{color : "blue", fontSize : "13px", cursor : "pointer"}} onClick={()=>decreaselikeMutation.mutate(listings.$id)}>Like</h6> : <h6 style={{color : "white", fontSize : "13px", cursor : "pointer"}} onClick={()=>likeMutation.mutate(listings.$id)}>Like</h6>}  */}
                           
 
-                           {listings.Like.includes(authid)?<i class="fa-solid fa-heart" style={{color:"#d7329a", fontSize  : "14px", cursor : "pointer"}} onClick={()=>decreaselikeMutation.mutate(listings.$id)}></i> : <i class="fa-solid fa-heart" style={{color : "white", fontSize : "14px", cursor : "pointer"}} onClick={()=>likeMutation.mutate(listings.$id)}></i>}
+                           {/* {listings.Like.includes(authid)?<i class="fa-solid fa-heart" style={{color:"#d7329a", fontSize  : "14px", cursor : "pointer"}} onClick={()=>decreaselikeMutation.mutate(listings.$id)}></i> : <i class="fa-solid fa-heart" style={{color : "white", fontSize : "14px", cursor : "pointer"}} onClick={()=>likeMutation.mutate(listings.$id)}></i>} */}
+
+                            {listings.Like.includes(authid)?<i class="fa-solid fa-heart" style={{color:"#d7329a", fontSize  : "14px", cursor : "pointer"}} onClick={()=>decreaselikeMutation.mutate({docid : listings.$id, Like : listings.Like})}></i> : <i class="fa-solid fa-heart" style={{color : "white", fontSize : "14px", cursor : "pointer"}} onClick={()=>likeMutation.mutate({ docid :listings.$id, Like : listings.Like})}></i>}
                                
                         <div className="like-right" style={{color : "white"}}>
   {/* {increaselike.includes(listings.$id)
     ? listings.Like.length + 1 
     : listings.Like.length}  */}
-  {listings.Like.includes(authid)
+  {/* {listings.Like.includes(authid)
     ? listings.Like.length 
-    : listings.Like.length} 
-     
+    : listings.Like.length}  */}
+     {listings.Like.length}
   {/* {increaselike === listings.$id ? listings.Like.length +1 : listings.Like.length} */}    
                         </div>
                         </div> 
@@ -1214,7 +843,7 @@ setopacity({padding:" 20px 180px",
               {/* <h6 onClick={educationcredentialopen}  style={{ color: "white" }} > <i class="fa-solid fa-graduation-cap" style={{ color: "#0b57d0" }}> </i> Add Education credentials</h6> */}
               {educationcredentials && Object.keys(educationcredentials).length > 0 ?( <><h6 style={{color : "white", textDecoration: "underline"}}>Eduation credentials</h6></>):(<h6 style={{ color: "white" }} > <i className="fa-solid fa-graduation-cap" style={{ color: "#0b57d0" }}> </i> Education credentials</h6>)}
               <div className="education-credential-box">
-                <form action="" className='education-form'>
+                {/* <form action="" className='education-form'>
                   <i className="fa-solid fa-circle-xmark" style={{ float: "right", color: "black" }}></i>
                   <div classname="mb-3">
                     <label htmlFor="formGroupExampleInput" className="form-label" style={{color : "black"}}>Add schooling credentials</label>
@@ -1228,7 +857,7 @@ setopacity({padding:" 20px 180px",
                     <input type="text" className="form-control" id="formGroupExampleInput" onChange={(e) => setgradutionpassout(e.target.value)} placeholder="Graduation passout year" />
                   </div>
                   <button type="submit" className='btn btn-primary'>Add</button>
-                </form>
+                </form> */}
 
               </div>
               <div className="education-response">  
@@ -1285,7 +914,7 @@ setopacity({padding:" 20px 180px",
               {/* <h6 style={{ color: "white" }} onClick={Locationopen}> <i class="fa-solid fa-location-dot" style={{ color: "#0b57d0" }}></i> Add Location credentials</h6> */}
               {locationcredentials && Object.keys(locationcredentials).length > 0 ? (<><h6 style={{color: "white", textDecoration: "underline"}}>Location credentials</h6><h6  style={{color : "white", textDecoration: "underline"}}></h6></>):(<h6 style={{ color: "white" }} > <i className="fa-solid fa-location-dot" style={{ color: "#0b57d0" }}> </i> Add location credentials</h6>)}
               <div className="location-credential-box">
-                <form action="" className='education-form'>
+                {/* <form action="" className='education-form'>
                     <i className="fa-solid fa-circle-xmark" style={{ float: "right", color: "white" }}></i>
                     <div className="mb-3">
                       <label htmlFor="formGroupExampleInput" className="form-label" style={{color : "white"}}>Location credentials</label>
@@ -1294,7 +923,7 @@ setopacity({padding:" 20px 180px",
                       
                     </div>
                     <button type="submit" className='btn btn-primary'>Add</button>
-                  </form>
+                  </form> */}
                 </div>
                 <div className="education-response">  
                 {locationcredentials ? (
