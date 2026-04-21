@@ -14,6 +14,10 @@ import database from '../../../appwrite/database'
 import { useQuery } from "@tanstack/react-query";
 // import { useNavigate } from 'react-router-dom'  
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+//   importing custom hooks
+import useProfile from '../Customs/Increase/userprofile'
+
 // import authService from '../../../appwrite/auth'
 
   
@@ -345,7 +349,6 @@ function Userprofile() {
                queryKey:["followings", authid],
                queryFn : ()=> fetchingfollowings(authid),
               
-                
                staleTime :  5 * 60 * 1000,
             }) 
 
@@ -505,136 +508,126 @@ const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwri
 
 
   //  uploading the profile box section
-  const[proffesion, setproffesion] = useState("")
-const [personal, setpersonal] = useState("")
-  async function Profilecredential(e) {
-    e.preventDefault()
-    try {
-      const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-      const databases = new Databases(client);
-      const storage = new Storage(client);
-      const fileInput = document.getElementById('profileupload');
-   const profile = await storage.createFile(conf.appwriteprofileid,ID.unique(),fileInput.files[0]
-               );
-              //  console.log(profile.$id)
-               let profileid = profile.$id 
-               let picurl =`https://cloud.appwrite.io/v1/storage/buckets/67af2d5d0023c5596848/files/${profileid}/view?project=677eb42f003e041a0476`
-      const profilebox = await databases.createDocument(
-        conf.appwritedatabaseid, conf.appwritebiocollectionid, ID.unique(), {
-        "profession":proffesion,
-        "personal":personal,
-        "authid": authid,
-        "picurl" : picurl
+//   const[proffesion, setproffesion] = useState("")
+// const [personal, setpersonal] = useState("")
 
-      })
-      // console.log("added credentials", profilebox);
+  // async function Profilecredential(e) {
+  //   e.preventDefault()
+  //   try {
+  //     const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
+  //     const databases = new Databases(client);
+  //     const storage = new Storage(client);
+  //     const fileInput = document.getElementById('profileupload');
+  //  const profile = await storage.createFile(conf.appwriteprofileid,ID.unique(),fileInput.files[0]
+  //              );
+  //             //  console.log(profile.$id)
+  //              let profileid = profile.$id 
+  //              let picurl =`https://cloud.appwrite.io/v1/storage/buckets/67af2d5d0023c5596848/files/${profileid}/view?project=677eb42f003e041a0476`
+  //     const profilebox = await databases.createDocument(
+  //       conf.appwritedatabaseid, conf.appwritebiocollectionid, ID.unique(), {
+  //       "profession":proffesion,
+  //       "personal":personal,
+  //       "authid": authid,
+  //       "picurl" : picurl
 
-    } catch (error) {
-      console.log(error)
-      }}
+  //     })
+  //     // console.log("added credentials", profilebox);
+
+  //   } catch (error) {
+  //     console.log(error)
+  //     }}
 
       //  Edit profile creentials
         //  const[updateid, setupdateid] = useState("")
-     async function editcredentials(id){
+
+        // const[yesedit, setyesedit] = useState(null)
+    // async function editcredentials(id){
     // console.log(id, "getting the id");
     
-       const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-      const databases = new Databases(client);
-        try {  
-               const getdocument = await  databases.listDocuments(
-                    conf.appwritedatabaseid,conf.appwritebiocollectionid,[Query.equal("authid",id)] 
-                  )
-                  // console.log(getdocument, "haaa");
-                  let newdoc = getdocument.documents[0].$id
-           const editupdate = await databases.updateDocument(conf.appwritedatabaseid,conf.appwritebiocollectionid,newdoc,{
-              "profession" :credentials1,
-              "personal" :credentials2
-           }
-           )
-          //  console.log(editupdate, "updated successfully"); 
-        }
-         catch (error) {
-            console.log(error);
+    //   const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
+    //   const databases = new Databases(client);
+    //         const storage = new Storage(client);
+
+    //     try {
+    //            const getdocument = await  databases.listDocuments(
+    //                 conf.appwritedatabaseid,conf.appwritebiocollectionid,[Query.equal("authid",id)] 
+    //               )
+    //               // console.log(getdocument, "haaa");
+    //               let newdoc = getdocument.documents[0].$id
+    //               if (yesedit) {
+    //                 const fileInput = document.getElementById('editprofileupload');
+    //                 const profile = await storage.createFile(conf.appwriteprofileid,ID.unique(),fileInput.files[0]);
+    //              let profileid = profile.$id 
+    //              let picurl =`https://cloud.appwrite.io/v1/storage/buckets/67af2d5d0023c5596848/files/${profileid}/view?project=677eb42f003e041a0476`
+
+    //              const editupdate = await databases.updateDocument(conf.appwritedatabaseid,conf.appwritebiocollectionid,newdoc,{
+    //                 "profession" :credentials1,
+    //                 "personal" :credentials2,
+    //                 "picurl": picurl,
+    //              }
+    //              ) 
+
+    //              console.log(editupdate, "updateeddd");
+                 
+    //             }
+    //    const editupdate = await databases.updateDocument(conf.appwritedatabaseid,conf.appwritebiocollectionid,newdoc,{
+    //                 "profession" :credentials1,
+    //                 "personal" :credentials2,
+    //                 "picurl": dp ,
+    //              }
+    //              ) 
+
+
+    //        console.log(editupdate, "updated successfully"); 
+    //        return editupdate
+    //     }
+    //      catch (error) {
+    //         console.log(error);
                              
-        }
-     }
+    //     }
+    //  }
 
 
       // fetching the profile credentials
-      const[credentials, setcredentials] = useState([])
-      const[credentials1, setcredentials1] = useState("")
-      const[credentials2, setcredentials2] = useState("")
-      const[dp, setdp] = useState(null)
-      let fetchprofilecredentials =async()=>{
+      // const[credentials, setcredentials] = useState([])
+      // const[credentials1, setcredentials1] = useState("")
+      // const[credentials2, setcredentials2] = useState("")
+      // const[dp, setdp] = useState(null)
 
-        const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-        const databases = new Databases(client);
-        try {
-          const getcredentials = await databases.listDocuments(
-            conf.appwritedatabaseid, conf.appwritebiocollectionid,[Query.equal("authid", authid)] 
-          )
-          let reversecredentials = getcredentials.documents.reverse()
-          console.log(reversecredentials,"yes the credentials are here")
-          // setcredentials(reversecredentials[0])
-          // setcredentials1(reversecredentials[0].profession)
-          // setcredentials2(reversecredentials[0].personal)  
-          return  reversecredentials[0]
-          
-        } catch (error) {
-          console.log(error, "error in fetching the  credentials of the user");
-          
-        }
-      }
-        // useEffect(()=>{
-        //   fetchprofilecredentials()
-        // },[])
+       const {personal, proffesion, credentials1, credentials2, dp,credentials,yesedit,setproffesion, setpersonal, setcredentials, setcredentials1, setcredentials2, setdp, setyesedit, editcredentials, Profilecredential,fetchprofilecredentials} = useProfile()
+
       
       const {data :profilecredentials} = useQuery({
+        
             queryKey:["credentials",authid],
-            queryFn :fetchprofilecredentials,
+            queryFn :()=>fetchprofilecredentials(authid),
             staleTime :  5 * 60 * 1000,
          }) 
          useEffect(() => {
-  // if (profilecredentials) {
+  if (profilecredentials) {
     setcredentials(profilecredentials);
     setcredentials1(profilecredentials?.profession || "");
     setcredentials2(profilecredentials?.personal || "");
     setdp(profilecredentials?.picurl || null)
-  // }
+
+  }
 }, [profilecredentials]);
-                                                                                    
-      // useEffect(()=>{
-          
-      //      fetchprofilecredentials()
-         
-      // },[authid])
-          
-    //       useEffect(()=>{
-    //   if (authid) {
-    //     fetchprofilecredentials()
-    //   }
-    // },[authid,])
+                                         
+//  mutating the profile credentials
 
-    //  fetching profile credentials
-
-    // const fetchingprofilecredentials = async()=>{
-    //    const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-    //     const databases = new Databases(client);
-    //        const getcredentials = await databases.listDocuments(
-    //         conf.appwritedatabaseid, conf.appwritebiocollectionid,[Query.equal("authid", authid)] 
-    //       )
-    //       let reversecredentials = getcredentials.documents.reverse()
-    //       return reversecredentials[0]
-    // }
-
-    //           let credentials1 = profilecredentials?.profession
-    //           let credentials2 = profilecredentials?.personal
-    //           let credentialspic = profilecredentials?.picurl
-             
+const editmutation = useMutation({
+ mutationFn : editcredentials,
+ onSuccess: () => {
+    // 🔥 THIS triggers posts API again
+    queryClient.invalidateQueries({queryKey: ["credentials",authid]});
+  },
+})
 
 
-    //  Adding comments
 
+
+
+     
 
   const [addcomments, setaddcomments] = useState('')
   const [commentcreator, setcommentcreator] = useState("")
@@ -976,12 +969,12 @@ const [personal, setpersonal] = useState("")
         <div className="profile-box-content">
               <h5>Edit credentials</h5>
               <p style={{fontSize : "15px"}}>Credentials add credibility to your content</p>
-              <form action=""  onSubmit={(e) => { e.preventDefault(); editcredentials(authid)}}>
-              <input type="text" name="" id="" required ={true}  placeholder='Edit professional bio' style={{width :"100%", height:"40px", border: "2px solid #0b57d0", background : '#363434'}}  value={credentials1} onChange={(e)=>setcredentials1(e.target.value)} />
-              <textarea name="" id="" style={{width : "100%", height : "154px", border: "1px solid white", background : '#363434', marginTop: "10px"}} placeholder='Edit personal bio' onChange={(e)=>setcredentials2(e.target.value)}value={credentials2} ></textarea>
+              <form action=""  onSubmit={(e) => { e.preventDefault(); editmutation.mutate(authid)}}>
+              <input type="text" name="" id="" required ={true}  placeholder='Edit professional bio' style={{width :"100%", height:"40px", border: "2px solid #0b57d0", background : '#363434'}} value={credentials1}  onChange={(e)=>setcredentials1(e.target.value)} />
+              <textarea name="" id="" style={{width : "100%", height : "154px", border: "1px solid white", background : '#363434', marginTop: "10px"}} placeholder='Edit personal bio' value={credentials2} onChange={(e)=>setcredentials2(e.target.value)} ></textarea>
               <p style={{fontSize : "15px"}}>Edit profile image</p> 
               <div>
-              <input type="file" name="" id="profileupload" placeholder='coverimage' />
+              <input type="file" name="" id="editprofileupload" placeholder='coverimage'  onChange={(e)=> setyesedit(e.target.value)} />
               {/* <button  style={{backgroundColor :"#0b57d0", fontSize : "13.5px"}} onClick={uploadphoto}>Select</button> */}
               </div>
               <button style={{backgroundColor :"#0b57d0", fontSize : "13.5px"}}>save</button>
@@ -1036,6 +1029,7 @@ const [personal, setpersonal] = useState("")
                           {/* {profilecredentials? <div> <div className="credentialsline"> <h5 className='credentialshover' style={{fontSize: "1.1rem"}}>{credentials1}</h5><span className='credentialsvisible' onClick={profileboxopen}>Edit</span></div> </div> :<span></span>}      */}
                           {/* {credentials? <div> <div className="credentialsline"> <h5 className='credentialshover' style={{fontSize: "1.1rem"}}>{credentials.profession}</h5></div> </div> :<span>loading</span>} */} 
                           {profilecredentials?<h6 style={{color : "white", fontSize: "16px"}}>{credentials1}</h6>:<h6 style={{color : "white"}}></h6>}
+                           {profilecredentials?<h6 style={{color : "white", fontSize: "16px"}}>{credentials2}</h6>:<h6 style={{color : "white"}}></h6>}
                          </div>
                        <div className="followersandfollowings">
                         {!followingsloading && !followingserror && (  
@@ -1051,10 +1045,10 @@ const [personal, setpersonal] = useState("")
                      </div>
                    </div>
 
-                <div className="profile-des" style={{padding:" 2px 24px 16px 29px"}}>
+                {/* <div className="profile-des" style={{padding:" 2px 24px 16px 29px"}}>
                   {profilecredentials?<h6 style={{color : "white", fontSize: "16px"}}>{credentials2}</h6>:<h6 style={{color : "white"}}></h6>}
                  
-                </div>
+                </div> */}
 
                  
           
