@@ -1,5 +1,5 @@
 .profile-left-top-image {
-    width: 20%;
+    width: 100%;
     height: 100%;
     /* height: 182px; */
     background-size: cover;
@@ -9,8 +9,29 @@
     /* border: 1px solid black; */
     /* background-position: center; */
     /* border: 1px solid white; */
-    
-  }  
+  } 
+  
+  .profile-left-top-image-box{
+    width: 26%;
+    height: 106px;
+    display: flex;
+    justify-content: center;
+     border-radius: 50%;
+     border: 2px solid transparent;
+    background: linear-gradient(#000000, #3f3e3e) padding-box, linear-gradient(22deg, #d7329a, #0b57d0) border-box;
+        align-items: center; 
+    text-align: center;
+    color: wheat;
+    font-size: 14px;
+    cursor: pointer;
+    min-height: 106px;
+  }
+
+
+
+
+
+
 .profile-left-top-img {
     width: 100%;
     height: 100%;
