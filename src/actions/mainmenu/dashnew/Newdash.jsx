@@ -52,7 +52,7 @@ import useQuestions from '../Customs/Increase/questions'
        return getuser;
      }
                   
-function Newdash({network}) {
+function Newdash() {
   const queryClient = useQueryClient();
   const navigate = useNavigate()
      const dispatch = useDispatch();

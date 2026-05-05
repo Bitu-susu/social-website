@@ -17,22 +17,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 //   importing custom hooks
 import useProfile from '../Customs/Increase/userprofile'
-
+import { databases } from '../Customs/Increase/appwritesdk'
+import { storage } from '../Customs/Increase/appwritesdk'
+import {likesincrease,likesdecrease} from '../Customs/Increase/increaselikes'
 // import authService from '../../../appwrite/auth'
+import useFetchall from '../Customs/Increase/userpostsallfetchs'
 
-  
-    //   here i  was writting the fetching post function in the upper of the component 
-//      async function userdocuments({queryKey}) {
-//   const [, authid] = queryKey; // 👈 extract authid
-//       if (authid) {
-//         const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-//         const databases = new Databases(client);
-//         const queries = [Query.equal("authid", authid)];
-//            var listuserdocuments = await databases.listDocuments(
-//               conf.appwritedatabaseid, conf.appwritepostcollectionid, queries 
-//             )
-//           }
-//           return listuserdocuments.documents;
+
      
 // }
       //   getting current user 
@@ -42,14 +33,6 @@ import useProfile from '../Customs/Increase/userprofile'
        return getuser;
      }
 
-
-  
-    // const storingapi = async()=>{
-    //            const listevery = await database.listdocuments() 
-
-    //      return listevery.documents.reverse()
-    //      //   return reversinglists
-    //     }
 function Userprofile() {
    const queryClient = useQueryClient();
   // open profile credential box
@@ -86,32 +69,6 @@ function Userprofile() {
   }
 
 
-//     const [user, setuser] = useState("")
-//     const [authid, setauthid] = useState("")
-// const[letter, setletter] = useState("")
-
-// useEffect(()=>{                 
-// async function fetchdata() {
-// try {
-//   const getuser = await authService.getcurrentuser();    
-//  setuser(getuser.name)
-//  console.log(getuser.$id, "idddd");
- 
-//  setauthid(getuser.$id)
-//  const Firstletter = getuser.name.charAt(0)
-//  const uppercase = Firstletter.toUpperCase();
-// //  console.log(uppercase, "yes the upper case");
- 
-//  setletter(uppercase)
-
-// }
-// catch (error) {
-//   //  setuser("loading..",error)    
-//   console.log(error)
-// }}
-// fetchdata()
-// },[])
-// current user
  
       const {data :currentusers} = useQuery({
          queryKey:["currentuser"],
@@ -124,45 +81,14 @@ function Userprofile() {
            let firstletter = currentusers?.name.charAt(0).toUpperCase()  
  
 
-  //   getting the profile of the auth user 
-  // const [posts, setposts] = useState([])
-  // const [postcreator, setpostcreator] = useState([])
-  // async function userdocuments() {
-  //   const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-  //   const databases = new Databases(client);
-  //   try {
-  //     const queries = [Query.equal("authid", authid)]
-  //     console.log("yes the authid is ", authid);
-      
-      
-
-  //     const listuserdocuments = await databases.listDocuments(
-  //       conf.appwritedatabaseid, conf.appwritepostcollectionid, queries 
-  //     )
-  //     // console.log(listuserdocuments, "yes");
-  //     // setposts(listuserdocuments.documents)
-  //     // setpostcreator(listuserdocuments.documents[0].postcreator)
-  //     //  console.log(postcreator, "here");
-
-  //   } catch (error) {
-  //     console.log(error);
-
-  //   }
-  // }
-  // useEffect(() => {
-  //   if (authid) {
-  //     userdocuments()
-  //   }
-  // }, [authid])
 
   //  fetching posts of the authuser , with react query
 
    const userdocuments =async()=>{
-        const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-    const databases = new Databases(client);
+
       const queries = [Query.equal("authid", authid)]
       const listuserdocuments = await databases.listDocuments(
-        conf.appwritedatabaseid, conf.appwritepostcollectionid, queries 
+      conf.appwritedatabaseid, conf.appwritepostcollectionid, queries 
       );
          return listuserdocuments.documents.reverse()
    }
@@ -177,10 +103,6 @@ function Userprofile() {
    const [nottrimcontent, setnottrimcontent] = useState("")
   const[gettingid, setgettingid] = useState("")
  async function nottrim(id) {
-   const client = new Client()
-  .setEndpoint(conf.appwriteurl)
-  .setProject(conf.appwriteprojectid);
-  const databases = new Databases(client);
   try {
      
     const nottrimcontent = await databases.listDocuments(
@@ -195,61 +117,13 @@ function Userprofile() {
   }
     }
 
-    
-     
+
 //    likes increase section copy from newdash 
 
     const[likecolor, setlikecolor] = useState()                                                                                    
        
           const [increaselike, setincreaselike] = useState([])
-
-          // async function likesincrease(id) {
-          const likesincrease = async (id)=>{
-
-            const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);                                             
-      
-            // const storage = new Storage(client);
-            const databases = new Databases(client); 
-            try {
-    
-                  const getdocuments = await databases.getDocument(
-                    conf.appwritedatabaseid,conf.appwritepostcollectionid,id
-                  )
-                    let getdata = getdocuments.Like
-                  console.log(getdata); 
-                  setlikecolor(true) 
-              if (getdata.includes(authid)) {
-                   alert("you already like the post")          
-              }
-              else{
-                const updateddocument = await databases.updateDocument(conf.appwritedatabaseid,conf.appwritepostcollectionid,id,{  
-                        "Like" :[...getdata, authid]  
-                      }   
-                     ) 
-                     console.log(updateddocument, "yes updated");
-                      // setincreaselike(updateddocument.Like.length +1)
-
-                      //  for state purpose only 
-                      setincreaselike(prev => [...prev, id]);         
-              }
-                      
-            } catch (error) {
-                  console.log("error in updating likes", error);                                                             
-            }
-          }
-
-          
-          
-                   
-          // const { data :postdocuments, isLoading :postdocumentsloading, error :postdocumentserror } = useQuery({
-          //           queryKey: ["documents",authid],
-          //           queryFn: userdocuments,
-          //           //  enabled:Boolean(authid),
-          //            staleTime: 5 * 60 * 1000,
-          //         });
-
-              //  linking the mutation with the post function and the likes increase function 
-                  
+     
               const likeMutation = useMutation({
             mutationFn: likesincrease,
           
@@ -259,84 +133,20 @@ function Userprofile() {
             },
           }); 
 
+          //   linking the mutation with the posts function and the likes decrease function
+   
+ const decreaselikeMutation = useMutation({
+  mutationFn: likesdecrease,
 
-     
-  //   copied from dashboard section
-                                                                                          //  for likes section
-       
-                                                                                          // const [increaselike, setincreaselike] = useState([])
-
-                                                                                          // async function likesincrease(id) {
-                                                                                          //   const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);                                             
-                                                                                      
-                                                                                          //   // const storage = new Storage(client);
-                                                                                          //   const databases = new Databases(client);
-                                                                                          //   try {
-                                                                                    
-                                                                                          //         const getdocuments = await databases.getDocument(
-                                                                                          //           conf.appwritedatabaseid,conf.appwritepostcollectionid,id
-                                                                                          //         )
-                                                                                          //           let getdata = getdocuments.Like
-                                                                                          //           // console.log(getdata);
-                                                                                                    
-                                                                                          //     if (getdata.includes(authid)) {
-                                                                                          //          alert("you already like the post")
-                                                                                          //     }
-                                                                                          //     else{
-                                                                                          //       const updateddocument = await databases.updateDocument(conf.appwritedatabaseid,conf.appwritepostcollectionid,id,{  
-                                                                                          //               "Like" :[...getdata, authid]  
-                                                                                          //             }  
-                                                                                          //            ) 
-                                                                                          //           //  console.log(updateddocument, "yes updated");
-                                                                                          //             // setincreaselike(updateddocument.Like.length +1)
-                                                                                          //             setincreaselike(prev => [...prev, id]);   
-                                                                                                     
-                                                                                          //     }
-                                                                                                      
-                                                                                          //   } catch (error) {
-                                                                                          //         console.log("error in updating likes", error);
-                                                                                                  
-                                                                                          //   }
-                                                                                      
-                                                                                          // }                                                        
-                                                                                    
-
-  // const[followers, setfollowers] = useState("")
-  //    const [followinglist, setfollowinglist] = useState("")
-
-
-    //    fetching followings
-  //   async function  fetchingfollowings(id) {
-  //     const client = new Client()
-  //     .setEndpoint(conf.appwriteurl)
-  //     .setProject(conf.appwriteprojectid);
-  //   const databases = new Databases(client);
-  //   try {
-      
-  //     const getfollowings = await databases.listDocuments(
-  //       conf.appwritedatabaseid, conf.appwritefollowersid,[Query.equal("giver", id)]    
-  //     )
-  //     //  console.log(getfollowings.documents);
-  //      let followinglist  = getfollowings.documents
-  //      let listmapping = followinglist.map((list) => list.reciever);
-  //       // console.log(listmapping.length);
-  //       setfollowinglist(listmapping.length)
-  //   } catch (error) {
-  //        console.log("error in fetching followings", error);
-         
-  //   }
-  //   }
-  //   useEffect(()=>{
- 
-  //     fetchingfollowings(authid)
-      
-  //  },[authid])
+  onSuccess: () => {
+    // 🔥 THIS triggers posts API again
+    queryClient.invalidateQueries({queryKey: ["documentss",authid]});
+  },
+}); 
 
     //  fetching followings using react querry 
    
       const fetchingfollowings = async(id)=>{
-     const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-    const databases = new Databases(client);
        const getfollowings = await databases.listDocuments(
         conf.appwritedatabaseid, conf.appwritefollowersid,[Query.equal("giver", id)]    
       )
@@ -353,41 +163,9 @@ function Userprofile() {
             }) 
 
  
-   //   fetching followers 
-//    async function fetchingfollowers(authid) {
-//     const client = new Client()
-//     .setEndpoint(conf.appwriteurl)
-//     .setProject(conf.appwriteprojectid);
-//   const databases = new Databases(client);
-//     try {
-//       const getfollowers = await databases.listDocuments(
-//         conf.appwritedatabaseid, conf.appwritefollowersid,[Query.equal("reciever", authid)]   
-//       )
-//       // console.log(getfollowers.documents)  
-//           // setfollowerslist(getfollowers.documents) 
-//           let followerslist = getfollowers.documents
-//           let listmapping = followerslist.map((list) => list.giver);  
-//           // console.log(listmapping.length);
-//           setfollowers(listmapping.length)
-
-
-//     } catch (error) {  
-//       console.log("fetching the followers", error);  
-      
-//     }
-//   }
-//  useEffect(()=>{
- 
-//     fetchingfollowers(authid)
-    
-// //  },[increasefollowers,authid])
-//  },[authid])
-
 //  fetching follwers with react query
 
  const fetchingfollowers =async(authid)=>{
-     const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-  const databases = new Databases(client);
       const getfollowers = await databases.listDocuments(
         conf.appwritedatabaseid, conf.appwritefollowersid,[Query.equal("reciever", authid)])
         let followerslist = getfollowers.documents
@@ -406,193 +184,8 @@ function Userprofile() {
 //  initially  check whether the current user follow the profile , by which we organize the button 
    
 
- async function checkfollowing(){
-       const client = new Client()
-      .setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-    const databases = new Databases(client);
-
-    try {
-        const check = await databases.listDocuments(
-              conf.appwritedatabaseid, conf.appwritefollowersid,[Query.equal("reciever", data)] 
-            )
-    } catch (error) {
-      
-    }
-}
-
-  //   increasing followers
-
-  // async function increasefollowers(data) {
-  //   const client = new Client()
-  //     .setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-  //   const databases = new Databases(client);
-  //         try {   
-  //            const getfollowers = await databases.listDocuments(
-  //             conf.appwritedatabaseid, conf.appwritefollowersid,[Query.equal("reciever", data)] 
-  //           )
-  //           // console.log(getfollowers.documents)  
-  //           // setfollowerslist(getfollowers.documents) 
-  //           let followerslist = getfollowers.documents
-  //           let listmapping = followerslist.map((list) => list.giver);
-  //           // console.log(listmapping.length); 
-  //           // setfollowers(listmapping.length)
-            
-  //           if (listmapping.includes(currentusers)) {
-             
-  //             alert("you already follow this profile")  
-  //           } 
-  //           else{
-  //             const addfollowers = await databases.createDocument( 
-  //               conf.appwritedatabaseid, conf.appwritefollowersid,ID.unique(),{
-  //                "giver": currentusers,
-  //                "reciever": data,
-  //                "name":  currentname
-  //               })
-  //               // console.log(addfollowers.length);
-  //               // Manually update the state without refetching
-  //               setfollowers((prev) => prev + 1); 
-  //           } 
- 
-  //         } catch (error) {
-  //             console.log(error, "error in fetching followers"); 
-              
-  //         }
-  // }
-
-    //  decrease followers
-
-     async function likesdecrease(id){
-const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);                                             
-      
-            // const storage = new Storage(client);
-            const databases = new Databases(client); 
-                const getdocuments = await databases.getDocument(
-                    conf.appwritedatabaseid,conf.appwritepostcollectionid,id
-                  )
-                    let getdata = getdocuments.Like
-
-            try {
-               setlikecolor(false) 
-               if(getdata.includes(authid)) {
-             let newgetdata = await getdata.filter((element)=> {
-                return  element!==authid
-                }
-                )
-                console.log(newgetdata); 
-                
-                 const updateddocument = await databases.updateDocument(conf.appwritedatabaseid,conf.appwritepostcollectionid,id,{  
-                        "Like":newgetdata  
-                       }   
-                     ) 
-                     console.log(updateddocument);  
-                    //   for state purpose only 
-                    let removelikes = increaselike.filter((element)=> {return element!==id})
-                      setincreaselike(removelikes)
-               }
-            } catch (error) {
-                 console.log(error);
-                 
-            }
-          }
-
-          //   linking the mutation with the posts function and the likes decrease function
-   
- const decreaselikeMutation = useMutation({
-  mutationFn: likesdecrease,
-
-  onSuccess: () => {
-    // 🔥 THIS triggers posts API again
-    queryClient.invalidateQueries({queryKey: ["documentss",authid]});
-  },
-}); 
-
-
-  //  uploading the profile box section
-//   const[proffesion, setproffesion] = useState("")
-// const [personal, setpersonal] = useState("")
-
-  // async function Profilecredential(e) {
-  //   e.preventDefault()
-  //   try {
-  //     const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-  //     const databases = new Databases(client);
-  //     const storage = new Storage(client);
-  //     const fileInput = document.getElementById('profileupload');
-  //  const profile = await storage.createFile(conf.appwriteprofileid,ID.unique(),fileInput.files[0]
-  //              );
-  //             //  console.log(profile.$id)
-  //              let profileid = profile.$id 
-  //              let picurl =`https://cloud.appwrite.io/v1/storage/buckets/67af2d5d0023c5596848/files/${profileid}/view?project=677eb42f003e041a0476`
-  //     const profilebox = await databases.createDocument(
-  //       conf.appwritedatabaseid, conf.appwritebiocollectionid, ID.unique(), {
-  //       "profession":proffesion,
-  //       "personal":personal,
-  //       "authid": authid,
-  //       "picurl" : picurl
-
-  //     })
-  //     // console.log("added credentials", profilebox);
-
-  //   } catch (error) {
-  //     console.log(error)
-  //     }}
-
-      //  Edit profile creentials
-        //  const[updateid, setupdateid] = useState("")
-
-        // const[yesedit, setyesedit] = useState(null)
-    // async function editcredentials(id){
-    // console.log(id, "getting the id");
-    
-    //   const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-    //   const databases = new Databases(client);
-    //         const storage = new Storage(client);
-
-    //     try {
-    //            const getdocument = await  databases.listDocuments(
-    //                 conf.appwritedatabaseid,conf.appwritebiocollectionid,[Query.equal("authid",id)] 
-    //               )
-    //               // console.log(getdocument, "haaa");
-    //               let newdoc = getdocument.documents[0].$id
-    //               if (yesedit) {
-    //                 const fileInput = document.getElementById('editprofileupload');
-    //                 const profile = await storage.createFile(conf.appwriteprofileid,ID.unique(),fileInput.files[0]);
-    //              let profileid = profile.$id 
-    //              let picurl =`https://cloud.appwrite.io/v1/storage/buckets/67af2d5d0023c5596848/files/${profileid}/view?project=677eb42f003e041a0476`
-
-    //              const editupdate = await databases.updateDocument(conf.appwritedatabaseid,conf.appwritebiocollectionid,newdoc,{
-    //                 "profession" :credentials1,
-    //                 "personal" :credentials2,
-    //                 "picurl": picurl,
-    //              }
-    //              ) 
-
-    //              console.log(editupdate, "updateeddd");
-                 
-    //             }
-    //    const editupdate = await databases.updateDocument(conf.appwritedatabaseid,conf.appwritebiocollectionid,newdoc,{
-    //                 "profession" :credentials1,
-    //                 "personal" :credentials2,
-    //                 "picurl": dp ,
-    //              }
-    //              ) 
-
-
-    //        console.log(editupdate, "updated successfully"); 
-    //        return editupdate
-    //     }
-    //      catch (error) {
-    //         console.log(error);
-                             
-    //     }
-    //  }
-
-
-      // fetching the profile credentials
-      // const[credentials, setcredentials] = useState([])
-      // const[credentials1, setcredentials1] = useState("")
-      // const[credentials2, setcredentials2] = useState("")
-      // const[dp, setdp] = useState(null)
+    //      profile credentials section  , importing from profile.js section
+  
 
        const {personal, proffesion, credentials1, credentials2, dp,credentials,yesedit,setproffesion, setpersonal, setcredentials, setcredentials1, setcredentials2, setdp, setyesedit, editcredentials, Profilecredential,fetchprofilecredentials} = useProfile()
 
@@ -622,12 +215,7 @@ const editmutation = useMutation({
     queryClient.invalidateQueries({queryKey: ["credentials",authid]});
   },
 })
-
-
-
-
-
-     
+   
 
   const [addcomments, setaddcomments] = useState('')
   const [commentcreator, setcommentcreator] = useState("")
@@ -717,61 +305,43 @@ const editmutation = useMutation({
 
    //   sending educational credentials to database 
 
-  const [schoolingname, setschoolingname] = useState("")
-  const [highereducation, sethighereducation] = useState("")
-  const[schoolpassout, setschoolpassout] = useState("")
-    const [gradutionpassout, setgradutionpassout] = useState("")
+ 
 
-  async function createeducationcredentials(e) {
-    e.preventDefault()
-    try {
-      const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-      const databases = new Databases(client);
-      const addeducation = await databases.createDocument(
-        conf.appwritedatabaseid, conf.appwriteeucationid, ID.unique(), {
-       "schooling": schoolingname,
-        "schoolpassout": schoolpassout,
-        "highereducation": highereducation,
-        "gradutionpassout": gradutionpassout,
-        "authid": authid
-      })
-      // console.log("added education", addeducation);
+  const {schoolingname, setschoolingname, highereducation, sethighereducation,schoolpassout, setschoolpassout,gradutionpassout, setgradutionpassout,createeducationcredentials,fetchingeducation, edit1,edit2,edit3,edit4,
+ setedit1, setedit2, setedit3, setedit4,editeducationcredentials} = useFetchall()
 
-    } catch (error) {
-      console.log(error);
-
-    }
-  }
-  //   fetching the educational credentials of the user
-  const [fetchingeducations, setfetchingeducations] = useState(null)
-  async function fetchingeducation() {
-    try {
-      const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-      const databases = new Databases(client);
-      const educationdetails = await databases.listDocuments(
-        conf.appwritedatabaseid, conf.appwriteeducationid,[
-        Query.equal("authid", authid)]
-      )
-      let reverseeducation = educationdetails.documents.reverse()
-      // console.log("education details", reverseeducation);
-      setfetchingeducations(reverseeducation[0])
-      // console.log("here is the fetching details", fetchingeducations);
-
-
-    } catch (error) {
-      console.log(error);
-
-    }
-  }
+    const {data :educationcredentials} = useQuery({
+        
+            queryKey:["education",authid],
+            queryFn :()=>fetchingeducation(authid),
+            staleTime :  5 * 60 * 1000,
+         })
   useEffect(() => {
-    if (authid) {
-      fetchingeducation()
-    }
-  }, [authid])
+  if (educationcredentials) {
+   setedit1(educationcredentials?.schooling || "")
+   setedit2(educationcredentials?.schoolpassout || "")
+   setedit3(educationcredentials?.highereducation || "")
+   setedit4(educationcredentials?.gradutionpassout || "")
+
+  }
+}, [educationcredentials]);
+
+  // 
+    
+  const editeducation = useMutation({
+ mutationFn : editeducationcredentials,
+ onSuccess: () => {
+    // 🔥 THIS triggers posts API again
+    queryClient.invalidateQueries({queryKey: ["education",authid]});
+  },
+})
+   
+
+
    //   sending employment credentials to database 
 
-   const [employment, setemployment] = useState("")
-   const [experience, setexperience] = useState("")
+  //  const [employment, setemployment] = useState("")
+  //  const [experience, setexperience] = useState("")
    const [employmentclose, setemploymentclose] = useState({})
    
   function Employmentclose() {
@@ -784,54 +354,48 @@ const editmutation = useMutation({
       display: "block"
     })
   }
-   async function createemploymentcredentials(e) {
-     e.preventDefault()
-     try {
-       const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-       const databases = new Databases(client);
-       const addemployment = await databases.createDocument(
-         conf.appwritedatabaseid, conf.appwriteemploymentid, ID.unique(), {
-        "employment": employment,
-         "experiance": experience,
-         "authid": authid
-       })
-       // console.log("added education", addeducation);
- 
-     } catch (error) {
-       console.log(error);
- 
-     }
-   }
+  
    //   fetching the employment credentials of the user
-  const [fetchingemployment, setfetchingemployment] = useState({})
-  async function Fetchingemployment() {
-    try {
-      const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-      const databases = new Databases(client);
-      const employmentdetails = await databases.listDocuments(
-        conf.appwritedatabaseid, conf.appwriteemploymentid, [
-        Query.equal("authid", authid)]
-      )
-      let reverseemployment = employmentdetails.documents.reverse()
-      // console.log("employment details", reverseemployment);
-      setfetchingemployment(reverseemployment[0])
-      // console.log("here is the fetching details", fetchingeducations);
+  // const [fetchingemployment, setfetchingemployment] = useState({})
+
+ const {Fetchingemployment,createemploymentcredentials,editemploymentcredentials, employment, experience, emp1,emp2,setemployment,setexperience,setemp1,setemp2} = useFetchall()
 
 
-    } catch (error) {
-      console.log(error);
+  const {data :employmentcredentials} = useQuery({
+          
+            queryKey:["employment",authid],
+            queryFn :()=>Fetchingemployment(authid),
+            staleTime :  5 * 60 * 1000,
+         })
 
-    }
+     useEffect(() => {
+  if (employmentcredentials) {
+   setemp1(employmentcredentials?.employment || "")
+   setemp2(employmentcredentials?.experiance || "")
   }
-  useEffect(() => {
-    if (authid) {
-      Fetchingemployment()
-    }
-  }, [authid])
+}, [employmentcredentials]);
+
+const createemploy = useMutation({
+ mutationFn : createemploymentcredentials, 
+ onSuccess: () => {
+    // 🔥 THIS triggers posts API again
+    queryClient.invalidateQueries({queryKey: ["employment",authid]});
+  },
+})
+
+ const editemploy = useMutation({
+ mutationFn :  editemploymentcredentials,
+ onSuccess: () => {
+    // 🔥 THIS triggers posts API again
+    queryClient.invalidateQueries({queryKey: ["employment",authid]});
+  },
+})
 
     //   sending location credentials to database 
 
-    const [location, setlocation] = useState("")
+      const{location, setlocation, location1, setlocation1,createlocationcredentials,Fetchinglocation,editlocationcredentials} = useFetchall()   
+
+    // const [location, setlocation] = useState("")
    
     const [locationclose, setlocationclose] = useState({})
     
@@ -840,112 +404,49 @@ const editmutation = useMutation({
        display: "none"
      })
    }
+
    function Locationopen() {
      setlocationclose({
        display: "block"
      })
    }
-   async function createlocationcredentials(e) {
-    e.preventDefault()
-    try {
-      const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-      const databases = new Databases(client);
-      const addemployment = await databases.createDocument(
-        conf.appwritedatabaseid, conf.appwritelocationid, ID.unique(),{
-       "address": location,
-        "authid": authid
-      })
-      // console.log("added education", addeducation);
+  
+     const {data :locationcredentials} = useQuery({
+          
+            queryKey:["location",authid],
+            queryFn :()=>Fetchinglocation(authid),
+            staleTime :  5 * 60 * 1000,
+         })
+         useEffect(()=>{
+          setlocation1(locationcredentials?.address || "")
+         },[locationcredentials])
 
-    } catch (error) {
-      console.log(error);
+         const createlocation = useMutation({
+ mutationFn : createlocationcredentials, 
+ onSuccess: () => {
+    // 🔥 THIS triggers posts API again
+    queryClient.invalidateQueries({queryKey: ["location",authid]});
+  },
+})
 
-    }
-  }
+ const editlocation = useMutation({
+ mutationFn :  editlocationcredentials,
+ onSuccess: () => {
+    // 🔥 THIS triggers posts API again
+    queryClient.invalidateQueries({queryKey: ["location",authid]});
+  },
+})
 
-  // fetching location credentials
-  const [fetchinglocation, setfetchinglocation] = useState({})
-
-  async function Fetchinglocation() {
-    try {
-      const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-      const databases = new Databases(client);
-      const locationdetails = await databases.listDocuments(
-        conf.appwritedatabaseid, conf.appwritelocationid, [
-        Query.equal("authid", authid)]
-      )
-      let reverselocation = locationdetails.documents.reverse()
-      // console.log("employment details", reverselocation);
-      setfetchinglocation(reverselocation[0])
-      // console.log("here is the fetching details", fetchingeducations);
-
-
-    } catch (error) {
-      console.log(error);
-
-    }
-  }
-  useEffect(() => {
-    if (authid) {
-      Fetchinglocation()
-    }
-  }, [authid])
 
              // adding profile pic
  const[profilepic, setprofilepic] = useState("")
-
-//  async function uploadphoto() {
-//  const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-//  const storage = new Storage(client);
-//  const databases = new Databases(client);
-//  try {
-//    const fileInput = document.getElementById('profileupload');
-//    const profile = await storage.createFile(conf.appwriteprofileid,ID.unique(),fileInput.files[0]
-//                );
-//                console.log(profile.$id)
-//                let profileid = profile.$id
-//                let picurl =`https://cloud.appwrite.io/v1/storage/buckets/67af2d5d0023c5596848/files/${profileid}/view?project=677eb42f003e041a0476`
-//      const createfiledb = await databases.createDocument(
-//        conf.appwritedatabaseid,conf.appwriteprofiledb,ID.unique(),{
-//        "profilepic" : profileid,
-//        "authid" : authid,
-//        "picurl": picurl
-//        }  
-//      ) 
-//      console.log(createfiledb);
-//  } catch (error) {   
-//      console.log(error);
-     
-//  }
-//  }
-
-//  async function getprofilepic() {
-//   const client = new Client().setEndpoint(conf.appwriteurl)
-//      .setProject(conf.appwriteprojectid);
-//      const storage = new Storage(client);
-//      const databases = new Databases(client);
-//      try {
-//             const getprofilepic = await databases.listDocuments( conf.appwritedatabaseid,conf.appwriteprofiledb,[Query.equal("authid", authid)
-//            ] )
-//            let profileurl = getprofilepic.documents.reverse() 
-//                  console.log(profileurl);
-                 
-//             setprofilepic(profileurl[0].picurl)
-//      } catch (error) {
-//        console.log(error);
-//      }
-//    }
-//    useEffect(()=>{
-//      getprofilepic()
-//   },[uploadphoto, getprofilepic])
-
 
 
   return (
     <div>
       <div className="profilecredential"style={profileopen}>
         <div className="profilebox">
-        <i className="fa-solid fa-circle-xmark"   style={{color: "white",position: "absolute", right : "0px",zIndex:"4"}} onClick={profileboxclose} ></i>
+        <i className="fa-solid fa-circle-xmark"   style={{color: "white",position: "absolute", right : "0px",zIndex:"4"}} onClick={profileboxclose}></i>
         <div className="profile-box-content">
               <h5>Add credentials</h5>
               <p style={{fontSize : "15px"}}>Credentials add credibility to your content</p>
@@ -965,12 +466,14 @@ const editmutation = useMutation({
       </div>
       <div className="profilecredential"style={editboxopen}>
         <div className="profilebox">
-        <i className="fa-solid fa-circle-xmark"   style={{color: "white",position: "absolute", right : "0px",zIndex:"4"}} onClick={Editboxboxclose} ></i>
+        <i className="fa-solid fa-circle-xmark" style={{color: "white",position: "absolute", right : "0px",zIndex:"4"}} onClick={Editboxboxclose}></i>
         <div className="profile-box-content">
               <h5>Edit credentials</h5>
               <p style={{fontSize : "15px"}}>Credentials add credibility to your content</p>
               <form action=""  onSubmit={(e) => { e.preventDefault(); editmutation.mutate(authid)}}>
-              <input type="text" name="" id="" required ={true}  placeholder='Edit professional bio' style={{width :"100%", height:"40px", border: "2px solid #0b57d0", background : '#363434'}} value={credentials1}  onChange={(e)=>setcredentials1(e.target.value)} />
+              {/* <input type="text" name="" id="" required ={true}  placeholder='Edit professional bio' style={{width :"100%", height:"40px", border: "2px solid #0b57d0", background : '#363434'}} value={credentials1}  onChange={(e)=>setcredentials1(e.target.value)} /> */}
+              <input type="text" name="" id="" required ={true}  placeholder='Edit professional bio' style={{width :"100%", height:"40px", border: "2px solid #0b57d0", background : '#363434'}}value={credentials1} onChange={(e)=>setcredentials1(e.target.value)} />
+
               <textarea name="" id="" style={{width : "100%", height : "154px", border: "1px solid white", background : '#363434', marginTop: "10px"}} placeholder='Edit personal bio' value={credentials2} onChange={(e)=>setcredentials2(e.target.value)} ></textarea>
               <p style={{fontSize : "15px"}}>Edit profile image</p> 
               <div>
@@ -1007,16 +510,16 @@ const editmutation = useMutation({
 <div className="profile-section" style={lowopacity}>
     <div className="profile-left">    
           <div className="profile-left-top">
-
-                     {/* <div className="profile-left-top-image"> 
-                        
-                        {profilecredentials?<img src={dp} alt="" />:<></>}
- 
-                     </div>   */}
-                      {profilecredentials ?<img  src={dp} alt=""   className="profile-left-top-image" /> :<></>}
-
+     
+                      <div className="profile-left-top-image-box">
+                       
+                      {profilecredentials ?<img  src={dp} alt=""   className="profile-left-top-image" /> :<> 
+                        <h5 className='' onClick={profileboxopen}>tap to upload img</h5>
+                        </>} 
+                       
+                      </div> 
                     
-                     <div className="profile-left-topcontent">
+                      <div className="profile-left-topcontent">
                        <div className="profile-left-top1">        
                         {user?<h3>{user}</h3>:<h3></h3>}
                          {/* <span onClick={()=>increasefollowers(authid)}>Follow</span> */}
@@ -1090,21 +593,21 @@ const editmutation = useMutation({
                       </div>
                       <div className="like-comment-section">
                          <div className="like-section"> 
-                          {/* {listings.Like.includes(authid) ?  <i class="fa-regular fa-heart" style={{color : "red"}} ></i>: <i class="fa-regular fa-heart"onClick={()=>likesincrease(listings.$id)}></i>} */}
-                           {/* <i className="fa-regular fa-heart"onClick={()=>likesincrease(listings.$id)} style={{color:"white"}}></i> */}
-                          {/* {listings.Like.includes(authid)?<h6 style={{color : "blue", fontSize : "13px", cursor : "pointer"}} onClick={()=>decreaselikeMutation.mutate(listings.$id)}>Like</h6> : <h6 style={{color : "white", fontSize : "13px", cursor : "pointer"}} onClick={()=>likeMutation.mutate(listings.$id)}>Like</h6>}  */}
+                     
 
-                          {listings.Like.includes(authid)?<i class="fa-solid fa-heart" style={{color:"#d7329a", fontSize  : "14px", cursor : "pointer"}} onClick={()=>decreaselikeMutation.mutate(listings.$id)}></i> : <i class="fa-solid fa-heart" style={{color : "white", fontSize : "14px", cursor : "pointer"}} onClick={()=>likeMutation.mutate(listings.$id)}></i>}
+                          {/* {listings.Like.includes(authid)?<i class="fa-solid fa-heart" style={{color:"#d7329a", fontSize  : "14px", cursor : "pointer"}} onClick={()=>decreaselikeMutation.mutate(listings.$id)}></i> : <i class="fa-solid fa-heart" style={{color : "white", fontSize : "14px", cursor : "pointer"}} onClick={()=>likeMutation.mutate(listings.$id)}></i>} */}
                           
+   {listings.Like.includes(authid)?<i class="fa-solid fa-heart" style={{color:"#d7329a", fontSize  : "14px", cursor : "pointer"}} onClick={()=>decreaselikeMutation.mutate({docid : listings.$id, Like : listings.Like})}></i> : <i class="fa-solid fa-heart" style={{color : "white", fontSize : "14px", cursor : "pointer"}} onClick={()=>likeMutation.mutate({ docid :listings.$id, Like : listings.Like})}></i>}
+
                                
                         <div className="like-right" style={{color : "white"}}>
   {/* {increaselike.includes(listings.$id)
     ? listings.Like.length + 1 
     : listings.Like.length}  */}
-  {listings.Like.includes(authid)
+  {/* {listings.Like.includes(authid)
     ? listings.Like.length 
-    : listings.Like.length} 
-     
+    : listings.Like.length}  */}
+      {listings.Like.length}
   {/* {increaselike === listings.$id ? listings.Like.length +1 : listings.Like.length} */}    
                         </div>
                         </div> 
@@ -1172,13 +675,36 @@ const editmutation = useMutation({
           <div className="profile-right-credentials" style={{color : "white"}}>
             <div className="education-credentials">
               {/* <h6 onClick={educationcredentialopen}  style={{ color: "white" }} > <i class="fa-solid fa-graduation-cap" style={{ color: "#0b57d0" }}> </i> Add Education credentials</h6> */}
-              {fetchingeducations && Object.keys(fetchingeducations).length > 0  ?( <><h6 style={{color : "white", textDecoration: "underline"}}>Eduation credentials</h6><h6 onClick={educationcredentialopen} style={{color : "white", textDecoration: "underline"}}>Edit</h6></>):(<h6 onClick={educationcredentialopen}  style={{ color: "white" }} > <i className="fa-solid fa-graduation-cap" style={{ color: "#0b57d0" }}> </i> Add Education credentials</h6>)}
-              <div className="education-credential-box" style={educationopen}>
+              {educationcredentials && Object.keys(educationcredentials).length > 0  ?(
+                 <><h6 style={{color : "white", textDecoration: "underline"}}>Eduation credentials</h6><h6 onClick={educationcredentialopen} style={{color : "white", textDecoration: "underline"}}>Edit</h6>
+             <div className="education-credential-box" style={educationopen}>
+                <form action="" className='education-form'>
+                  <i className="fa-solid fa-circle-xmark" onClick={educationcredentialclose} style={{ float: "right", color: "black" }}></i>
+                  <div className="mb-3">
+                    <label htmlFor="formGroupExampleInput" className="form-label" style={{color : "black"}}>Edit schooling credentials</label>
+                    <input type="text" className="form-control" id="formGroupExampleInput"  onChange={(e) => setedit1(e.target.value)} value={edit1} placeholder="school credentialssssss" style={{marginBottom : "7px"}} />
+                    <input type="text" className="form-control" id="formGroupExampleInput" value={edit2} onChange={(e) =>setedit2(e.target.value)} placeholder="school passout year" />
+                    
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="formGroupExampleInput2" className="form-label" style={{color : "black"}}> Higher education credentials</label>
+                    <input type="text" className="form-control" id="formGroupExampleInput2" value={edit3} onChange={(e) => setedit3(e.target.value)} placeholder="Graduation credentials" style={{marginBottom : "7px"}}  />
+                    <input type="text" className="form-control" id="formGroupExampleInput" value={edit4} onChange={(e) => setedit4(e.target.value)} placeholder="Graduation passout year" />
+                  </div>
+                  <button type="submit" onClick={(e)=>{e.preventDefault() ; editeducation.mutate(authid)} } className='btn btn-primary'>Edit</button>
+                </form>
+
+              </div> 
+              </>
+            ):(
+            
+            <><h6 onClick={educationcredentialopen}  style={{ color: "white" }} > <i className="fa-solid fa-graduation-cap" style={{ color: "#0b57d0" }}> </i> Add Education credentials</h6>
+ <div className="education-credential-box" style={educationopen}>
                 <form action="" className='education-form'>
                   <i className="fa-solid fa-circle-xmark" onClick={educationcredentialclose} style={{ float: "right", color: "black" }}></i>
                   <div className="mb-3">
                     <label htmlFor="formGroupExampleInput" className="form-label" style={{color : "black"}}>Add schooling credentials</label>
-                    <input type="text" className="form-control" id="formGroupExampleInput" onChange={(e) => setschoolingname(e.target.value)} placeholder="school credentials" style={{marginBottom : "7px"}} />
+                    <input type="text" className="form-control" id="formGroupExampleInput"  onChange={(e) => setschoolingname(e.target.value)} placeholder="school credentials" style={{marginBottom : "7px"}} />
                     <input type="text" className="form-control" id="formGroupExampleInput" onChange={(e) =>setschoolpassout(e.target.value)} placeholder="school passout year" />
                     
                   </div>
@@ -1187,31 +713,59 @@ const editmutation = useMutation({
                     <input type="text" className="form-control" id="formGroupExampleInput2" onChange={(e) => sethighereducation(e.target.value)} placeholder="Graduation credentials" style={{marginBottom : "7px"}}  />
                     <input type="text" className="form-control" id="formGroupExampleInput" onChange={(e) => setgradutionpassout(e.target.value)} placeholder="Graduation passout year" />
                   </div>
-                  <button type="submit" onClick={createeducationcredentials} className='btn btn-primary'>Add</button>
+                  <button type="submit" onClick={(e)=>{e.preventDefault() ; createemploymentcredentials(authid)}} className='btn btn-primary'>Add</button>
                 </form>
-
               </div>
-              <div className="education-response">  
-                {fetchingeducations ? (
-                  <><span>{fetchingeducations.schooling}</span><span style={{paddingLeft: "5px"}}>{fetchingeducations.schoolpassout}</span><br /><div className="graduation"><span>{fetchingeducations.highereducation}</span><span style={{paddingLeft: "5px"}}>{fetchingeducations.gradutionpassout}</span></div></>
+                 </>
 
-                ) : (<span>no credentials yet</span>)}
+              )}
+             
+
+              <div className="education-response">  
+                {
+                educationcredentials?(
+               <>
+               <span>{edit1}</span>  <span>{edit2}</span>
+               <br />
+                <div className="graduation">
+                    <span>{edit3}</span>
+                  <span style={{paddingLeft: "5px"}}>{edit4}</span>
+                  </div>
+               </>):(
+                  <>
+                  <span>no credentials yet.</span>
+                  </>
+
+                 ) }
               </div>
 
             </div>
             <div className="employment-credentials">
-              {/* <h6 style={{ color: "white" }} onClick={Employmentopen}> <i class="fa-solid fa-user" style={{ color: "#0b57d0" }}></i> Add Employment credentials</h6> */}
-              {fetchingemployment && Object.keys(fetchingemployment).length > 0 ? (<><h6 style={{color: "white", textDecoration: "underline"}}>Employment credentials</h6><h6 onClick={Employmentopen} style={{color : "white", textDecoration: "underline"}}>Edit</h6></>):(<h6 onClick={Employmentopen}  style={{ color: "white" }} > <i className="fa-solid fa-graduation-cap" style={{ color: "#0b57d0" }}> </i> Add Employment credentials</h6>)}
-              {/* {Object.keys(fetchingeducations).length > 0 ? (
-  <h6 onClick={educationcredentialopen} style={{ color: "white", textDecoration: "underline" }}>
-    Edit credentials
-  </h6>
-) : (
-  <h6 onClick={educationcredentialopen} style={{ color: "white" }}>
-    <i className="fa-solid fa-graduation-cap" style={{ color: "#0b57d0" }}></i>
-    Add Education credentials
-  </h6>
-)} */}
+            
+              {employmentcredentials && Object.keys(employmentcredentials).length > 0 ? (<><h6 style={{color: "white", textDecoration: "underline"}}>Employment credentials</h6><h6 onClick={Employmentopen} style={{color : "white", textDecoration: "underline"}}>Edit</h6>
+              
+              <div className="employment-credential-box" style={employmentclose}>
+              <form action="" className='education-form'>
+                  <i className="fa-solid fa-circle-xmark" onClick={Employmentclose} style={{ float: "right", color: "black" }}></i>
+                  <div className="mb-3">
+                    <label htmlFor="formGroupExampleInput" className="form-label" style={{color : "black"}}>Add Employment credentials</label>
+                    <input type="text" className="form-control" id="formGroupExampleInput" value={emp1} onChange={(e) => setemp1(e.target.value)} placeholder="position and work" style={{marginBottom : "7px"}}/>
+                    
+                    
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="formGroupExampleInput2" className="form-label" style={{color : "black"}}>Experiance credentials</label>
+                    <input type="text" className="form-control" id="formGroupExampleInput2" value={emp2} onChange={(e) => setemp2(e.target.value)} placeholder="Working experiance" style={{marginBottom : "7px"}}  />
+        
+                  </div>
+                  <button type="submit" onClick={(e)=>{e.preventDefault() ; editemploy.mutate(authid)}} className='btn btn-primary'>Edit</button>
+                </form>
+              </div>
+      
+              </>)
+              :
+              (<>
+                <h6 onClick={Employmentopen}  style={{ color: "white" }} > <i className="fa-solid fa-graduation-cap" style={{ color: "#0b57d0" }}> </i> Add Employment credentials</h6>
               <div className="employment-credential-box" style={employmentclose}>
               <form action="" className='education-form'>
                   <i className="fa-solid fa-circle-xmark" onClick={Employmentclose} style={{ float: "right", color: "black" }}></i>
@@ -1223,15 +777,19 @@ const editmutation = useMutation({
                   </div>
                   <div className="mb-3">
                     <label htmlFor="formGroupExampleInput2" className="form-label" style={{color : "black"}}>Experiance credentials</label>
-                    <input type="text" className="form-control" id="formGroupExampleInput2" onChange={(e) => setexperience(e.target.value)} placeholder="Working experiance" style={{marginBottom : "7px"}}  />
+                    <input type="text" className="form-control" id="formGroupExampleInput2" onChange={(e) => setexperience(e.target.value)} placeholder="Working experiance" style={{marginBottom : "7px"}}/>
         
                   </div>
-                  <button type="submit" onClick={createemploymentcredentials} className='btn btn-primary'>Add</button>
+                  <button type="submit" onClick={(e)=>{e.preventDefault() ; createemploy.mutate(authid)}} className='btn btn-primary'>Add</button>
                 </form>
               </div>
+              </>
+
+)}
+
               <div className="education-response">  
-                {fetchingemployment ? (
-                  <><span>{fetchingemployment.employment}</span><br /><span>{fetchingemployment.experiance}</span></>
+                {employmentcredentials ? (
+                  <><span>{emp1}</span><br /><span>{emp2}</span></>
 
                 ) : (<span>no credentials yet</span>)}
               </div>
@@ -1239,23 +797,41 @@ const editmutation = useMutation({
 
            <div className="location-credentials">
               {/* <h6 style={{ color: "white" }} onClick={Locationopen}> <i class="fa-solid fa-location-dot" style={{ color: "#0b57d0" }}></i> Add Location credentials</h6> */}
-              {fetchinglocation && Object.keys(fetchinglocation).length > 0 ? (<><h6 style={{color: "white", textDecoration: "underline"}}>Location credentials</h6><h6 onClick={Locationopen} style={{color : "white", textDecoration: "underline"}}>Edit</h6></>):(<h6 onClick={Locationopen}  style={{ color: "white" }} > <i className="fa-solid fa-location-dot" style={{ color: "#0b57d0" }}> </i> Add location credentials</h6>)}
-              <div className="location-credential-box" style={locationclose}>
+              {locationcredentials && Object.keys(locationcredentials).length > 0 ? (<><h6 style={{color: "white", textDecoration: "underline"}}>Location credentials</h6><h6 onClick={Locationopen} style={{color : "white", textDecoration: "underline"}}>Edit</h6>
+               <div className="location-credential-box" style={locationclose}>
+                <form action="" className='education-form'>
+                    <i className="fa-solid fa-circle-xmark" onClick={Locationclose} style={{ float: "right", color: "white" }}></i>
+                    <div className="mb-3">
+                      <label htmlFor="formGroupExampleInput" className="form-label" style={{color : "white"}}>Add Location credentials</label>
+                      <input type="text" className="form-control" id="formGroupExampleInput"  placeholder="type city & state name" style={{marginBottom : "7px"}} value={location1} onChange={(e)=>setlocation1(e.target.value)}/>
+
+                    </div>
+                    <button type="submit" onClick={(e)=>{e.preventDefault() ; editlocation.mutate(authid)}}  className='btn btn-primary'>Edit</button>
+                  </form>
+                </div></>
+            )
+              :
+
+              (<>
+              <h6 onClick={Locationopen}  style={{ color: "white" }} > <i className="fa-solid fa-location-dot" style={{ color: "#0b57d0" }}> </i> Add location credentials</h6>
+               <div className="location-credential-box" style={locationclose}>
                 <form action="" className='education-form'>
                     <i className="fa-solid fa-circle-xmark" onClick={Locationclose} style={{ float: "right", color: "white" }}></i>
                     <div className="mb-3">
                       <label htmlFor="formGroupExampleInput" className="form-label" style={{color : "white"}}>Add Location credentials</label>
                       <input type="text" className="form-control" id="formGroupExampleInput"  placeholder="type city & state name" style={{marginBottom : "7px"}} />
-                      {/* <input type="text" className="form-control" id="formGroupExampleInput" onChange={(e) => setlocation(e.target.value)} placeholder="type city & state name" style={{marginBottom : "7px"}} /> */}
-                      
-                      
+
                     </div>
-                    <button type="submit" onClick={createlocationcredentials} className='btn btn-primary'>Add</button>
+                    <button type="submit" onClick={(e)=>{e.preventDefault() ; createlocation.mutate(authid)}} className='btn btn-primary'>Add</button>
                   </form>
                 </div>
+
+</>
+              )}
+             
                 <div className="education-response">  
-                {fetchinglocation ? (
-                  <><span>lives in - </span><span>{fetchinglocation.address}</span><br/></>
+                {locationcredentials ? (
+                  <><span>lives in - </span><span>{location1}</span><br/></>
 
                 ) : (<span>no credentials yet</span>)}
               </div>
