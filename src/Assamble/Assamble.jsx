@@ -192,25 +192,22 @@ const useOnlineoffline = ()=>{
         path="/newdash"
 
         element  = { 
-        // element= {
-
-        // user ? <Newdash /> : <Navigate to="/login" />}
-
-       
+// user ? <Newdash /> : <Navigate to="/login" />}
            !isOnline ? (
             user ? <Newdash /> : <Newdash></Newdash>
           ) : user ? (
                <Newdash />
           ) : (
-           <Navigate to="/login" />
+           <Navigate to="/login"/>
           )
                }
       />
 
       <Route
         path="/userprofile/:username"
-        element={user ? <Userprofile /> : <Navigate to="/login" />}
-      /> for the 
+        element={
+          user ? <Userprofile /> : <Navigate to="/login" />}
+      /> 
 
       <Route
         path="/profileuser/:username"
