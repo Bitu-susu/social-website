@@ -36,7 +36,7 @@ function Profileuser() {
    const {data :currentusers} = useQuery({
          queryKey:["currentuser"],
          queryFn : currentuser,
-         staleTime :  5 * 60 * 1000,
+         staleTime :  50 * 60 * 1000,
       })       
           //   declaring variables for the current user 
            let user = currentusers?.name;
@@ -111,7 +111,7 @@ const[checks, setchecks] = useState([])
  
   //    fetching followings using react query
     let fetchingfollowings = async(id)=>{
-     const getfollowings = await databases.listDocuments(
+    const getfollowings = await databases.listDocuments(
    conf.appwritedatabaseid, conf.appwritefollowersid,[Query.equal("giver", id)])
    let followinglist  = getfollowings.documents.map((list) => list.reciever);
   // followinglist(followinglist.length)
@@ -245,6 +245,8 @@ const unfollowmutation = useMutation({
 
 //  fetching profile credentials using react query
 
+
+const [loading, setloading] = useState(true)
 let fetchprofilecredentials =async()=>{
   const getcredentials = await databases.listDocuments(
       conf.appwritedatabaseid, conf.appwritebiocollectionid,[Query.equal("authid",selectorid )] 
@@ -260,7 +262,13 @@ let fetchprofilecredentials =async()=>{
               }) 
               let passion = profilecredentials?.personal;
               let profession = profilecredentials?.profession
-
+               
+              useEffect(()=>{
+              if (profilecredentials) {
+                  
+                setloading(false)
+              }
+              },[profilecredentials])
 //  Adding comments
 
 
@@ -651,17 +659,26 @@ setopacity({padding:" 20px 180px",
         <div className="profile-section" style={opacity}>
     <div className="profile-left">
           <div className="profile-left-top">
-                     {/* <div className="profile-left-top-image">
-                      {gettingprofilepic?<img src={profilepic} alt="" />:<></>}
-                            
-                     </div>  */}
-                     {/* <img  src={profilepic} alt=""   className="profile-left-top-image" /> :<></> */}
+                   
+                      <div className="profile-left-top-image-box">
+                       
 
-                     {gettingprofilepic ?
+                               {loading ? (
+  <div className="dot-loader"> <span></span>
+  <span></span>
+  <span></span> </div> // or null
+) : gettingprofilepic ? (
+  <img src={profilepic} alt="" className="profile-left-top-image" />
+) : (
+  <h5>no profile</h5>
+)}                  
+                      </div> 
+
+                     {/* {gettingprofilepic ?
                       <div className="profile-left-top-image">
                           <img src={profilepic} alt="" />
                       </div> :<></>
-                     }
+                     } */}
                      <div className="profile-left-topcontent">
                        <div className="profile-left-top1">
                         {/* {user?<h3>{user}</h3>:<h3>loading..</h3>} */}

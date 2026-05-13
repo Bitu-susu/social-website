@@ -45,15 +45,16 @@ async function submitsignup(e) {
        const newaccount = await authservice.accountcreate(inputemail, inputpassword, inputname);
        console.log(newaccount.name)
        dispatch(valueplace(newaccount.name))
- 
        if (newaccount) {
          try {
            const sessionstart = await authservice.accountlogin(inputemail, inputpassword);
            console.log( "your session start", sessionstart)
+           localStorage.setItem("user", JSON.stringify(sessionstart.name));
            setredirecting("redirecting...") 
 
            setTimeout( ()=>{
-             navigate("/Newdash")
+            //  navigate("/Newdash")
+            window.location.href = '/Newdash'; 
            },2000)
            
          } catch (error) {
