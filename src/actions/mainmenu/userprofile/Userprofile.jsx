@@ -188,7 +188,8 @@ function Userprofile() {
   
 
        const {personal, proffesion, credentials1, credentials2, dp,credentials,yesedit,setproffesion, setpersonal, setcredentials, setcredentials1, setcredentials2, setdp, setyesedit, editcredentials, Profilecredential,fetchprofilecredentials} = useProfile()
-
+         
+       const[loading, setloading] = useState(true)
       
       const {data :profilecredentials} = useQuery({
         
@@ -201,7 +202,8 @@ function Userprofile() {
     setcredentials(profilecredentials);
     setcredentials1(profilecredentials?.profession || "");
     setcredentials2(profilecredentials?.personal || "");
-    setdp(profilecredentials?.picurl || null)
+    setdp(profilecredentials?.picurl || null);
+    setloading(false)
 
   }
 }, [profilecredentials]);
@@ -513,9 +515,18 @@ const createemploy = useMutation({
      
                       <div className="profile-left-top-image-box">
                        
-                      {profilecredentials ?<img  src={dp} alt=""   className="profile-left-top-image" /> :<> 
+                      {/* {profilecredentials ?<img  src={dp} alt=""   className="profile-left-top-image" /> :<> 
                         <h5 className='' onClick={profileboxopen}>tap to upload img</h5>
-                        </>} 
+                        </>}  */}
+                        {loading ? (
+  <div className="dot-loader"> <span></span>
+  <span></span>
+  <span></span> </div> // or null
+) : profilecredentials ? (
+  <img src={dp} alt="" className="profile-left-top-image" />
+) : (
+  <h5 onClick={profileboxopen}>tap to upload img</h5>
+)}
                        
                       </div> 
                     

@@ -34,6 +34,7 @@ import {likesincrease,likesdecrease} from '../Customs/Increase/increaselikes'
 import usePosts from '../Customs/Increase/posts' 
 import useComments from '../Customs/Increase/comments'
 import useQuestions from '../Customs/Increase/questions'
+import { useOnlineoffline } from '../../../Assamble/Assamble'
   const fetchingquestions = async()=>{
         const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);        
               const databases = new Databases(client); 
@@ -53,6 +54,10 @@ import useQuestions from '../Customs/Increase/questions'
      }
                   
 function Newdash() {
+
+   const {online} = useOnlineoffline()
+  
+  
   const queryClient = useQueryClient();
   const navigate = useNavigate()
      const dispatch = useDispatch();
@@ -803,6 +808,8 @@ if (aibot) {setaibot({ display  :"block"})}}
 
 
 </div>
+
+         {online === true ? <h5>yes</h5> : <h5>no</h5>}
                   
                  {/* <div class="dot-loader">
   <span></span>

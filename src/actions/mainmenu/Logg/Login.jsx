@@ -28,10 +28,11 @@ function Login() {
      e.preventDefault(); 
 
     try {
-      let logindetails = await authService.accountlogin(email, password);
-      if (logindetails) {
+      const logindetails = await authService.accountlogin(email, password);
+    
+        localStorage.setItem("user", JSON.stringify(logindetails.name));
            window.location.href = '/Newdash'; 
-      }
+    
       console.log(logindetails);
       
       

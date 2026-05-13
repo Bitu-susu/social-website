@@ -14,185 +14,123 @@ import Profileuser from '../actions/mainmenu/userprofile/Profileuser'
 import Questions from '../actions/mainmenu/Questions/Questions'
 
 import authService from '../appwrite/auth'
-// import { Outlet } from 'react-router-dom'
 
-
-// const currentuser = async()=>{
-//     const getuser = await authService.getcurrentuser();
-//     return getuser;
-// }
-
-//  export default function Assamble() {
-//   //  const selector = useSelector((state) => state.sendingname.loginname)
-//   //  console.log(selector, "here is the selector");
-//     //  let navigate = useNavigate
-// //  giving restriction to the urls 
-//    const [user, setuser] = useState(()=>{
-//       if (navigator.onLine){
-       
 //       }
-//    })
-//    const [loading, setLoading] = useState(true); 
-//    const [isOnline, setIsOnline] = useState(navigator.onLine);
-//   //  const [isServerReachable, setIsServerReachable] = useState(true);
-//    async function restrict() {
-//      try {
-//          if (navigator.onLine) {
-//           setIsOnline(true)
-//            let gettinguser = await authService.getcurrentuser() 
-//            console.log(gettinguser, "getting");
-//            if (gettinguser) {
-//              setuser(gettinguser)
-//          }
+const useOnlineoffline = ()=>{
+    const[online, setonline] = useState(navigator.onLine)
+        useEffect(() => {   
+    window.addEventListener("online", ()=>setonline(true)); 
+    window.addEventListener("offline", ()=> setonline(false));
+    
+    return () => {
+      window.removeEventListener("online", ()=> setonline(true)); // ✅ FIX
+      window.removeEventListener("offline", ()=>setonline(false)); // ✅ FIX
+    };
+  }, []);
          
-//         }
-//         // else{
-//         //   setuser(null)
-//         // } 
-        
-//   } catch (error) {
-//     // setuser(null)
-//   } 
-//       finally{
-//         setLoading(false)
-//       } 
-//     }
-//     useEffect(()=>{restrict()},[])   
-    
-
-
-// //  useeffect to detect the internet 
-
-// useEffect(()=>{
-//     const netonline = ()=>{ 
-//          setIsOnline(true) 
-
-//     }
-//     const netoffline = ()=> setIsOnline(false)
-//       window.addEventListener("online", netonline);
-//     window.addEventListener("offline", netoffline);
-    
-//     return () => {
-//     window.addEventListener("online", netonline); 
-//     window.addEventListener("offline", netoffline);
-//   };
-// },[])
-
-//   console.log(navigator.onLine);
-//   console.log(isOnline, "gggg");
-  
-  
-
-//  if (loading) {
-  
-//    return (
-//      <div style={{ textAlign: "center", display : "flex", justifyContent : 'center', alignItems: "center", height : "100vh", backgroundColor : "white" }}>
-//        <h2>Loading...</h2>
-//      </div>
-//    );
-//  }
-
-//    return (
-//     <Routes>
-//       {/* <Route  path='/' element ={<Newdashtesting/>}/>
-//       <Route
-//       path = '/testing'
-//       element ={<Newdashtesting/>}
-//       /> */}
-      
-//        <Route
-//         path="/" 
-       
-//         element={  user ? <Newdash network ={isOnline} /> : <Home />}
-
-//       />
-//       <Route
-//         path="/signup"
-//         element={!user && isOnline === false ? <Signup /> : <Navigate to="/newdash" replace />}
-//       />
-//       <Route
-//         path="/login"
-//         element={user ? <Navigate to="/newdash" replace /> : <Login />}
-//       />
-
-// {/*  privacy components  */}
-
-      
-//       <Route
-//         path="/dashboard"
-//         element={user ? <Dashboard /> : <Navigate to="/login" replace />}
-//       />
-//       <Route
-//         path="/profile"
-//         element={user ? <Profile /> : <Navigate to="/login" replace />}
-//       />
-//       <Route
-//         path="/newdash"
-//         element={user ? <Newdash /> : <Navigate to="/login" replace />}
-//       />
-//       <Route
-//         path="/userprofile/:username"
-//         element={user ? <Userprofile /> : <Navigate to="/login" replace />}
-//       />
-//       <Route
-//         path="/profileuser/:username"
-//         element={user ? <Profileuser /> : <Navigate to="/login" replace />}
-//       />
-//       <Route
-//         path="/Questions"
-//         element={user ? <Questions /> : <Navigate to="/login" replace />}
-//       />
-//     </Routes>
-//   )
-//       }
-
+  return {online}
+ }
 
 
       export default function Assamble() {
-
+        
   const [user, setuser] = useState(null); // ✅ simple
   const [loading, setLoading] = useState(true);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
-
+  
+  
   // 🔥 fetch user
   async function restrict() {
-    try {
-      if (!navigator.onLine) return; // 🚫 stop if offline
+      try {
+          if (!navigator.onLine) return; // 🚫 stop if offline
+      
+          let gettinguser = await authService.getcurrentuser(); 
+          console.log(gettinguser, "getting");
 
-      let gettinguser = await authService.getcurrentuser();
-      console.log(gettinguser, "getting");
-
-      if (gettinguser) {
-        setuser(gettinguser);
+          if (gettinguser) {
+              setuser(gettinguser);
       } else {
         setuser(null);
       }
-
+       
     } catch (error) {
       setuser(null);
     } finally {
       setLoading(false);
     }
   }
-
-  // ✅ run on mount + when internet comes back
+  
+  
   useEffect(() => {
     restrict();
-  }, [isOnline]);
-
+  }, []);
+    
   // 🌐 network listener (FIXED)
   useEffect(() => {
-    const netonline = () => setIsOnline(true);
+      const netonline = () => setIsOnline(true);
     const netoffline = () => setIsOnline(false);
-
+    
     window.addEventListener("online", netonline);
     window.addEventListener("offline", netoffline);
-
+   
     return () => {
       window.removeEventListener("online", netonline); // ✅ FIX
       window.removeEventListener("offline", netoffline); // ✅ FIX
     };
   }, []);
+  
+ 
+  
+  
+  
+  // async function restrict(){
+  //   try {
+  //         if (!navigator.onLine) {
+  //        const cached = localStorage.getItem("user");
+  //        if (cached) {
+  //          setUser(JSON.parse(cached));
+  //         }
+  //         } 
+  //         else{
+  //           const  gettinguser = await authService.getcurrentuser(); 
+  //           console.log(gettinguser, "getting");
+  //           setuser(gettinguser)
+  //         }
+  //       }
+  //      catch (error) {
+  //          console.log(error);  
+  //          return error   
+  //     }
+  //     finally {
+  //     setLoading(false);
+  //     }
+
+  //     //  window.addEventListener("online", restrict);
+
+  // // user returns to tab
+  // // document.addEventListener(
+  // //   "visibilitychange",
+  // //   () => {
+  // //     if (
+  // //       document.visibilityState === "visible"
+  // //     ) {
+  // //       restrict();
+  // //     }
+  // //   }
+  // // );
+
+  // // return () => {
+  // //   window.removeEventListener(
+  // //     "online",
+  // //     restrict
+  // //   );
+  // //   }
+  // }
+  // useEffect(()=>{        
+  // restrict()
+  // },[])
+
+
 
   // ⏳ loading state
   if (loading) {
@@ -211,7 +149,7 @@ import authService from '../appwrite/auth'
         path="/"
         element={
           !isOnline ? (
-            user ? <Newdash network={isOnline} /> : <h2>⚠️ Offline</h2>
+            user ? <Newdash /> : <Newdash></Newdash>
           ) : user ? (
             <Navigate to="/newdash" />
           ) : (
@@ -230,35 +168,49 @@ import authService from '../appwrite/auth'
         path="/login"
         element={!user ? <Login /> : <Navigate to="/newdash" />}
       />
-
+      
       {/* ✅ PROTECTED ROUTES */}
-      <Route
+      {/* <Route
         path="/newdash"
         element={
           !isOnline ? (
-            <h2>⚠️ Offline</h2>
+            <Newdash></Newdash>
           ) : user ? (
             <Newdash />
           ) : (
             <Navigate to="/login" />
           )
         }
-      />
-
+      /> */}
+  
       <Route
-        path="/profile"
+        path="/profile" 
         element={user ? <Profile /> : <Navigate to="/login" />}
       />
 
       <Route
         path="/newdash"
-        element={user ? <Newdash /> : <Navigate to="/login" />}
+
+        element  = { 
+        // element= {
+
+        // user ? <Newdash /> : <Navigate to="/login" />}
+
+       
+           !isOnline ? (
+            user ? <Newdash /> : <Newdash></Newdash>
+          ) : user ? (
+               <Newdash />
+          ) : (
+           <Navigate to="/login" />
+          )
+               }
       />
 
       <Route
         path="/userprofile/:username"
         element={user ? <Userprofile /> : <Navigate to="/login" />}
-      />
+      /> for the 
 
       <Route
         path="/profileuser/:username"
@@ -270,11 +222,7 @@ import authService from '../appwrite/auth'
         element={user ? <Questions /> : <Navigate to="/login" />}
       />
 
-    </Routes>
-  );
+    </Routes>  
+  )
 }
-  
- 
-
-
-  //     
+    export {useOnlineoffline} ;

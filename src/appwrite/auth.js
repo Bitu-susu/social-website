@@ -14,11 +14,8 @@ export class Authservise{
             inputname){
         try {
             const accountcreate = await this.account.create(
-                ID.unique(),
-                inputemail,
-                inputpassword,
-                inputname
-              );
+                ID.unique(),inputemail,inputpassword,inputname);
+            
             return accountcreate
         } catch (error) {
                  console.log("error while creating account", error)
