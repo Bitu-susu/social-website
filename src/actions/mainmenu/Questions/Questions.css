@@ -49,17 +49,18 @@
        justify-content: space-evenly;
        gap: 10px;
       min-height: 100vh;
-       padding: 5px 195px;
+       padding: 5px 159px;
        opacity: 1;
     }
     .left{
-        width: 20%;
+        width: 16%;
     }
     .middle{
      width: 62%;
      /* background-color: red; */
      /* position: relative; */
      padding-right: 43px;
+     padding: 13px 44px;
     }
     .questions{
         /* background:#262626; */
@@ -70,7 +71,7 @@
         padding: 20px; */
         border-radius: 10px;
         width: 100%;
-        color: white;
+        color: #0b57d0;
     }
     .questions-top{
             display: flex;
@@ -92,7 +93,7 @@
     .lists{
         position: sticky;
         top: 0px;
-            background: #2c2e2e;
+            background: #0b57d0;
     padding: 16px 26px;
     line-height: 10px;
     border-radius: 10px;

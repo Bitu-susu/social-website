@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import  './signup.css';
 import leftlogo from '../../../../images/blogpost_logo-removebg-preview.png'
 import authservice from '../../../../appwrite/auth';
@@ -11,6 +11,13 @@ import { useDispatch} from "react-redux";
 // import signupimg from ''
 import back from '../../../../images/birendra.png'
 import svg from '../../../../images/wired-lineal-12-layers-hover-slide.gif'
+import  impu from '../../../../images/full-shot-people-cleaning-together.jpg'
+
+//  importing images for the one by one 
+  import img1 from '../../../../images/ChatGPT Image May 21, 2026, 01_31_12 PM.png'
+  import img2 from '../../../../images/ChatGPT Image May 21, 2026, 07_24_10 PM.png'
+  import img3 from '../../../../images/ChatGPT Image May 21, 2026, 07_31_35 PM.png'
+  import img4 from '../../../../images/ChatGPT Image May 21, 2026, 07_35_49 PM.png'
 
 
 const slice = createSlice({
@@ -25,10 +32,9 @@ const slice = createSlice({
 })
 export const { valueplace } = slice.actions;
 export const sender = slice.reducer;
-function Signup() {
-  
+function Signup() { 
   const navigate = useNavigate()
-  const dispatch = useDispatch()
+const dispatch = useDispatch()
 const [inputname, setinputname] = useState("")
 const [inputemail, setinputemail] = useState("") 
 const [inputpassword, setinputpassword] = useState("")
@@ -70,6 +76,7 @@ async function submitsignup(e) {
 
   //  google authentication
 
+
   async function googlelogin() {
      try {
       const Google = await authservice.gogooglelogin()
@@ -78,6 +85,27 @@ async function submitsignup(e) {
          console.log("error in logging with google", error);
      }
   }
+   
+  const[img, setimg] = useState(null)
+
+  function puttingimage(){
+       let arr = [0,1,2]
+       const randomValue = arr[Math.floor(Math.random() * arr.length)];
+       console.log(randomValue);
+       
+       let obj = {
+           0 : img1,
+           1 : img2,
+           2 : img3,
+           3 : img4
+       }
+       let making = obj[randomValue]
+        console.log(making); 
+        setimg(making)
+  }
+  useEffect(()=>{
+    puttingimage()
+  },[])
   return (
    <>
     {/* <h1 className='loadingstate'>{loading}</h1>
@@ -125,7 +153,24 @@ async function submitsignup(e) {
          </div> */}
 
        <div className="signuplayout">
-       <div className="layout1"></div>
+       <div className="layout1">
+       <div className="layout1content">
+          <div className="layout1logo">
+            <span>ngngngng</span>
+          </div>
+          <div className="layout1text">
+             <h1 style={{
+                  color: "#010101",
+    fontFamily: 'McAfeePoppins',
+    fontWeight: "600",
+
+             }} >Explore the <br /> things <br /> <span style={{color : "blue" }}> you love.</span> </h1>
+          </div>
+       </div>
+        <div className="layout1image">
+        <img src={img} alt="" />
+        </div>
+       </div>
        <div className="layout2">
         <div className="formsection">
               <div className="content-section" style={{paddingBottom : "15px"}}>
@@ -133,7 +178,7 @@ async function submitsignup(e) {
                 <img src={svg} alt="" style={{width : "50px"}} />
               </div>
                  <p>Sign in to access your dashboard</p>
-<form action="" className='signup-form' onSubmit={submitsignup} >
+<form action="" className='signup-form' onSubmit={submitsignup}>
               <div className="mb-3">
             <input 
               type="text" value={inputname} onChange={(event)=>setinputname(event.target.value)}

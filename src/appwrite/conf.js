@@ -36,6 +36,8 @@ const conf = {
   appwritelocationid: import.meta.env.VITE_APPWRITE_LOCATION_ID,
   appwritequestionid: import.meta.env.VITE_APPWRITE_QUESTION_ID,
   appwriteanswerid: import.meta.env.VITE_APPWRITE_ANSWER_ID,
-  appwritechatid :import.meta.env.VITE_APPWRITE_CHAT_ID
+  appwritechatid :import.meta.env.VITE_APPWRITE_CHAT_ID,
+  appwritechatProfileid :import.meta.env.VITE_APPWRITE_CHAT_PROFILE_ID,
+  geminiapi :import.meta.env.VITE_GEMINI_API 
 };
 export default conf;

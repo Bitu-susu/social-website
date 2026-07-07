@@ -73,20 +73,20 @@
   /* background-image: url('../../../../images/birendra.png'); */
   /* background-image: url('../../../images/2149629598.jpg'); */
   /* background-image: url('../../../images/full-shot-people-cleaning-together.jpg'); */
-  background-image: url('../../../images/social-media-concept-with-device.jpg');
+  /* background-image: url('../../../../images/full-shot-people-cleaning-together.jpg'); */
   height: 100vh;
     background-size: cover;
   background-position: center;
   display: flex;
   justify-content: space-between;
-   border-radius: 35px;
-   /* background-position: -364px; */
+   /* border-radius: 35px; */
+   background-position: -364px;
  }
  .layout2{
      background-color: white;
      height: 100vh;
-     width: 36%;
-     border-radius: 35px;
+     width: 32%;
+     /* border-radius: 35px; */
      /* background: linear-gradient(rgba(0,0,0,.4), rgba(0,0,0,.4)), */
  }
  .formsection{
@@ -99,7 +99,7 @@
     
  }
  .signup-form{
-    width: 60%;
+    width: 80%;
    line-height: 25px;
  }
  .mb-3{
@@ -120,4 +120,27 @@
     align-items: center;
     justify-content: center;
     gap: 10px;
+ }
+ .layout1{
+      width: 70%;
+    display: flex;
+    justify-content: space-around;
+ }
+ .layout1content{
+      width: 30%;
+      width: 30%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding-left: 25px;
+ }
+
+ .layout1image{
+  width: 80%;
+      display: flex;
+    align-items: center;
+    justify-content: center;
+ }
+ .layout1image img{
+      width: 100%;
  }

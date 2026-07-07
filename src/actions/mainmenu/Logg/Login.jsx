@@ -1,10 +1,17 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import './Login.css'
 import { Link } from 'react-router-dom'
  import google from "../../../images/google-removebg-preview.png"
  import authService from '../../../appwrite/auth'
   import { useNavigate } from 'react-router-dom'
  import svg from '../../../images/wired-lineal-12-layers-hover-slide.gif'
+
+ //  importing images for the one by one 
+ import img1 from '../../../images/ChatGPT Image May 21, 2026, 01_31_12 PM.png'
+  import img2 from '../../../images/ChatGPT Image May 21, 2026, 07_24_10 PM.png'
+  import img3 from '../../../images/ChatGPT Image May 21, 2026, 07_31_35 PM.png'
+  import img4 from '../../../images/ChatGPT Image May 21, 2026, 07_35_49 PM.png'
+  
 function Login() {
     let navigate = useNavigate()
   //  login with google 
@@ -42,7 +49,26 @@ function Login() {
     }
     }
 
+  const[img, setimg] = useState(null)
 
+  function puttingimage(){
+       let arr = [0,1,2]
+       const randomValue = arr[Math.floor(Math.random() * arr.length)];
+       console.log(randomValue);
+       
+       let obj = {
+           0 : img1,
+           1 : img2,
+           2 : img3,
+           3 : img4
+       }
+       let making = obj[randomValue]
+        console.log(making); 
+        setimg(making)
+  }
+  useEffect(()=>{
+    puttingimage()
+  },[])
 
   return (
     <div>
@@ -85,7 +111,24 @@ function Login() {
          </div> */}
 
          <div className="signuplayouts">
-                <div className="layout1"></div>
+                 <div className="layout1">
+       <div className="layout1content">
+          <div className="layout1logo">
+            <span>ngngngng</span>
+          </div>
+          <div className="layout1text">
+             <h1 style={{
+                  color: "#010101",
+    fontFamily: 'McAfeePoppins',
+    fontWeight: "600",
+
+             }} >Explore the <br /> things <br /> <span style={{color : "blue" }}> you love.</span> </h1>
+          </div>
+       </div>
+        <div className="layout1image">
+        <img src={img} alt="" />
+        </div>
+       </div>
                 <div className="layout2">
                  <div className="formsection">
                        <div className="content-section" style={{paddingBottom : "15px"}}>

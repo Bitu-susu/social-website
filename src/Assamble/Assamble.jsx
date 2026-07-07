@@ -12,7 +12,7 @@ import Newdash from '../actions/mainmenu/dashnew/Newdash'
 import Userprofile from '../actions/mainmenu/userprofile/Userprofile'
 import Profileuser from '../actions/mainmenu/userprofile/Profileuser'
 import Questions from '../actions/mainmenu/Questions/Questions'
-
+import './Assamble.css'
 import authService from '../appwrite/auth'
 
 //       }
@@ -31,13 +31,12 @@ const useOnlineoffline = ()=>{
   return {online}
  }
 
-
       export default function Assamble() {
         
   const [user, setuser] = useState(null); // ✅ simple
   const [loading, setLoading] = useState(true);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
-  
+   
   
   // 🔥 fetch user
   async function restrict() {
@@ -49,21 +48,24 @@ const useOnlineoffline = ()=>{
 
           if (gettinguser) {
               setuser(gettinguser);
-      } else {
-        setuser(null);
-      }
+                 setLoading(false);
+            } else {
+              setuser(null);
+              setLoading(false);
+            }
+            
+          } catch (error) {
+            setuser(null);
+          } 
+    //       finally{
        
-    } catch (error) {
-      setuser(null);
-    } finally {
-      setLoading(false);
-    }
+    //  }
   }
   
   
   useEffect(() => {
     restrict();
-  }, []);
+  }, [isOnline]);
     
   // 🌐 network listener (FIXED)
   useEffect(() => {
@@ -83,79 +85,59 @@ const useOnlineoffline = ()=>{
   
   
   
-  // async function restrict(){
-  //   try {
-  //         if (!navigator.onLine) {
-  //        const cached = localStorage.getItem("user");
-  //        if (cached) {
-  //          setUser(JSON.parse(cached));
-  //         }
-  //         } 
-  //         else{
-  //           const  gettinguser = await authService.getcurrentuser(); 
-  //           console.log(gettinguser, "getting");
-  //           setuser(gettinguser)
-  //         }
-  //       }
-  //      catch (error) {
-  //          console.log(error);  
-  //          return error   
-  //     }
-  //     finally {
-  //     setLoading(false);
-  //     }
-
-  //     //  window.addEventListener("online", restrict);
-
-  // // user returns to tab
-  // // document.addEventListener(
-  // //   "visibilitychange",
-  // //   () => {
-  // //     if (
-  // //       document.visibilityState === "visible"
-  // //     ) {
-  // //       restrict();
-  // //     }
-  // //   }
-  // // );
-
-  // // return () => {
-  // //   window.removeEventListener(
-  // //     "online",
-  // //     restrict
-  // //   );
-  // //   }
-  // }
-  // useEffect(()=>{        
-  // restrict()
-  // },[])
-
+ 
 
 
   // ⏳ loading state
   if (loading) {
     return (
-      <div style={{ textAlign: "center", display: "flex", justifyContent: 'center', alignItems: "center", height: "100vh"}}>
-        <h2>Loading...</h2>
-      </div>
+      // <div style={{ textAlign: "center", display: "flex", justifyContent: 'center', alignItems: "center", height: "100vh"}}>
+      //   <h2>Loading...</h2>
+      // </div>
+      <div className="dot-loader">
+        <h3>loading</h3>
+         <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+   </div> 
     );
   }
-
+    
   return (
     <Routes>
 
-      {/* ✅ HOME (FIXED LOGIC) */}
+      {/* ✅ HOME (FIXED LOGIC) */} 
       <Route
-        path="/"
-        element={
-          !isOnline ? (
-            user ? <Newdash /> : <Newdash></Newdash>
-          ) : user ? (
-            <Navigate to="/newdash" />
-          ) : (
-            <Home />
-          )
-        }
+         path="/"
+         element  = {
+    !isOnline ? (
+      user ? (
+        <Newdash />
+      ) : (
+        <Newdash />
+      )
+    ) : loading === true ? (
+      <div
+        style={{
+          textAlign: "center",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <h2>Loading...</h2>
+      </div>
+    ) : user ? (
+      <Newdash />
+    ) : (
+      <Home></Home>
+    )
+  }
+       
+
+         
       />
 
       {/* ✅ AUTH ROUTES */}
@@ -191,16 +173,31 @@ const useOnlineoffline = ()=>{
       <Route
         path="/newdash"
 
-        element  = { 
-// user ? <Newdash /> : <Navigate to="/login" />}
-           !isOnline ? (
-            user ? <Newdash /> : <Newdash></Newdash>
-          ) : user ? (
-               <Newdash />
-          ) : (
-           <Navigate to="/login"/>
-          )
-               }
+        element  = {
+    !isOnline ? (
+      user ? (
+        <Newdash />
+      ) : (
+        <Newdash />
+      )
+    ) : loading === true ? (
+      <div
+        style={{
+          textAlign: "center",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <h2>Loading...</h2>
+      </div>
+    ) : user ? (
+      <Newdash />
+    ) : (
+      <Navigate to="/login" />
+    )
+  }
       />
 
       <Route
@@ -220,6 +217,8 @@ const useOnlineoffline = ()=>{
       />
 
     </Routes>  
+
+  // <Newdash></Newdash>
   )
 }
     export {useOnlineoffline} ;

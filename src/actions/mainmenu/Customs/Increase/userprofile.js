@@ -20,7 +20,7 @@ const useProfile = ()=>{
         async function Profilecredential(e) {
             e.preventDefault()
             try {
-        const user = await authService.getcurrentuser();
+                       const user = await authService.getcurrentuser();
        const authid = user.$id 
       const fileInput = document.getElementById('profileupload');
    const profile = await storage.createFile(conf.appwriteprofileid,ID.unique(),fileInput.files[0]
@@ -36,8 +36,8 @@ const useProfile = ()=>{
         "picurl" : picurl
 
       })
-      // console.log("added credentials", profilebox);
-
+      console.log("added credentials", profilebox);
+     
     } catch (error) {
       console.log(error)
       }}

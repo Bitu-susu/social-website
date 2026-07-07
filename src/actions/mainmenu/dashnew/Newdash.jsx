@@ -35,6 +35,12 @@ import usePosts from '../Customs/Increase/posts'
 import useComments from '../Customs/Increase/comments'
 import useQuestions from '../Customs/Increase/questions'
 import { useOnlineoffline } from '../../../Assamble/Assamble'
+
+import Header from '../Customs/Increase/header/Header'
+
+
+import Chat from '../Customs/Increase/chat/Chat'
+
   const fetchingquestions = async()=>{
         const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);        
               const databases = new Databases(client); 
@@ -91,7 +97,7 @@ function Newdash() {
         const {submitpost, submit, submitshown} = usePosts()
         const postMutation = useMutation({
   mutationFn: submitpost,
-  
+        
   onSuccess: () => {
     // 🔥 THIS triggers posts API again
     queryClient.invalidateQueries({ queryKey: ["documents"]});
@@ -453,32 +459,44 @@ if (aibot) {setaibot({ display  :"block"})}}
     e.preventDefault();
     creatingasksection(questiontitle,authid,user)
     }
-           
+
+
+    const [value, setValue] = React.useState('one');
+    const handleChange = (event, newValue) => {
+      setValue(newValue);
+    };
+
+//     async function get() {
+//     try {
+//        let apikey = conf.geminiapi
+//        if (!apikey) {
+//         throw new Error("API key is not defined. Check your .env file.");
+//     }
+//         const genAI = new GoogleGenerativeAI(apikey);
+//         const model = genAI.getGenerativeModel({ model:  "gemini-2.5-flash" });
+
+//         const result = await model.generateContent("what is the capital of iran");
+//         console.log((result.response.text()));
+
+//     } catch (error) {
+//         console.error("Error:", error);
+//     }
+// }
+//     useEffect(()=>{
+//   get()
+//     },[])
+
   return (
     <div>
-      {/* { network === true ? <h4>connected</h4>:<h4>notconnected</h4>} */}
-      {/* style={submitshown} */}
-                                                         {/* for the header section */}
-             {/* <div className="successbox" style={submitshown}>
-              <i className="fa-solid fa-circle-xmark" onClick={successclosing}  style={{color: "black",position: "absolute", right : "0px", background: "white",zIndex:"4"}}></i>
-              <div className="successbox1-h3">
-              <h5>{submit}</h5>
-              {newpost === true ?<span style={{cursor : "pointer", textDecoration : "underline"}} onClick={()=>navigate('/Userprofile')} >view post</span> : <span></span>}</div>
-             
-
-             </div> */}
-             {/* <div className="successbox" style={questiondisplay}>
-              <i className="fa-solid fa-circle-xmark" onClick={questiondisplayclose}  style={{color: "black",position: "absolute", right : "0px", background: "white",zIndex:"5"}} ></i>
-              <h3>{submitquestion}</h3>
-             </div> */}
+      
          <div className="dash-section">
          <div className="posting" style ={postdisplay}>
          <div className="fullposting">
          <div className="posting-top">
-         <h6 style={{padding : "4px 8px", backgroundColor :"#0b57d0",color : "white", borderRadius : "20px"}} >{firstletter}</h6>
-            
-            <h6 style={{color : "white"}}>{user}</h6>
-            <i className="fa-solid fa-xmark" onClick={postboxclose}  style={{color: "white",position: "absolute", right : "0px", zIndex:"4"}}></i>
+         {/* <h6 style={{padding : "4px 8px", backgroundColor :"#0b57d0",color : "white", borderRadius : "20px"}} >{firstletter}</h6> */}
+         
+            {/* <h6 style={{color : "white"}}>{user}</h6> */}
+            <i className="fa-solid fa-xmark" onClick={postboxclose}  style={{color: "black",position: "absolute", right : "3px", zIndex:"4", top : "2px" }}></i>
             </div>
             <div className="posting-bottom">
             <form action="" className='postform' onSubmit={addingposts}>
@@ -558,28 +576,28 @@ if (aibot) {setaibot({ display  :"block"})}}
           </div>
           </div> */}
           </div>
-        <div className="header" id='header'>
-            <div className="headerleft">
+        {/* <div className="headerr" id='header'>
+            <div className="headerrleft">
 
-        {/* <i className="fa-solid fa-house" style={{fontSize: "18px"}}></i> */}
-        <Link to="/"><i className="fa-solid fa-house" style={{fontSize: "18px", color : "white"}}></i></Link>
+        
+        <Link to="/"><i className="fa-solid fa-house" style={{fontSize: "18px", color : "#0b57d0"}}></i></Link>
         <i className="fa-solid fa-users-line" style={{fontSize: "18px"}}></i> 
         <i className="fa-solid fa-bell" style={{fontSize: "18px"}}></i>
-          <Link to="/Questions"><i className="fa-solid fa-book-open-reader" style={{fontSize: "18px", color : "white"}}></i></Link>
-        {/* <i className="fa-solid fa-book-open-reader" style={{fontSize: "18px"}}></i> */}
+          <Link to="/Questions"><i className="fa-solid fa-book-open-reader" style={{fontSize: "18px", color : "#0b57d0"}}></i></Link>
+        
         </div>
         <div className="headermiddle">
         <input type="text" name="" id="" style={{height: "35px, width: 100%"}} className='dashboard-input' placeholder="search your favorite querry"/>
         </div>
         <div className="headerright">
             <h6 style={{padding : "4px 8px", backgroundColor :"#0b57d0",color : "white", borderRadius : "20px"}} >{firstletter}</h6>
+            {user?<><h6 style={{color : "black",fontWeight : "400"}}>{user.slice(0,7)}..</h6></> : <>loading..</>}
             
-            <h6 style={{color : "white"}}>{user}</h6>
-              <button style={{backgroundColor :"#0b57d0", fontSize : "13.5px"}} onClick={loginname}>userprofile</button>
-              <button style={{backgroundColor :"#d7329a", fontSize : "13.5px"}} onClick={sessionend} >Logout</button>
+              <button style={{backgroundColor :"white", fontSize : "13.5px",color : "black", border : "1px solid #dcd5d5"}} onClick={loginname}>userprofile</button>
+              <button style={{backgroundColor :"#0b57d0", fontSize : "13.5px"}} onClick={sessionend} >Logout</button>
         </div>  
-        </div> 
-
+        </div>  */}
+   <Header></Header>
       <div className="dashboardcontainer" >
         <div className="dashboard-1" style={lowopacity}>
           {/* <div className="dash-1-boxsection">
@@ -619,36 +637,36 @@ if (aibot) {setaibot({ display  :"block"})}}
                       <h6 style={{color : "white", cursor : "pointer"}} onClick={()=> setcontextvalue("")}>All posts</h6>
                     </div>
                     <div className="dash-1-content">
-                    <h6 style={{textAlign : "left",color : "white",cursor: "pointer"}} onClick={()=> setcontextvalue("AI")} >Artificial intelligence</h6>
-                     <img src={ai} alt="" />
+                    <h6 style={{textAlign : "left",color : "black",cursor: "pointer, fontWeight :500"}} onClick={()=> setcontextvalue("AI")} >AI</h6>
+                     {/* <img src={ai} alt="" /> */}
                     </div>
                     <div className="dash-1-content">
-                    <h6 style={{textAlign : "left", color : "white", cursor : "pointer"}} onClick={()=>setcontextvalue("EV")} >Electric vehicle</h6>
-                     <img src={ev} alt="" />
+                    <h6 style={{textAlign : "left", color : "black", cursor : "pointer"}} onClick={()=>setcontextvalue("EV")} >Electric vehicle</h6>
+                     {/* <img src={ev} alt="" /> */}
                     </div>
                     <div className="dash-1-content">
-                    <h6 style={{textAlign : "left", color : "white", cursor : 'pointer'}} onClick={()=>setcontextvalue("Stock Market")}>Stock market</h6>
-                     <img src={stock} alt="" />
+                    <h6 style={{textAlign : "left", color : "black", cursor : 'pointer'}} onClick={()=>setcontextvalue("Stock Market")}>Stock market</h6>
+                     {/* <img src={stock} alt="" /> */}
                     </div>
                     <div className="dash-1-content">
-                    <h6 style={{textAlign : "left", color : "white", cursor :"pointer"}} onClick={()=>setcontextvalue("Business & Startup")}>Business & Startup</h6>
-                     <img src={business} alt="" />
+                    <h6 style={{textAlign : "left", color : "black", cursor :"pointer"}} onClick={()=>setcontextvalue("Business & Startup")}>Business & Startup</h6>
+                     {/* <img src={business} alt="" /> */}
                     </div>
                     <div className="dash-1-content">
-                    <h6 style={{textAlign : "left", color : "white", cursor : "pointer"}} onClick={()=>setcontextvalue("Science & Technology")}> Science & Technology</h6>
-                     <img src={technology} alt="" />
+                    <h6 style={{textAlign : "left", color : "black", cursor : "pointer"}} onClick={()=>setcontextvalue("Science & Technology")}> Science & Technology</h6>
+                     {/* <img src={technology} alt="" /> */}
                     </div>
                     <div className="dash-1-content">
-                    <h6 style={{textAlign : "left", color : "white", cursor : "pointer"}} onClick={()=>setcontextvalue("Politics")}>Politics</h6>
-                     <img src={politics} alt="" />
+                    <h6 style={{textAlign : "left", color : "black", cursor : "pointer"}} onClick={()=>setcontextvalue("Politics")}>Politics</h6>
+                     {/* <img src={politics} alt="" /> */}
                     </div>
                     <div className="dash-1-content">
-                    <h6 style={{textAlign : "left", color : "white", cursor : 'pointer'}} onClick={()=>setcontextvalue("Culture & Religion")}>Culture & Religion</h6>
-                     <img src={culture} alt="" />
+                    <h6 style={{textAlign : "left", color : "black", cursor : 'pointer'}} onClick={()=>setcontextvalue("Culture & Religion")}>Culture & Religion</h6>
+                     {/* <img src={culture} alt="" /> */}
                     </div>
                     <div className="dash-1-content">
-                    <h6 style={{textAlign : "left", color : "white", cursor : "pointer"}} onClick={()=>setcontextvalue("Fashion & Lifestylet")}>Fashion & Lifestyle</h6>
-                     <img src={stock} alt="" />
+                    <h6 style={{textAlign : "left", color : "black", cursor : "pointer"}} onClick={()=>setcontextvalue("Fashion & Lifestylet")}>Fashion & Lifestyle</h6>
+                     {/* <img src={stock} alt="" /> */}
                     </div>
                     
                     
@@ -661,7 +679,7 @@ if (aibot) {setaibot({ display  :"block"})}}
 
                         <div className="dash-2-up-top">
                     <h6 style={{padding : "4px 9px", backgroundColor :"#0b57d0",color : "white", borderRadius : "20px", width: '30px'}} >{firstletter}</h6>
-                    <input type="text" name="" id="" style={{height: "35px",color : "white", background : "#474545",border : "none", width : "100%", borderRadius : '20px'}} className='dashboard-input' placeholder="what do you want to ask or share "/>                       
+                    <input type="text" name="" id="" style={{height: "35px",color : "black", background : "white",border : "none", width : "100%", borderRadius : '20px'}} className='dashboard-input' placeholder="what do you want to ask or share "/>                       
                     </div>
                     <div className="dash-2-down">
                          <button className='dash-2-buttons' style={{borderRight : '1px solid white'}} onClick={opacitychanger}>Post</button>
@@ -670,6 +688,7 @@ if (aibot) {setaibot({ display  :"block"})}}
                     </div>
 
                     </div>
+
                       
                      {!postdocumentsloading && !postdocumentserror &&(
                       <div className="everyposts-section">
@@ -679,10 +698,10 @@ if (aibot) {setaibot({ display  :"block"})}}
                       <div className="every-post">
                       <div className="onlycontent">
                         <div className="post-heading" style={{lineHeight: "10px"}} >
-                          <h5 style={{color : "white"}}>{listings.posttitle}</h5> 
+                          <h5 style={{color : "black"}}>{listings.posttitle}</h5> 
                           <div className="incdate" style={{display: "flex", justifyContent: "space-between"}}> 
-                          <span style={{fontWeight: "400", fontSize: "14px", color: "white",textDecoration : "underline"}}>{listings.postcategory ? "category - " + listings.postcategory :listings.postcategory} </span>
-                          <span style={{fontWeight: "400", fontSize: "14px", color: "white", borderRadius:"20px", padding : "7px 7px"}} >{listings.Date}</span>
+                          <span style={{fontWeight: "400", fontSize: "14px", color: "black",textDecoration : "underline"}}>{listings.postcategory ? "category - " + listings.postcategory :listings.postcategory} </span>
+                          <span style={{fontWeight: "400", fontSize: "13.5px", color: "#0b57d0", borderRadius:"20px", padding : "7px 7px"}} >{listings.Date}</span>
                           </div> 
                         </div> 
                          {/* <div className="post-category">
@@ -691,21 +710,21 @@ if (aibot) {setaibot({ display  :"block"})}}
 
                          </div> */}
                         <div className="post-user" style={{display : "flex", justifyContent :"space-between", padding: "8px 0px",color : "#626161"}}>
-                          <h6 onClick={()=> reduxsend(listings.authid,listings.postcreator)} style={{color :"#626161", textDecoration: "underline",fontSize: "14px", cursor:"pointer"}}>{listings.postcreator}</h6>
+                          <h6 onClick={()=> reduxsend(listings.authid,listings.postcreator)} style={{color :"#0b57d0", textDecoration: "underline",fontSize: "14px", cursor:"pointer"}}>{listings.postcreator}</h6>
                             {/* <img src={listings.featuredimage} alt="" srcset="" /> */}
                           {/* <i class="fa-solid fa-circle-xmark" onClick={()=>postdeletion(listings.$id)} style={deletepost}></i> */}
                         </div>   
                         
                         <div className="post-content"> 
                        {gettingid === listings.$id ?(
-                         <h6 style={{color: "white",fontWeight:"400",lineHeight:"24px" }}>{nottrimcontent}</h6>
-                        ):( <h6 style={{color: "white",fontWeight:"400",lineHeight:"24px" }}>{listings.postcontent.slice(0,300)}</h6> )}
+                         <h6 style={{color: "black",fontWeight:"400",lineHeight:"24px" }}>{nottrimcontent}</h6>
+                        ):( <h6 style={{color: "black",fontWeight:"400",lineHeight:"24px" }}>{listings.postcontent.slice(0,300)}</h6> )}
                         <h6 style={{cursor: "pointer", fontWeight : "300", color: "#0b57d0"}} onClick={()=>nottrim(listings.$id)}>{gettingid === listings.$id ?"" :"(... more⬇️)"}</h6>
                         
                         </div> 
                         </div>
                         <div className="post-image" style={{display: "flex", justifyContent:"center", backgroundColor : ""}}>
-                          <img src={listings.featuredimage} alt="image" style={{width:"80%"}} />
+                          <img src={listings.featuredimage} alt="image" style={{width:"95%", borderRadius : "21px"}} />
                       </div>
                       <div className="like-comment-section">
                          <div className="like-section"> 
@@ -782,6 +801,7 @@ if (aibot) {setaibot({ display  :"block"})}}
                       
                  </div>
                  <div className="dashboard-3">
+                    <div className="dash3-1">
                  <div className="top-upbox"  style={{display :submitshown === true ? " block" : 'none'}}>
                    <div className="top-upbox-content">
                  <p>{submit}</p>
@@ -810,83 +830,33 @@ if (aibot) {setaibot({ display  :"block"})}}
 </div>
 
          {online === true ? <h5>yes</h5> : <h5>no</h5>}
-                  
-                 {/* <div class="dot-loader">
-  <span></span>
-  <span></span>
-  <span></span>
-</div> */}
+            </div>      
 
+              <div className="dash3-2">
+                 
+                 {/* <div className="dash3-2-top">
 
-                 {/* <div className="dash-3-topnews" style={lowopacity}>
-            <div className="topnews-heading">
-              <h5>Most popular</h5>
-            </div>
-
-         </div> */}
-         <div className="dash-board-3-bottom">
-         <div className="ai-contentsection" style={aibot}>
-          <p style={{fontSize : "14px", textAlign : "center", }}>please make content short <br />😊</p>
-          <textarea style={{width: "100%",height: "400px", border: "none",backgroundColor: "#3f3d3d" }} readOnly value={getresult} name="" id="" placeholder=''></textarea>
-          <div className="ai-content">
-            <p style={{fontSize : "14px", textAlign : "center"}}>What can i help with?</p>
-            <div className="ai-input">
-              <input type="text" name="" id="" value={typo} onChange={(e)=>settypo(e.target.value)}  style={{height: "30px", width : "80%", height: "37px",
-    border: "none",
-    borderRadius: "10px"}} placeholder="Type..." />
-              <i className="fa-solid fa-caret-right" style={{fontSize : "30px"}} onClick={get}></i>
-            </div>
-          </div>
-         </div>
-         <div className="bottomdash">
-          <div className="dash-3-bottom">
-            <div className="dash-3-section">
-              <h6 style={{color : "white", fontWeight : "400"}}>Geneate AI Content</h6>
-              
-              <div className="dash-3-icons">
-              <i className="fa-solid fa-circle-dot"></i>
-              <i className="fa-solid fa-caret-up" onClick={chatbotopen}></i>
-              <i className="fa-solid fa-caret-down" onClick={chatbotclose}></i>
-              </div>
-              </div>
-              </div>
-              </div>
-              </div>
-                 {/* <div className="dash-3-voting" style={lowopacity}>
-                   <h5 style={{color : "#ff6b74"}}>Vote on trending</h5>
-                   <div className="dash-3-votingsection">
-        {postings.map((listings)=>(
-          <>
-          <div className="just-2">
-             <h6 style={{color : "white", fontWeight: "400"}}>{listings.posttitle} <span style={{color : "#ff6b74"}}>(100 votes)</span> </h6>
-             <span style={{cursor: "pointer", textDecoration : "underline", color : "white"}} > vote</span>
-             </div>
-             </>
-        )).slice(0,10)}
-       </div>
-                 </div> */}
-                 {/* <div className="listquestions" style={{padding : "10px 2px"}}>
-                    {!questionloading && !questionerror && (
-                   <div className="listquestions-content">
-                    <h5 style={{color : "#ffade9"}}> Most recent questions</h5>
-                  {question.map((question)=>(
+                  <h5>Chat</h5>
+                    <div className="dash3-2-top-right">
+                     <div className="dash-3-2top-right-img"></div>
+                     <span>Ask</span>
                    
-                    <div className="questions-asked" key={question.$id}>
-
-                     <h6 style={{color :"white", fontWeight: "400"}}>{question.question}</h6>
-                     <div className="question-button" style={{display: "flex", justifyContent :"space-between"}}>
-                     <span style={{color :"white", fontSize: '14px'}}> author : {question.creator}</span>
-            <button className='question-button' style={questionbutton} onClick={()=>(zoomquestion(question.$id, question.question))}>reply</button>
-                                          
+                     <span>...</span>
                     </div>
-                     </div>
-                  
-                ))}
-                <hr style={{margin : "0px", color : "white"}} />
-                        
-                   </div>
-                )}
                  </div> */}
+                 {/* <div className="dash3-2-middle">
+                             <input type="text" name="" id="" style={{height: "35px, width: 100%"}} className='dashboard-input' placeholder="Ask your favorite query"/>
+ 
+                 </div> */}
+                 <Chat></Chat>
+                 {/* <div className="dash3-2-bottom">
+
+                 </div> */}
+              </div>
+              <div className="dash3-3">
+              </div>
+
+
                  </div>
       </div>
 
@@ -898,3 +868,5 @@ if (aibot) {setaibot({ display  :"block"})}}
 
 export default Newdash
 
+
+  

@@ -15,6 +15,7 @@ import { useDispatch } from 'react-redux'
 import { isRouteErrorResponse, Link, useNavigate } from 'react-router-dom'
 // import Usecurrentuser from './Questionss'
 
+import Header from '../Customs/Increase/header/Header'
 
 
 //   fetching current user
@@ -62,7 +63,7 @@ function Questions() {
              let authid = currentusers?.$id; 
              let firstletter = currentusers?.name.charAt(0).toUpperCase()  
 
-
+   
 const[selectcategory, setselectcategory] = useState("")
 
 //  fetching questions with authid
@@ -285,27 +286,10 @@ async function withauthquestions(){
           </div>
           </div>
           </div> */}
+       
+       <Header></Header>
       
       
-       <div className="header" id='header'>
-            <div className="headerleft">
-
-         <Link to="/"><i className="fa-solid fa-house" style={{fontSize: "18px", color : "white"}}></i></Link>
-        <i className="fa-solid fa-users-line" style={{fontSize: "18px"}}></i> 
-        <i className="fa-solid fa-bell" style={{fontSize: "18px"}}></i>
-        <i className="fa-solid fa-book-open-reader" style={{fontSize: "18px"}}></i>
-        </div>
-        <div className="headermiddle">
-        <input type="text" name="" id="" style={{height: "35px, width: 100%"}} className='dashboard-input' placeholder="search your favorite querry"/>
-        </div>
-        <div className="headerright">
-            <h6 style={{padding : "4px 8px", backgroundColor :"#0b57d0",color : "white", borderRadius : "20px"}} >{firstletter}</h6>
-            
-            <h6 style={{color : "white"}}>{user}</h6>
-              <button style={{backgroundColor :"#0b57d0", fontSize : "13.5px"}} onClick={loginname}>userprofile</button>
-              <button style={{backgroundColor :"#d7329a", fontSize : "13.5px"}} onClick={sessionend}>Logout</button>
-        </div>
-        </div> 
 
 <div className="contents-section">
     <div className="left" style={{color : "white"}}>
@@ -323,10 +307,10 @@ async function withauthquestions(){
         <div className="questions">
           <div className="questions-top">
             <div className="question-topbox">
-            <i className="fa-solid fa-star" id='icon-color' style={{fontSize : "13px", background: "radial-gradient(black, transparent)", padding: "4px"}}></i>
+            <i className="fa-solid fa-star" id='icon-color' style={{fontSize : "13px",  padding: "4px"}}></i>
             </div>
             <div className="question-topcontent">
-               <span>Questions for you</span>
+               <span style={{color : "black"}} >Questions for you</span>
             </div>
           </div> <hr />
           <div className="questions-content">
@@ -338,12 +322,12 @@ async function withauthquestions(){
                       <>
                       
                     <div className="questions-asked" key={question.$id}>
-                        {question.authid === authid ?(<h5 style={{color :"white",fontSize : "16.5px" ,fontWeight: "400", backgroundColor : "#832222"}}>{question.question}</h5>):(<h5 style={{color :"white",fontSize : "16.5px" ,fontWeight: "400"}}>{question.question}</h5>)}
+                        {question.authid === authid ?(<h5 style={{color :"black",fontSize : "16.5px" ,fontWeight: "400", backgroundColor : "#832222"}}>{question.question}</h5>):(<h5 style={{color :"black",fontSize : "16.5px" ,fontWeight: "400"}}>{question.question}</h5>)}
                      {/* <h5 style={{color :"white",fontSize : "16.5px" ,fontWeight: "400"}}>{question.question}</h5> */}
                      <div className="question-button" style={{display: "flex", justifyContent :"space-between",alignItems : "center"}}>
                         
-                     <span style={{color :"white", fontSize: '16.0px', fontWeight : "500"}}> Asked : {question.creator}</span>
-       {reply === "yes" ?( <button className='question-button' style={{border : '1px solid #7d63ed'}} onClick={()=>zoomquestion(question.$id, question.question)} >View</button>):( <button className='question-button' style={{border : '1px solid #7d63ed'}} onClick={()=>zoomquestion(question.questionid, question.question)} >View</button>)}
+                     <span style={{color :"#0b57d0", fontSize: '16.0px', fontWeight : "500"}}> Asked : {question.creator}</span>
+       {reply === "yes" ?( <button className='question-button' style={{border : '1px solid #7d63ed',color : "white", background : "#0b57d0"}} onClick={()=>zoomquestion(question.$id, question.question)} >View</button>):( <button className='question-button' style={{border : '1px solid #7d63ed', color : "white", background : "#0b57d0"}} onClick={()=>zoomquestion(question.questionid, question.question)} >View</button>)}
             {/* <button className='question-button' style={{border : '1px solid #7d63ed'}} onClick={()=>zoomquestion(question.$id, question.question)} >View</button> */}
                   
                     </div>
@@ -377,15 +361,16 @@ async function withauthquestions(){
     </div>
     <div className="right">
         {/* <h4>Questions</h4> */}
-        {getquestion}
+        <h5 style={ {color : "black"}} >{getquestion}</h5>
+        
         <div className="gettinganswers">
                 
              {listanswers.length > 0 ? listanswers.map((answer)=>(<>
 
                 <div className="every-answer" style={{lineHeight: "40px"}}key={answer.$id} >
                   {/* <h6>{answer.question}</h6> */}
-                  <span style={{padding: "2px 5px",borderRadius: '10px',fontSize : "13px"}}>{answer.creator}</span>
-                  <h6 style={{color : "white", fontWeight: "400", padding: "4px 4px",backgroundColor: "#383737",borderRadius: "10px"}}>{answer.answer}</h6>
+                  <span style={{padding: "2px 5px",borderRadius: '10px',fontSize : "14px", color : "black"}}>{answer.creator}</span>
+                  <h6 style={{color : "white", fontWeight: "400", padding: "4px 4px",borderRadius: "10px", background : "#0b57d0"}}>{answer.answer}</h6>
                 </div>  
              </>
                 

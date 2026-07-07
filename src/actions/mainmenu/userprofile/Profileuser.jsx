@@ -17,6 +17,8 @@ import './Userprofile.css'
  import InputEmoji from 'react-input-emoji'
 //   fetching current user from the react query 
 import '../../mainmenu/dashnew/Newdash.css'
+import Header from '../Customs/Increase/header/Header'
+
 
 //  importing custom hooks
 import {likesincrease,likesdecrease} from '../Customs/Increase/increaselikes'
@@ -404,9 +406,6 @@ async function fetchcomments(id) {
 //   fetching profile pic 
 // const[profilepic, setprofilepic] = useState(null)
  async function getprofilepic() {
-    // const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-    //    const storage = new Storage(client);
-    //    const databases = new Databases(client);
       
               const getprofilepic = await databases.listDocuments( conf.appwritedatabaseid, conf.appwritebiocollectionid,[Query.equal("authid", selectorid)
              ])
@@ -493,26 +492,26 @@ useEffect(() => {
     const unsubscribe = client.subscribe(
       `databases.${conf.appwritedatabaseid}.collections.${conf.appwritechatid}.documents`,
       (response) => {
-
+ 
         if (response.payload.roomid === rooms) {
 
           setmessages(prev => {
-
+    
             const exists = prev.some(msg => msg.$id === response.payload.$id);
-
+     
             if (exists) return prev;
 
             return [...prev, response.payload];
-
+   
           });
 
         }
 
       }
     );
-
+    
     return () => unsubscribe();
-
+    
   }
 
 }, [rooms, chatrun]); 
@@ -527,10 +526,10 @@ async function createmessage() {
       "sender" : authid,
       "sendername" :user,
       "reciever" : selectorid,
-      // "recievername" : ,
+      "recievername" : creatorid,
       "roomid" : rooms, 
       "message" : chatmessage,
-     "time": Date.now()
+      "time": Date.now()
     }
     )
     console.log(createmessages, "dddddd");
@@ -541,7 +540,7 @@ async function createmessage() {
 }
   //   fetching chats according to the roomid
 
-  async function fetchingchats() {
+async function fetchingchats() {
 
      try {
                if (chatrun === true && rooms.length > 0) {
@@ -557,13 +556,17 @@ async function createmessage() {
         
      }
   }
-  useEffect(()=>{
-          fetchingchats()
+useEffect(()=>{
+fetchingchats()
 },[rooms, chatrun])
 
 
+   
+
+
+
 //  chat box input css setting 
- let[inputstyle, setinputstyle] = useState({
+let[inputstyle, setinputstyle] = useState({
   display : "flex", padding : "10px", borderTop: "1px solid #eee",alignItems: "center",background: "white", color :"black"
  })
 let[clickstyle, setclickstyle] = useState({
@@ -576,7 +579,7 @@ let[clickstyle, setclickstyle] = useState({
    function chatboxicon(){
 setopacity({padding:" 20px 180px",
     display:" flex",
-    justifyContent: "space-between",
+    justifyContent: "space-between", 
     minHeight:" 100vh"})
   setchatcontainer({display : "none"})
    }
@@ -634,28 +637,11 @@ setopacity({padding:" 20px 180px",
 
       </div>
 
-    </div>  </div>
+    </div>
+    </div>
+     
   
-          <div className="header" id='header'>
-            <div className="headerleft">
-
-       <Link to="/"><i className="fa-solid fa-house" style={{fontSize: "18px", color : "white"}}></i></Link>
-        <i className="fa-solid fa-users-line" style={{fontSize: "18px"}}></i>
-        <i className="fa-solid fa-bell" style={{fontSize: "18px"}}></i>
-<Link to="/Questions"><i className="fa-solid fa-book-open-reader" style={{fontSize: "18px", color : "white"}}></i></Link>
-        </div>
-        <div className="headermiddle">
-        <input type="text" name="" id="" style={{height: "35px"}} className='dashboard-input' placeholder="search your favorite querry"/>
-        </div>
-        <div className="headerright">
-          {currentusers?<h6 style={{padding : "4px 8px", backgroundColor :"#0b57d0",color : "white", borderRadius : "20px"}}>{firstletter}</h6>:<h6>..</h6>}
-          {/* <h6 style={{padding : "4px 8px", backgroundColor :"#0b57d0",color : "white", borderRadius : "20px"}} >{firstletter}</h6> */}
-            {currentusers?<h6 style={{color : "white"}}>{user}</h6>: <h6 style={{color : "white"}}>loading...</h6>}
-            {/* <h6 style={{color : "white"}}>{user}</h6> */}
-              <button style={{backgroundColor :"#0b57d0", fontSize : "13.5px"}} onClick={loginname}>userprofile</button>
-              <button style={{backgroundColor :"#d7329a", fontSize : "13.5px"}} onClick={sessionend} >Logout</button>
-        </div>
-        </div>
+         <Header></Header>
         <div className="profile-section" style={opacity}>
     <div className="profile-left">
           <div className="profile-left-top">
@@ -673,16 +659,11 @@ setopacity({padding:" 20px 180px",
   <h5>no profile</h5>
 )}                  
                       </div> 
-
-                     {/* {gettingprofilepic ?
-                      <div className="profile-left-top-image">
-                          <img src={profilepic} alt="" />
-                      </div> :<></>
-                     } */}
+ 
                      <div className="profile-left-topcontent">
                        <div className="profile-left-top1">
                         {/* {user?<h3>{user}</h3>:<h3>loading..</h3>} */}
-                        <h3>{creatorid}</h3>
+                        <h3 style={{fontWeight : "400"}}>{creatorid}</h3>
                    <div className="follow-chat"  style={{
                       display: "flex",
     justifyContent: "center",
@@ -692,7 +673,7 @@ setopacity({padding:" 20px 180px",
              <div className="followbox">
 {selectorid !== authid && (
    checks.includes(authid) ? ( <button onClick={() => unfollowmutation.mutate()}
-      style={{ backgroundColor :"#0b57d0", fontSize : "13.5px" }}>Unfollow</button>) : (<button onClick={() => followmutation.mutate(selectorid)} style={{ backgroundColor :"white", color : "black", fontSize : "13.5px" }}>follow
+      style={{ backgroundColor :"#0b57d0", fontSize : "13.5px" }}>Unfollow</button>) : (<button onClick={() => followmutation.mutate(selectorid)} style={{ backgroundColor :"#0b57d0", color : "white", fontSize : "13.5px" }}>follow
     </button>
     
   )
@@ -704,34 +685,29 @@ setopacity({padding:" 20px 180px",
 
  </div>  
 
-                        {/* {checking?(<span onClick={()=> unfollowmutation.mutate()} style={{backgroundColor : "white", color : "black"}}>unfollow</span>):(<span onClick={()=>followmutation.mutate(selectorid)}>Follow</span>)} */}
-
                        </div>
-                       {/* {credentials?<div></div>:<span onClick={profileboxopen}>Add Profile credentials</span>} */}
-                       {/* <span onClick={()=>setprofileopen({display : "block"})}>Add Profile credentials</span> */}
-                         {/* <div className="getcredentials">
-                          {profilecredentials? <div> <div className="credentialsline"> <h5 className='credentialshover' style={{fontSize: "1.1rem"}}>{profession}</h5></div> </div> :<span></span>}     
-                         </div> */}
-                          {/* <div className="messagebox">
-                        <button onClick={()=>chatconnection(authid,selectorid)} >Chat</button>
-                       </div> */}
+                      
                          <div className="getcredentials">
-                           <div> <div className="credentialsline"> <h5 className='credentialshover' style={{fontSize: "1.1rem"}}>{profession}</h5></div> </div> 
-                           {/* {profession}    */}
-                          {/* {!profilecredentialsloading && !profilecredentialserror&&({profession})} */}
-                         </div>
+                          
+                             <div className="credentialsline">
+
+                             <h6 className='credentialshover' style={{fontSize: "16px",color : "black",fontWeight :"400"}}>{profession}</h6>
+                               {profilecredentials?<h6 style={{color : "black", fontSize: "16px", fontWeight : "400"}}>{passion}</h6>:<h6 style={{color : "white"}}></h6>}
+                             </div>
+                       
+                        
                        <div className="followersandfollowings">
-                       <span>{fetchfollowings} Followings</span> 
-                       <span>{fetchfollowers} followers </span> <br /></div>
+                       <span>{fetchfollowings} followings</span> 
+                       <span>{fetchfollowers} followers </span> <br />
+                       </div>
                       
                      </div>
+
+                 
                    </div>
 
-                <div className="profile-des" style={{padding:" 2px 24px 16px 29px"}}>
-                  {profilecredentials?<h6 style={{color : "white", fontSize: "16px"}}>{passion}</h6>:<h6 style={{color : "white"}}></h6>}
-                  {/* <h6  style={{color : "white", fontSize: "16px"}}>love coding it kills depression,</h6> */}
-                </div>
-
+               
+              </div>
                 <div className="everyposts-section">
 
 
@@ -739,37 +715,33 @@ setopacity({padding:" 20px 180px",
                       <div className="everyposts-section">
                     { 
                     postdocuments.map((listings)=> (
-                      <div className="Posts" style={{marginTop : "8px"}} key={listings.$id} >
+                      <div className="Posts" style={{marginTop : "20px"}} key={listings.$id} >
                       <div className="every-post">
                       <div className="onlycontent">
                         <div className="post-heading" style={{lineHeight: "10px"}} >
-                          <h5 style={{color : "white"}}>{listings.posttitle}</h5> 
+                          <h5 style={{color : "black"}}>{listings.posttitle}</h5> 
                           <div className="incdate" style={{display: "flex", justifyContent: "space-between"}}> 
-                          <span style={{fontWeight: "400", fontSize: "14px", color: "white",textDecoration : "underline"}}>{listings.postcategory ? "category - " + listings.postcategory :listings.postcategory} </span>
-                          <span style={{fontWeight: "400", fontSize: "14px", color: "white", borderRadius:"20px", padding : "7px 7px"}} >{listings.Date}</span>
+                          <span style={{fontWeight: "400", fontSize: "14px", color: "black",textDecoration : "underline"}}>{listings.postcategory ? "category - " + listings.postcategory :listings.postcategory} </span>
+                          <span style={{fontWeight: "400", fontSize: "14px", color: "#0b57d0", borderRadius:"20px", padding : "7px 7px"}} >{listings.Date}</span>
                           </div> 
                         </div> 
-                         {/* <div className="post-category">
-                        
-                         <span style={{fontWeight: "500"}} >category : {listings.postcategory}</span>
-
-                         </div> */}
+                       
                         <div className="post-user" style={{display : "flex", justifyContent :"space-between", padding: "8px 0px",color : "#626161"}}>
-                          <h6 onClick={()=> reduxsend(listings.authid,listings.postcreator)} style={{color :"#626161", textDecoration: "underline",fontSize: "14px", cursor:"pointer"}}>{listings.postcreator}</h6>
+                          <h6 onClick={()=> reduxsend(listings.authid,listings.postcreator)} style={{color :"#0b57d0", textDecoration: "underline",fontSize: "14px", cursor:"pointer"}}>{listings.postcreator}</h6>
                          
-                          {/* <i class="fa-solid fa-circle-xmark" onClick={()=>postdeletion(listings.$id)} style={deletepost}></i> */}
+                        
                         </div>   
                       
                         <div className="post-content"> 
                        {gettingid === listings.$id ?(
                          <h6 style={{color: "white",fontWeight:"400",lineHeight:"24px" }}>{nottrimcontent}</h6>
-                        ):( <h6 style={{color: "white",fontWeight:"400",lineHeight:"24px" }}>{listings.postcontent.slice(0,300)}</h6> )}
+                        ):( <h6 style={{color: "black",fontWeight:"400",lineHeight:"24px" }}>{listings.postcontent.slice(0,300)}</h6> )}
                         <h6 style={{cursor: "pointer", fontWeight : "300", color: "#0b57d0"}} onClick={()=>nottrim(listings.$id)}>{gettingid === listings.$id ?"" :"(... more⬇️)"}</h6>
                         
                         </div> 
                         </div>
-                        <div className="post-image" style={{display: "flex", justifyContent:"center", backgroundColor : "#626161"}}>
-                          <img src={listings.featuredimage} alt="image" style={{width:"80%"}} />
+                        <div className="post-image" style={{display: "flex", justifyContent:"center"}}>
+                          <img src={listings.featuredimage} alt="image" style={{width:"95%",borderRadius : "21px"}} />
                       </div>
                       <div className="like-comment-section">
                          <div className="like-section"> 
@@ -848,17 +820,18 @@ setopacity({padding:" 20px 180px",
                
                          </div>    
     </div>
+   
     <div className="profile-right" style={{ width: "36%" }}>
           <div className="profile-right-top">
-            <h5 style={{color : "white"}}>
+            <h5 style={{color : "black"}}>
             Credentials & Achievements Highlights
             </h5>
-            <i className="fa-solid fa-pen" style={{color: "white"}}></i>
-          </div> <hr style={{margin : "0px", color : 'white'}} />
-          <div className="profile-right-credentials" style={{color : "white"}}>
+            <i className="fa-solid fa-pen" style={{color: "black"}}></i>
+          </div> <hr style={{margin : "0px", color : 'black'}} />
+          <div className="profile-right-credentials" style={{color : "black"}}>
             <div className="education-credentials">
               {/* <h6 onClick={educationcredentialopen}  style={{ color: "white" }} > <i class="fa-solid fa-graduation-cap" style={{ color: "#0b57d0" }}> </i> Add Education credentials</h6> */}
-              {educationcredentials && Object.keys(educationcredentials).length > 0 ?( <><h6 style={{color : "white", textDecoration: "underline"}}>Eduation credentials</h6></>):(<h6 style={{ color: "white" }} > <i className="fa-solid fa-graduation-cap" style={{ color: "#0b57d0" }}> </i> Education credentials</h6>)}
+              {educationcredentials && Object.keys(educationcredentials).length > 0 ?( <><h6 style={{color : "black", textDecoration: "underline"}}>Eduation credentials</h6></>):(<h6 style={{ color: "black" }} > <i className="fa-solid fa-graduation-cap" style={{ color: "#0b57d0" }}> </i> Education credentials</h6>)}
               <div className="education-credential-box">
                 {/* <form action="" className='education-form'>
                   <i className="fa-solid fa-circle-xmark" style={{ float: "right", color: "black" }}></i>
@@ -891,7 +864,7 @@ setopacity({padding:" 20px 180px",
             </div>
             <div className="employment-credentials">
               {/* <h6 style={{ color: "white" }} onClick={Employmentopen}> <i class="fa-solid fa-user" style={{ color: "#0b57d0" }}></i> Add Employment credentials</h6> */}
-              {employmentcredentials && Object.keys(employmentcredentials).length > 0 ? (<><h6 style={{color: "white", textDecoration: "underline"}}>Employment credentials</h6><h6  style={{color : "white", textDecoration: "underline"}}></h6></>):(<h6   style={{ color: "white" }} > <i className="fa-solid fa-graduation-cap" style={{ color: "#0b57d0" }}> </i>  Employment credentials</h6>)}
+              {employmentcredentials && Object.keys(employmentcredentials).length > 0 ? (<><h6 style={{color: "black", textDecoration: "underline"}}>Employment credentials</h6><h6  style={{color : "black", textDecoration: "underline"}}></h6></>):(<h6   style={{ color: "black" }} > <i className="fa-solid fa-graduation-cap" style={{ color: "#0b57d0" }}> </i>  Employment credentials</h6>)}
               {/* {Object.keys(fetchingeducations).length > 0 ? (
   <h6 onClick={educationcredentialopen} style={{ color: "white", textDecoration: "underline" }}>
     Edit credentials
@@ -929,7 +902,7 @@ setopacity({padding:" 20px 180px",
 
            <div className="location-credentials">
               {/* <h6 style={{ color: "white" }} onClick={Locationopen}> <i class="fa-solid fa-location-dot" style={{ color: "#0b57d0" }}></i> Add Location credentials</h6> */}
-              {locationcredentials && Object.keys(locationcredentials).length > 0 ? (<><h6 style={{color: "white", textDecoration: "underline"}}>Location credentials</h6><h6  style={{color : "white", textDecoration: "underline"}}></h6></>):(<h6 style={{ color: "white" }} > <i className="fa-solid fa-location-dot" style={{ color: "#0b57d0" }}> </i> Add location credentials</h6>)}
+              {locationcredentials && Object.keys(locationcredentials).length > 0 ? (<><h6 style={{color: "black", textDecoration: "underline"}}>Location credentials</h6><h6  style={{color : "black", textDecoration: "underline"}}></h6></>):(<h6 style={{ color: "black" }} > <i className="fa-solid fa-location-dot" style={{ color: "#0b57d0" }}> </i> Add location credentials</h6>)}
               <div className="location-credential-box">
                 {/* <form action="" className='education-form'>
                     <i className="fa-solid fa-circle-xmark" style={{ float: "right", color: "white" }}></i>
@@ -954,7 +927,9 @@ setopacity({padding:" 20px 180px",
    
         </div>
 </div>
-    </div>
+   </div>
+    
+
   )
 }
 

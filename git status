@@ -1,0 +1,114 @@
+[33mcommit 70a995ac44e311c2b379dbd94b05339f9158e8b9[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;32mprofileuser[m[33m)[m
+Author: Birendra <birendrakumar2488@gmail.com>
+Date:   Wed May 13 15:25:59 2026 +0530
+
+    changes
+
+[33mcommit f12d4e9620e8ccc2b80743506f635bbf201f33bc[m[33m ([m[1;31morigin/profileuser[m[33m)[m
+Author: Birendra <birendrakumar2488@gmail.com>
+Date:   Wed May 13 15:19:39 2026 +0530
+
+    commited every section
+
+[33mcommit 40e451d60960c0fb9d2e31896d41bee3e715f934[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Merge: 7be3735 1e15a17
+Author: Birendra Kumar <160407711+Bitu-susu@users.noreply.github.com>
+Date:   Tue May 5 16:06:59 2026 +0530
+
+    Merge pull request #4 from Bitu-susu/userprofile
+    
+    changes the ui of the page userprofile, profileuser for both jsx an t…
+
+[33mcommit 1e15a173bc64da3a1d94b0776519da59683d58e6[m[33m ([m[1;31morigin/userprofile[m[33m, [m[1;32muserprofile[m[33m)[m
+Author: Birendra <birendrakumar2488@gmail.com>
+Date:   Tue May 5 16:04:22 2026 +0530
+
+    changes the ui of the page userprofile, profileuser for both jsx an the css
+
+[33mcommit 7be3735f08f85e6ff2a67d1c1c156af0c5626721[m
+Merge: 2b146dd 1fb188d
+Author: Birendra Kumar <160407711+Bitu-susu@users.noreply.github.com>
+Date:   Tue Apr 21 15:47:24 2026 +0530
+
+    Merge pull request #3 from Bitu-susu/userprofile
+    
+    Userprofile
+
+[33mcommit 1fb188df79a8ccabb50c0e9a2afb069636b147ee[m
+Merge: f6f08a1 2b146dd
+Author: Birendra <birendrakumar2488@gmail.com>
+Date:   Tue Apr 21 15:44:27 2026 +0530
+
+    Merge branch 'main' of https://github.com/Bitu-susu/social-website into userprofile
+
+[33mcommit f6f08a1a78a818f08cbaf8673f6699f86c87a81a[m
+Author: Birendra <birendrakumar2488@gmail.com>
+Date:   Tue Apr 21 15:37:22 2026 +0530
+
+    created new file userprofile.js , changes in userprofile.jsx file
+
+[33mcommit 2795ae80ade896b1d1ff76590882e91602100032[m
+Author: Birendra <birendrakumar2488@gmail.com>
+Date:   Wed Apr 15 13:54:57 2026 +0530
+
+     css change in the profile left top section of the userprofile section
+
+[33mcommit 0bd58bbc59a41253640718a81a91edb96c5f49a2[m
+Author: Birendra <birendrakumar2488@gmail.com>
+Date:   Wed Apr 15 12:40:49 2026 +0530
+
+    newdash ui modified
+
+[33mcommit 2b146dd3eba35437b6387cf2fc865b0a3371e51d[m
+Merge: 641f5b2 cf74d73
+Author: Birendra Kumar <160407711+Bitu-susu@users.noreply.github.com>
+Date:   Wed Apr 15 01:21:48 2026 +0530
+
+    Merge pull request #2 from Bitu-susu/profileuser
+    
+    Profileuser
+
+[33mcommit cf74d73e90ae3f610076f0e8a29c2dd3987ea32f[m
+Author: Birendra <birendrakumar2488@gmail.com>
+Date:   Wed Apr 15 01:20:43 2026 +0530
+
+    ui improve of profileuser and comment out the console.logs in increaselikes section
+
+[33mcommit 6ebfa271e9fbc8810da18621a42ee1cc265fe303[m
+Author: Birendra <birendrakumar2488@gmail.com>
+Date:   Tue Apr 14 19:36:51 2026 +0530
+
+    removing all unnecessery codes and comment out codes
+
+[33mcommit 014313f2d6e30910a08d7e685e237b54a9338be1[m
+Author: Birendra <birendrakumar2488@gmail.com>
+Date:   Tue Apr 14 17:05:20 2026 +0530
+
+    slightly change the ui of follow button
+
+[33mcommit 641f5b2f9bab8081eee466a05056fdad119a284a[m
+Merge: 246d31e a00a6cd
+Author: Birendra Kumar <160407711+Bitu-susu@users.noreply.github.com>
+Date:   Tue Apr 14 16:25:04 2026 +0530
+
+    Merge pull request #1 from Bitu-susu/profileuser
+    
+    Profileuser
+
+[33mcommit a00a6cd189078a959af6677c84630746ec321cba[m
+Author: Birendra <birendrakumar2488@gmail.com>
+Date:   Tue Apr 14 16:20:18 2026 +0530
+
+    changing small letter
+
+[33mcommit 35b6bd997526d578c9d3c955bf3328bd094e2edc[m
+Author: Birendra <birendrakumar2488@gmail.com>
+Date:   Tue Apr 14 13:03:23 2026 +0530
+
+    i improve the ui of follow and unfollow button
+
+[33mcommit 246d31eacd92468bef76b0621291864b8a64d63e[m
+Author: Birendra <birendrakumar2488@gmail.com>
+Date:   Thu Apr 9 23:40:46 2026 +0530
+
+    first commit

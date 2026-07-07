@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import authService from '../../../appwrite/auth'
 import { Client, Storage, ID } from 'appwrite'
 import { Account, Databases, Query, } from 'appwrite'
@@ -14,7 +14,7 @@ import database from '../../../appwrite/database'
 import { useQuery } from "@tanstack/react-query";
 // import { useNavigate } from 'react-router-dom'  
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-
+import JoditEditor from 'jodit-react';
 //   importing custom hooks
 import useProfile from '../Customs/Increase/userprofile'
 import { databases } from '../Customs/Increase/appwritesdk'
@@ -22,7 +22,10 @@ import { storage } from '../Customs/Increase/appwritesdk'
 import {likesincrease,likesdecrease} from '../Customs/Increase/increaselikes'
 // import authService from '../../../appwrite/auth'
 import useFetchall from '../Customs/Increase/userpostsallfetchs'
+import Header from '../Customs/Increase/header/Header'
 
+
+import usePosts from '../Customs/Increase/posts' 
 
      
 // }
@@ -443,9 +446,92 @@ const createemploy = useMutation({
              // adding profile pic
  const[profilepic, setprofilepic] = useState("")
 
+//   posting comes from new dash
+
+  const [title, settitle] = useState("")
+          const [category, setcategory] = useState("");
+          const [content, setcontent] = useState("");
+           const[postdisplay, setpostdisplay] = useState({})
+           const editor = useRef(null);
+function opacitychanger() {
+                      setlowopacity({opacity : "0.1"})
+                      setpostdisplay({display : "block"})
+                 }
+
+                 function postboxclose() {
+                    setlowopacity({opacity : "1.0"})
+                    setpostdisplay({display : "none"})
+                }
+ function addingposts(e){
+    e.preventDefault(); 
+     postMutation.mutate({title, category, authid, user, content})
+    }
+        const {submitpost, submit, submitshown} = usePosts()
+        const postMutation = useMutation({
+  mutationFn: submitpost,
+        
+  onSuccess: () => {
+    // 🔥 THIS triggers posts API again
+    queryClient.invalidateQueries({ queryKey: ["documents"]});
+  },
+}); 
 
   return (
     <div>
+
+        <div className="posting" style ={postdisplay}>
+         <div className="fullposting">
+         <div className="posting-top">
+         <h6 style={{padding : "4px 8px", backgroundColor :"#0b57d0",color : "white", borderRadius : "20px"}} >{firstletter}</h6>
+         
+            <h6 style={{color : "white"}}>{user}</h6>
+            <i className="fa-solid fa-xmark" onClick={postboxclose}  style={{color: "black",position: "absolute", right : "0px", zIndex:"4"}}></i>
+            </div>
+            <div className="posting-bottom">
+            <form action="" className='postform' onSubmit={addingposts}>
+          <div className="post-form-top">
+  <input type="text" name="" id="" required  value={title} onChange={(e)=>settitle(e.target.value)} placeholder='post content' style={{width :"70%", height:"40px", bordedr : "none", background : "white", color: "black", border:" 1px solid #b6b1b1"}}/>
+  <select name="" id="" required  value={category} style={{background : "white", color : 'black', border:" 1px solid #b6b1b1"}} onChange={(e)=>setcategory(e.target.value)}>
+    <option value="">Select post category</option>
+    <option value="AI">AI</option>                       
+    <option value="Science">Science & Technology</option>
+    <option value="EV">EV</option>
+    <option value="Business & Startup">Business & Startup</option>
+    <option value="Politics">Politics</option>
+    <option value="Stock Market">Stock Market</option>
+    <option value="Fashion & Lifestyle">Fashion & Lifestyle</option>
+    <option value="Culture">Culture</option>
+    <option value="Others">Others</option>
+  </select>
+  </div>
+  <JoditEditor 
+        ref={editor}
+        value={content}
+        onChange={setcontent}
+   
+         />
+         <div className="with-submit">
+         <div className="post-form-image" style={{marginTop : "10px"}}>
+         <label htmlFor="" style={{color : "white"}}>Cover image</label>
+         <input type="file" name="" id="uploader" style={{color : "white"}}  required />
+         </div>
+         <div className="popularreadings">
+          <button className='post-submit' style={{backgroundColor : "#0b57d0"}}>Submit</button>
+         </div>
+         </div>
+            <div className="post-form-result">
+
+              {/* <h6>{success}</h6> */}
+            </div>
+         </form>
+         
+              </div>
+              </div>
+          </div>
+
+
+
+
       <div className="profilecredential"style={profileopen}>
         <div className="profilebox">
         <i className="fa-solid fa-circle-xmark"   style={{color: "white",position: "absolute", right : "0px",zIndex:"4"}} onClick={profileboxclose}></i>
@@ -489,26 +575,10 @@ const createemploy = useMutation({
         </div>
       </div>
       
-      <div className="header" id='header'>
-            <div className="headerleft">
-
-        <Link to="/"><i className="fa-solid fa-house" style={{fontSize: "18px", color : "white"}}></i></Link>
-        <i className="fa-solid fa-users-line" style={{fontSize: "18px"}}></i>
-        <i className="fa-solid fa-bell" style={{fontSize: "18px"}}></i>
-         <Link to="/Questions"><i className="fa-solid fa-book-open-reader" style={{fontSize: "18px", color : "white"}}></i></Link>
-        </div>
-        <div className="headermiddle">
-        <input type="text" name="" id="" style={{height: "35px"}} className='dashboard-input' placeholder="search your favorite querry"/>
-        </div>
-        <div className="headerright">
-          {user?<h6 style={{padding : "4px 8px", backgroundColor :"#0b57d0",color : "white", borderRadius : "20px"}}>{firstletter}</h6>:<h6>..</h6>}
-          {/* <h6 style={{padding : "4px 8px", backgroundColor :"#0b57d0",color : "white", borderRadius : "20px"}} >{firstletter}</h6> */}
-            {user?<h6 style={{color : "white"}}>{user}</h6>: <h6 style={{color : "white"}}>loading...</h6>}
-            {/* <h6 style={{color : "white"}}>{user}</h6> */}
-              <button style={{backgroundColor :"#0b57d0", fontSize : "13.5px"}}>userprofile</button>
-              <button style={{backgroundColor :"#d7329a", fontSize : "13.5px"}} >Logout</button>
-        </div>
-        </div>
+        <Header></Header>
+      {/* <div className="header" id='header'>
+           
+        </div> */}
 <div className="profile-section" style={lowopacity}>
     <div className="profile-left">    
           <div className="profile-left-top">
@@ -532,7 +602,7 @@ const createemploy = useMutation({
                     
                       <div className="profile-left-topcontent">
                        <div className="profile-left-top1">        
-                        {user?<h3>{user}</h3>:<h3></h3>}
+                        {user?<h3 style={{fontWeight : "400"}}>{user}</h3>:<h3></h3>}
                          {/* <span onClick={()=>increasefollowers(authid)}>Follow</span> */}
                          {/* <button style={{backgroundColor :"#0b57d0", fontSize : "13.5px"}} onClick={increasefollowers(id)}>userprofile</button> */}
                        {profilecredentials?<div  onClick={Editboxopen} style={{cursor : "pointer"}} >Edit credentials</div>:<span onClick={profileboxopen}style={{cursor :'pointer'}}>Add Profile credentials</span>}
@@ -542,8 +612,8 @@ const createemploy = useMutation({
                          <div className="getcredentials">
                           {/* {profilecredentials? <div> <div className="credentialsline"> <h5 className='credentialshover' style={{fontSize: "1.1rem"}}>{credentials1}</h5><span className='credentialsvisible' onClick={profileboxopen}>Edit</span></div> </div> :<span></span>}      */}
                           {/* {credentials? <div> <div className="credentialsline"> <h5 className='credentialshover' style={{fontSize: "1.1rem"}}>{credentials.profession}</h5></div> </div> :<span>loading</span>} */} 
-                          {profilecredentials?<h6 style={{color : "white", fontSize: "16px"}}>{credentials1}</h6>:<h6 style={{color : "white"}}></h6>}
-                           {profilecredentials?<h6 style={{color : "white", fontSize: "16px"}}>{credentials2}</h6>:<h6 style={{color : "white"}}></h6>}
+                          {profilecredentials?<h6 style={{color : "black", fontSize: "16px,", fontWeight :"400"}}>{credentials1}</h6>:<h6 style={{color : "white"}}></h6>}
+                           {profilecredentials?<h6 style={{color : "black", fontSize: "16px",fontWeight : "400"}}>{credentials2}</h6>:<h6 style={{color : "white"}}></h6>}
                          </div>
                        <div className="followersandfollowings">
                         {!followingsloading && !followingserror && (  
@@ -567,40 +637,38 @@ const createemploy = useMutation({
                  
           
            {!postdocumentsloading && !postdocumentserror &&(
-                      <div className="everyposts-section">
+           postdocuments.length > 0 ? <>
+
+               <div className="everyposts-section">
                     { 
                     postdocuments.map((listings)=> (
-                      <div className="Posts" style={{marginTop : "8px"}} key={listings.$id} >
+                      <div className="Posts" style={{marginTop : "20px"}} key={listings.$id} >
                       <div className="every-post">
                       <div className="onlycontent">
                         <div className="post-heading" style={{lineHeight: "10px"}} >
-                          <h5 style={{color : "white"}}>{listings.posttitle}</h5> 
+                          <h5 style={{color : "black"}}>{listings.posttitle}</h5> 
                           <div className="incdate" style={{display: "flex", justifyContent: "space-between"}}> 
-                          <span style={{fontWeight: "400", fontSize: "14px", color: "white",textDecoration : "underline"}}>{listings.postcategory ? "category - " + listings.postcategory :listings.postcategory} </span>
-                          <span style={{fontWeight: "400", fontSize: "14px", color: "white",background:"#0b57d0", borderRadius:"20px", padding : "7px 7px"}} >{listings.Date}</span>
+                          <span style={{fontWeight: "400", fontSize: "14px", color: "black",textDecoration : "underline"}}>{listings.postcategory ? "category - " + listings.postcategory :listings.postcategory} </span>
+                          <span style={{fontWeight: "400", fontSize: "14px", color: "#0b57d0", borderRadius:"20px", padding : "7px 7px"}} >{listings.Date}</span>
                           </div> 
                         </div> 
-                         {/* <div className="post-category">
                         
-                         <span style={{fontWeight: "500"}} >category : {listings.postcategory}</span>
-
-                         </div> */}
-                        <div className="post-user" style={{display : "flex", justifyContent :"space-between", padding: "8px 0px",color : "#626161"}}>
-                          <h6 onClick={()=> reduxsend(listings.authid,listings.postcreator)} style={{color :"#626161", textDecoration: "underline",fontSize: "14px", cursor:"pointer"}}>{listings.postcreator}</h6>
+                        <div className="post-user" style={{display : "flex", justifyContent :"space-between", padding: "8px 0px",color : "#0b57d0"}}>
+                          <h6 onClick={()=> reduxsend(listings.authid,listings.postcreator)} style={{color :"#0b57d0", textDecoration: "underline",fontSize: "14px", cursor:"pointer"}}>{listings.postcreator}</h6>
                          
-                          {/* <i class="fa-solid fa-circle-xmark" onClick={()=>postdeletion(listings.$id)} style={deletepost}></i> */}
+                         
                         </div>   
                       
                         <div className="post-content"> 
                        {gettingid === listings.$id ?(
-                         <h6 style={{color: "white",fontWeight:"400",lineHeight:"24px" }}>{nottrimcontent}</h6>
-                        ):( <h6 style={{color: "white",fontWeight:"400",lineHeight:"24px" }}>{listings.postcontent.slice(0,300)}</h6> )}
+                         <h6 style={{color: "black",fontWeight:"400",lineHeight:"24px" }}>{nottrimcontent}</h6>
+                        ):( <h6 style={{color: "black",fontWeight:"400",lineHeight:"24px" }}>{listings.postcontent.slice(0,300)}</h6> )}
                         <h6 style={{cursor: "pointer", fontWeight : "300", color: "#0b57d0"}} onClick={()=>nottrim(listings.$id)}>{gettingid === listings.$id ?"" :"(... more⬇️)"}</h6>
                         
                         </div> 
                         </div>
-                        <div className="post-image" style={{display: "flex", justifyContent:"center", backgroundColor : "#626161"}}>
-                          <img src={listings.featuredimage} alt="image" style={{width:"80%"}} />
+                        <div className="post-image" style={{display: "flex", justifyContent:"center",}}>
+                          <img src={listings.featuredimage} alt="image" style={{width:"95%", borderRadius : "21px"}} />
                       </div>
                       <div className="like-comment-section">
                          <div className="like-section"> 
@@ -672,22 +740,31 @@ const createemploy = useMutation({
   
                 ))}
                     </div>
+            </> : <> <div style={{display : 'flex', alignItems : "center", height :"200px", gap : "10px"}}>
+               <h3 style={ {fontWeight : "400"}}>no posts yet</h3>  <h6 style={ {cursor : "pointer", textDecoration : "underline"}} onClick={opacitychanger}>add post</h6>
+               </div> </>
+
+
+
+                   
                      )} 
+
+
     </div>
      {/* </div> */}
     <div className="profile-right" style={{ width: "36%" }}>
           <div className="profile-right-top">
-            <h5 style={{color : "white"}}>
+            <h5 style={{color : "black"}}>
             Credentials & Achievements Highlights
             </h5> 
-            <i className="fa-solid fa-pen" style={{color: "white"}}></i>
+            <i className="fa-solid fa-pen" style={{color: "black"}}></i>
           </div>
-           <hr style={{margin : "0px", color : 'white'}} />
-          <div className="profile-right-credentials" style={{color : "white"}}>
+           <hr style={{margin : "0px", color : 'black'}} />
+          <div className="profile-right-credentials" style={{color : "black"}}>
             <div className="education-credentials">
               {/* <h6 onClick={educationcredentialopen}  style={{ color: "white" }} > <i class="fa-solid fa-graduation-cap" style={{ color: "#0b57d0" }}> </i> Add Education credentials</h6> */}
               {educationcredentials && Object.keys(educationcredentials).length > 0  ?(
-                 <><h6 style={{color : "white", textDecoration: "underline"}}>Eduation credentials</h6><h6 onClick={educationcredentialopen} style={{color : "white", textDecoration: "underline"}}>Edit</h6>
+                 <><h6 style={{color : "black", textDecoration: "underline"}}>Eduation credentials</h6><h6 onClick={educationcredentialopen} style={{color : "black", textDecoration: "underline"}}>Edit</h6>
              <div className="education-credential-box" style={educationopen}>
                 <form action="" className='education-form'>
                   <i className="fa-solid fa-circle-xmark" onClick={educationcredentialclose} style={{ float: "right", color: "black" }}></i>
@@ -709,7 +786,7 @@ const createemploy = useMutation({
               </>
             ):(
             
-            <><h6 onClick={educationcredentialopen}  style={{ color: "white" }} > <i className="fa-solid fa-graduation-cap" style={{ color: "#0b57d0" }}> </i> Add Education credentials</h6>
+            <><h6 onClick={educationcredentialopen}  style={{ color: "black" }} > <i className="fa-solid fa-graduation-cap" style={{ color: "#0b57d0" }}> </i> Add Education credentials</h6>
  <div className="education-credential-box" style={educationopen}>
                 <form action="" className='education-form'>
                   <i className="fa-solid fa-circle-xmark" onClick={educationcredentialclose} style={{ float: "right", color: "black" }}></i>
@@ -753,7 +830,7 @@ const createemploy = useMutation({
             </div>
             <div className="employment-credentials">
             
-              {employmentcredentials && Object.keys(employmentcredentials).length > 0 ? (<><h6 style={{color: "white", textDecoration: "underline"}}>Employment credentials</h6><h6 onClick={Employmentopen} style={{color : "white", textDecoration: "underline"}}>Edit</h6>
+              {employmentcredentials && Object.keys(employmentcredentials).length > 0 ? (<><h6 style={{color: "black", textDecoration: "underline"}}>Employment credentials</h6><h6 onClick={Employmentopen} style={{color : "black", textDecoration: "underline"}}>Edit</h6>
               
               <div className="employment-credential-box" style={employmentclose}>
               <form action="" className='education-form'>
@@ -776,7 +853,7 @@ const createemploy = useMutation({
               </>)
               :
               (<>
-                <h6 onClick={Employmentopen}  style={{ color: "white" }} > <i className="fa-solid fa-graduation-cap" style={{ color: "#0b57d0" }}> </i> Add Employment credentials</h6>
+                <h6 onClick={Employmentopen}  style={{ color: "black" }} > <i className="fa-solid fa-graduation-cap" style={{ color: "black" }}> </i> Add Employment credentials</h6>
               <div className="employment-credential-box" style={employmentclose}>
               <form action="" className='education-form'>
                   <i className="fa-solid fa-circle-xmark" onClick={Employmentclose} style={{ float: "right", color: "black" }}></i>
@@ -801,21 +878,21 @@ const createemploy = useMutation({
               <div className="education-response">  
                 {employmentcredentials ? (
                   <><span>{emp1}</span><br /><span>{emp2}</span></>
-
+                    
                 ) : (<span>no credentials yet</span>)}
               </div>
             </div>
 
            <div className="location-credentials">
               {/* <h6 style={{ color: "white" }} onClick={Locationopen}> <i class="fa-solid fa-location-dot" style={{ color: "#0b57d0" }}></i> Add Location credentials</h6> */}
-              {locationcredentials && Object.keys(locationcredentials).length > 0 ? (<><h6 style={{color: "white", textDecoration: "underline"}}>Location credentials</h6><h6 onClick={Locationopen} style={{color : "white", textDecoration: "underline"}}>Edit</h6>
+              {locationcredentials && Object.keys(locationcredentials).length > 0 ? (<><h6 style={{color: "black", textDecoration: "underline"}}>Location credentials</h6><h6 onClick={Locationopen} style={{color : "black", textDecoration: "underline"}}>Edit</h6>
                <div className="location-credential-box" style={locationclose}>
                 <form action="" className='education-form'>
-                    <i className="fa-solid fa-circle-xmark" onClick={Locationclose} style={{ float: "right", color: "white" }}></i>
+                    <i className="fa-solid fa-circle-xmark" onClick={Locationclose} style={{ float: "right", color: "black" }}></i>
                     <div className="mb-3">
-                      <label htmlFor="formGroupExampleInput" className="form-label" style={{color : "white"}}>Add Location credentials</label>
+                      <label htmlFor="formGroupExampleInput" className="form-label" style={{color : "black"}}>Add Location credentials</label>
                       <input type="text" className="form-control" id="formGroupExampleInput"  placeholder="type city & state name" style={{marginBottom : "7px"}} value={location1} onChange={(e)=>setlocation1(e.target.value)}/>
-
+                     
                     </div>
                     <button type="submit" onClick={(e)=>{e.preventDefault() ; editlocation.mutate(authid)}}  className='btn btn-primary'>Edit</button>
                   </form>
@@ -824,12 +901,12 @@ const createemploy = useMutation({
               :
 
               (<>
-              <h6 onClick={Locationopen}  style={{ color: "white" }} > <i className="fa-solid fa-location-dot" style={{ color: "#0b57d0" }}> </i> Add location credentials</h6>
+              <h6 onClick={Locationopen}  style={{ color: "black" }} > <i className="fa-solid fa-location-dot" style={{ color: "black" }}> </i> Add location credentials</h6>
                <div className="location-credential-box" style={locationclose}>
                 <form action="" className='education-form'>
-                    <i className="fa-solid fa-circle-xmark" onClick={Locationclose} style={{ float: "right", color: "white" }}></i>
+                    <i className="fa-solid fa-circle-xmark" onClick={Locationclose} style={{ float: "right", color: "black" }}></i>
                     <div className="mb-3">
-                      <label htmlFor="formGroupExampleInput" className="form-label" style={{color : "white"}}>Add Location credentials</label>
+                      <label htmlFor="formGroupExampleInput" className="form-label" style={{color : "black"}}>Add Location credentials</label>
                       <input type="text" className="form-control" id="formGroupExampleInput"  placeholder="type city & state name" style={{marginBottom : "7px"}} />
 
                     </div>
