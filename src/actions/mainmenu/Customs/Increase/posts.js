@@ -58,53 +58,23 @@ async function submitpost({title,category,authid,user,content}){
                   alert(error)
     }
 }
-    return{ submitpost, submit, submitshown}
+
+async function deletepost(postid){
+   try {
+      let deletingpost = await databases.deleteDocument(conf.appwritedatabaseid,conf.appwritepostcollectionid,postid)
+
+      console.log(deletingpost, "post successfully deleted");
+      
+   } catch (error) {
+     console.log(error);
+     
+   }
+}
+
+
+return{ submitpost, submit, submitshown, deletepost}
 }
 
 export default usePosts;
 
 
-//  async function submitpost(e) {
-      //   e.preventDefault(); 
-      //   setpostdisplay({display : "none"})
-      //   setsubmit("Your post is submitting.........")
-      //     setsubmitshown({display : "block"})
-      //   const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);                                                   
-      //     //   first uploading image in the post
-      //     const storage = new Storage(client);
-      //     const databases = new Databases(client);
-      //     try {
-      //       const result = await storage.createFile( conf.appwritebucketid,ID.unique(), 
-      //       document.getElementById('uploader').files[0], // file
-      //          ); 
-      //         //  await new Promise(resolve => setTimeout(resolve, 0));
-      //          const tempElement = document.createElement('div');
-      //          tempElement.innerHTML = content;
-      //          const postContent = tempElement.innerText;   
-      //          let url = `https://cloud.appwrite.io/v1/storage/buckets/677eb5a00022f1981a75/files/${result.$id}/view?project=677eb42f003e041a0476`;
-      //           //  then uploading the post title, content, category etc in the database 
-      //             const newdocument =  await databases.createDocument(conf.appwritedatabaseid,conf.appwritepostcollectionid,ID.unique(),{
-      //               "posttitle" :title,
-      //               "postcontent" :postContent,
-      //               "featuredimage" :url,
-      //               "postcategory":category,
-      //               "Date" :  new Date().toDateString(),
-      //               "authid" : authid,
-      //               "postcreator" :user,
-      //               'Like':[],
-      //             })
-      //            if (newdocument) {
-      //             // alert("your post successfully saved")
-      //             setsubmit("Your post successfully added")
-      //             setnewpost(true)
-                 
-      //            }
-                 
-      //     } catch (error) {  
-      //        console.log("error in creating post",error);
-      //             // setsuccess(error)
-      //             alert(error)
-            
-      //     }
-           
-      // }

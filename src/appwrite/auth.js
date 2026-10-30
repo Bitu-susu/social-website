@@ -46,7 +46,6 @@ export class Authservise{
        async logout(){
         try {
               const logout = await this.account.deleteSessions();
-             
               return logout;
         } catch (error) {
               console.log("error in deleting session", error)

@@ -76,7 +76,7 @@
  .layout2{
      background-color: white;
      height: 100vh;
-     width: 32%;
+     width: 29%;
      /* border-radius: 35px; */
      /* background: linear-gradient(rgba(0,0,0,.4), rgba(0,0,0,.4)), */
  }
@@ -90,7 +90,7 @@
     
  }
  .signup-form{
-  width: 80%;
+  width: 89%;
    line-height: 25px;
  }
  .mb-3{
@@ -115,13 +115,14 @@
 
 
  .layout1{
-      width: 70%;
+      width: 85%;
     display: flex;
     justify-content: space-around;
+    border-right: 1px solid #eee5e5; 
  }
  .layout1content{
-      width: 30%;
-      width: 30%;
+     
+      width: 27%;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -129,7 +130,7 @@
  }
 
  .layout1image{
-  width: 80%;
+  width: 100%;
       display: flex;
     align-items: center;
     justify-content: center;

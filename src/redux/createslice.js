@@ -22,7 +22,7 @@ import { createSlice } from '@reduxjs/toolkit'
         state.username = action.payload
     },
     sendloginname:(state,action) =>{
-        state.loginname = action.payload
+        state.loginname = action.payload   
     },
     sendcreatorname:(state,action) =>{
         state.creatorname = action.payload

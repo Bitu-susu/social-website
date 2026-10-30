@@ -164,7 +164,7 @@ async function submitsignup(e) {
     fontFamily: 'McAfeePoppins',
     fontWeight: "600",
 
-             }} >Explore the <br /> things <br /> <span style={{color : "blue" }}> you love.</span> </h1>
+             }} >Explore the <br /> things <br /> <span style={{color : "blue",backgroundColor : "#a2eeff" }}> you love.</span> </h1>
           </div>
        </div>
         <div className="layout1image">

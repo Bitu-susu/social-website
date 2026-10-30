@@ -4,6 +4,8 @@ import { useDispatch } from 'react-redux'
 // import { useState } from 'react';
 import authService from '../../../appwrite/auth'
 import { Client,Storage,ID } from 'appwrite'
+import { client } from '../../mainmenu/Customs/Increase/appwritesdk'
+
 import conf from '../../../appwrite/conf'
 import { isRouteErrorResponse, Link, useNavigate } from 'react-router-dom'    
 import JoditEditor from 'jodit-react';
@@ -24,12 +26,12 @@ import culture from '../../../images/culture.jpg'
 import {sendloginname} from '../../../redux/createslice'
 import { sendquestion } from '../../../redux/createslice' 
 import { useSelector } from 'react-redux'
-import { useQuery } from "@tanstack/react-query";  
+import { QueryClient, useQuery } from "@tanstack/react-query";  
 // import { useNavigate } from 'react-router-dom'
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 
-//  importing costom hoooks 
+//  importing custom hoooks 
 import {likesincrease,likesdecrease} from '../Customs/Increase/increaselikes'
 import usePosts from '../Customs/Increase/posts' 
 import useComments from '../Customs/Increase/comments'
@@ -103,6 +105,9 @@ function Newdash() {
     queryClient.invalidateQueries({ queryKey: ["documents"]});
   },
 }); 
+
+   
+
         // current user
 
       const {data :currentusers} = useQuery({
@@ -116,7 +121,7 @@ function Newdash() {
            let firstletter = currentusers?.name.charAt(0).toUpperCase()  
    
       //  here we are fetching the posts according to the selected categoy , with objects we can manage all in one place.
-
+     
     class Collects {
        client = new Client()
     account;
@@ -132,7 +137,32 @@ function Newdash() {
 
         try {  
             const listcategory = await this.databases.listDocuments( conf.appwritedatabaseid, conf.appwritepostcollectionid,[Query.equal("postcategory", category)]);
-            return listcategory.documents.reverse();
+            let addingtime = await listcategory.documents.map((objects)=>{
+               let now = new Date();
+      let created = new Date(objects.$createdAt)
+      let difference = now - created;
+      let seconds = Math.floor(difference/1000);
+      let minutes = Math.floor(seconds/60);
+      let hours = Math.floor(minutes/60);
+      let days = Math.floor(hours/24);
+      if (days>30){
+        let months = Math.floor(days/30)
+        return{...objects,actualtime : `${months} month${months>1?"s":""}`}
+      }
+      if (days>1) {
+        return {...objects,actualtime :`${days} day${days>1?"s" :""}`}
+      }
+      if (hours>0) {
+        return {...objects,actualtime :`${hours} hour${hours>1?"s" :""}`}
+      }
+      if (minutes>0) {
+        return {...objects,actualtime :`${minutes} minutes${minutes>1?"" :""}`}
+      }
+      return {...objects, actualtime : "just now"}
+    })
+    console.log(addingtime, "added time");
+    
+            return addingtime.reverse();
               } catch (error) {
                 return error
               }                
@@ -140,7 +170,34 @@ function Newdash() {
             async fetchall(){
               try {
                    const listevery = await database.listdocuments() 
-         return listevery.documents.reverse()
+   let addingtime = await listevery.documents.map((objects)=>{
+               let now = new Date();
+      let created = new Date(objects.$createdAt)
+      let difference = now - created;
+      let seconds = Math.floor(difference/1000);
+      let minutes = Math.floor(seconds/60);
+      let hours = Math.floor(minutes/60);
+      let days = Math.floor(hours/24);
+      if (days>30){
+        let months = Math.floor(days/30)
+        return{...objects,actualtime : `${months} month${months>1?"s":""}`}
+      }
+      if (days>1) {
+        return {...objects,actualtime :`${days} day${days>1?"s" :""}`}
+      }
+      if (hours>0) {
+        return {...objects,actualtime :`${hours} hour${hours>1?"s" :""}`}
+      }
+      if (minutes>0) {
+        return {...objects,actualtime :`${minutes} minutes${minutes>1?"" :""}`}
+      }
+      return {...objects, actualtime : "just now"}
+    })
+    console.log(addingtime, "added time");
+    
+            return addingtime.reverse();
+
+         
               } catch (error) {
                   return error
               }
@@ -161,6 +218,9 @@ function Newdash() {
            staleTime: 5 * 60 * 1000, 
             
         })
+
+         
+
           
                                                                                                  //  for likes section
               const[likecolor, setlikecolor] = useState()                                                                         
@@ -175,13 +235,77 @@ function Newdash() {
   mutationFn: likesincrease,
   
   onSuccess: () => {
-    console.log(successclosing, "saaaaaaa"),
-    // 🔥 THIS triggers posts API again
-    queryClient.invalidateQueries({ queryKey: ["documents"]});
-  },
-
-
+    // console.log(successclosing, "saaaaaaa"),
+    //  🔥 THIS triggers posts API again
+    // queryClient.invalidateQueries({ queryKey: ["documents"]});
+  }
 }); 
+
+
+    useEffect(()=>{
+       if (!authid)  return
+       
+       let unsubscribe = client.subscribe(
+    `databases.${conf.appwritedatabaseid}.collections.${conf.appwritelikesid}.documents`,
+    (response) => {
+    const data = response.payload;
+
+    const event = response.events
+    console.log(data, "dddddddddddasa");
+     console.log(event, 'event');
+     
+
+
+     if (event.some(data => data.endsWith("create"))) {
+        queryClient.setQueryData(
+      ["documents", contextvalue || "ALL"],
+      (
+oldposts = [])=>{
+  let updateone = oldposts.map((post)=>{
+      if (post.$id !== data.documentid) {
+        return post
+      }
+      else{
+        return {
+           ...post,
+              Like: [...(post.Like || []), data.authid]
+        }
+      }
+    })
+    return updateone
+}   
+    )
+     }
+     else{ 
+    queryClient.setQueryData(
+      ["documents", contextvalue || "ALL"],
+
+       (
+          oldposts = []) =>{
+             let updatedone = oldposts.map((post)=>{
+                if (post.$id !== data.documentid) {
+        return post
+      }
+      else{
+              let updateone = post.Like.filter((element)=> element !== authid)
+              console.log(updateone, "ehfwbbbbbbbb");
+              
+               return {
+                ...post,Like : updateone
+               }
+      }
+             })
+             return updatedone
+          }
+       
+       )
+      }
+
+    })
+     return () => unsubscribe();
+
+    },[queryClient, contextvalue, authid])
+
 
 
           //   linking the mutation with the posts function and the likes decrease function
@@ -191,7 +315,7 @@ function Newdash() {
 
   onSuccess: () => {
     // 🔥 THIS triggers posts API again
-    queryClient.invalidateQueries({ queryKey: ["documents"]}); 
+    // queryClient.invalidateQueries({ queryKey: ["documents"]}); 
   },
 }); 
 
@@ -227,7 +351,7 @@ const [comments, setcomments] = useState({
            if (comments) {
              setcomments({
                display:"block",
-               padding: "6px 2px"
+               padding: "6px 11px"
               })
            }
            else if (!comments){
@@ -238,72 +362,34 @@ const [comments, setcomments] = useState({
            }
 
                                                                                       //   adding comments
-  const[addcomments, setaddcomments] = useState('')
+   const[addcomments, setaddcomments] = useState('')
    const[commentcreator, setcommentcreator]= useState("")
    const[getcomments, setgetcomments] = useState([])
-  //  async function Addcomments(commentid) {
-  //    const client = new Client()
-  //     .setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-  //   const databases = new Databases(client);
-  //    try {
-  //      const getcreator = await authService.getcurrentuser();
-  //     let creatorname = getcreator.name
-  //     // console.log(getcreator.name);
-  //     //  let date = new Date().toString()
-  //      setcommentcreator(getcreator.name)
-  //      const comments = await databases.createDocument(
-  //       conf.appwritedatabaseid,conf.appwritecommentsid,ID.unique(),{
-  //         "comments" : addcomments,
-  //         "postid": commentid,
-  //        "name": creatorname,
-  //        "date":new Date().toDateString(),  
-  //       }
-  //     )
-  //     console.log( "these are the comments",comments);
-  //      setaddcomments("")
-  //      // setgetcomments(comments)
-                                                                      
-  //   } catch (error) {
-  //      console.log("getting error in adding comments", error);
-                                                                                       
-  //   }
-  //  }  
+ 
 
 
-     
-    //  fetching post comments 
-    // async function fetchcomments(selectedPostId) {
-    //   const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
-    //  const databases = new Databases(client);
-    //   try {
-    //        const fetchingcomments = await databases.listDocuments(
-    //         conf.appwritedatabaseid,conf.appwritecommentsid,[Query.equal("postid",selectedPostId)])
-    //         // setgetcomments(fetchingcomments.documents)
-    //         return fetchingcomments.documents
-    //   } catch (error) {
-    //       console.log("error in fetching comments", error);    
-    //   }
-    //  }
-  
     //  fetching with querry 
   // const [selectedPostId, setSelectedPostId] = useState("");
       const {fetchcomments} = useComments()
 
+      const[selectcomment, setselectcomment] = useState("")
+
       const {data :displaycommentss} = useQuery({
-         queryKey:["displaycomments"],
-         queryFn :()=>fetchcomments(), 
-          
+         queryKey:["displaycomments",selectcomment],
+          queryFn: ()=>fetchcomments({listingsi: selectcomment}),
          staleTime :  5 * 60 * 1000,
         //  enabled: !!selectedPostId,
       })
      const{ Addcomments} = useComments()
        const commentsmutation = useMutation({
   mutationFn: Addcomments,
-
-  onSuccess: () => {
+onSuccess: () => {
     // console.log(successclosing, "comment added "),
     // 🔥 THIS triggers posts API again
-    queryClient.invalidateQueries({ queryKey: ["displaycomments"]}); 
+    // queryClient.invalidateQueries({ queryKey: ["displaycomments",selectcomment]}); 
+      queryClient.invalidateQueries({ queryKey: ["realcommentss"]}); 
+
+    setaddcomments("")
   },
 }); 
 
@@ -431,20 +517,7 @@ if (aibot) {setaibot({ display  :"block"})}}
       }
      
 
-      async function sessionend(e) {
-        e.preventDefault()
-          try {
-                    let endingsession = await authService.logout()
-                  //  setuser(null)  
-                   if (endingsession) {
-                    window.location.href = '/login'; 
-                   }
-                 console.log(endingsession);
-                 
-          } catch (error) {
-             alert("error in logout")
-          }
-      }
+     
     //  adding post function
     function addingposts(e){
     e.preventDefault(); 
@@ -466,27 +539,81 @@ if (aibot) {setaibot({ display  :"block"})}}
       setValue(newValue);
     };
 
-//     async function get() {
-//     try {
-//        let apikey = conf.geminiapi
-//        if (!apikey) {
-//         throw new Error("API key is not defined. Check your .env file.");
-//     }
-//         const genAI = new GoogleGenerativeAI(apikey);
-//         const model = genAI.getGenerativeModel({ model:  "gemini-2.5-flash" });
+  //   styling the usercomments section
 
-//         const result = await model.generateContent("what is the capital of iran");
-//         console.log((result.response.text()));
+  const[commentdisplay, setcommentdisplay] = useState(null)
 
-//     } catch (error) {
-//         console.error("Error:", error);
-//     }
-// }
-//     useEffect(()=>{
-//   get()
-//     },[])
+  //  replying comments 
 
-  return (
+  const [replycomments, setreplycomments] = useState("");
+  const[fetchreply, setfetchreply] = useState("")
+     
+   const{replycomment,fetchreplycomment} = useComments()
+     
+  
+   const {data :displayreplycomments} = useQuery({
+         queryKey:["replycommentss",fetchreply],
+          queryFn: ()=>fetchreplycomment({listingscomment:fetchreply}),
+         staleTime :  5 * 60 * 1000,
+        //  enabled: !!selectedPostId,
+      })
+
+       const replymutation = useMutation({
+  mutationFn: replycomment,
+  onSuccess: () => {
+    // console.log(successclosing, "comment added "),
+    // 🔥 THIS triggers posts API again
+    queryClient.invalidateQueries({ queryKey: ["replycommentss",fetchreply]}); 
+  
+
+     setreplycomments("");
+  },
+
+})
+
+      //  to display comment length in post 
+
+
+       async function fetchingcomments(){
+         const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);        
+              const databases = new Databases(client);
+     try {
+         const fetchingcommentslength = await databases.listDocuments(
+            conf.appwritedatabaseid,conf.appwritecommentsid,[Query.limit(100)] )
+            console.log(fetchingcommentslength.documents, "documentssss");
+         return fetchingcommentslength.documents
+            
+     } catch (error) {
+           console.log(error, "error in fetching comments");  
+     }
+    }
+       const{data : realcomments}= useQuery({
+        queryKey :["realcommentss"],
+        queryFn : fetchingcomments,
+         staleTime :  5 * 60 * 1000,
+       })
+
+  //   delete comment 
+
+     let {deletecomment,replycommentdelete} = useComments()
+     
+     const deletemutation = useMutation({
+      mutationFn : deletecomment,
+      onSuccess : ()=>{
+        queryClient.invalidateQueries({ queryKey: ["displaycomments"]}); 
+      }
+     })
+
+     const replydeletemutation = useMutation({
+       mutationFn : replycommentdelete,
+       onSuccess : ()=>{
+       queryClient.invalidateQueries({ queryKey: ["replycommentss",fetchreply]}); 
+       }
+     })
+     
+     
+
+  return (   
     <div>
       
          <div className="dash-section">
@@ -496,7 +623,7 @@ if (aibot) {setaibot({ display  :"block"})}}
          {/* <h6 style={{padding : "4px 8px", backgroundColor :"#0b57d0",color : "white", borderRadius : "20px"}} >{firstletter}</h6> */}
          
             {/* <h6 style={{color : "white"}}>{user}</h6> */}
-            <i className="fa-solid fa-xmark" onClick={postboxclose}  style={{color: "black",position: "absolute", right : "3px", zIndex:"4", top : "2px" }}></i>
+            <i className="fa-solid fa-xmark" onClick={postboxclose}  style={{color: "white",position: "absolute", right : "3px", zIndex:"4", top : "2px" }}></i>
             </div>
             <div className="posting-bottom">
             <form action="" className='postform' onSubmit={addingposts}>
@@ -563,122 +690,59 @@ if (aibot) {setaibot({ display  :"block"})}}
           <h5 style={{fontFamily:"sans-serif",letterSpacing: "0.8px"}}>{getquestion}</h5>
           <textarea type="text"  placeholder='type your answer'rows='2'  value={answer} onChange={(e)=>setanswer(e.target.value)} ></textarea>
           </div>  
-          {/* <div className="asnswerbutton">
-          <button style={{backgroundColor :"#0b57d0", fontSize : "13.5px"}} onClick={savinganswer}>post</button>
-          <h6 style={{color : "white", fontWeight: "300", cursor: "pointer"}} onClick={fetchinganswers} >view all replies</h6>
-          <div className="gettinganswers">
-             {listanswers.length > 0 ? listanswers.map((answer)=>(
-                <div className="every-answer" style={{lineHeight: "40px"}} key={answer.$id}>
-                  <span style={{backgroundColor : "#0b57d0",padding: "2px 5px",borderRadius: '10px'}}>{answer.creator}</span>
-                  <h6 style={{color : "white", fontWeight: "400", padding: "10px 10px",backgroundColor: "#515454",borderRadius: "10px"}}>{answer.answer}</h6>
-                </div>
-             )) : <h6></h6>}
+          
           </div>
-          </div> */}
-          </div>
-        {/* <div className="headerr" id='header'>
-            <div className="headerrleft">
-
-        
-        <Link to="/"><i className="fa-solid fa-house" style={{fontSize: "18px", color : "#0b57d0"}}></i></Link>
-        <i className="fa-solid fa-users-line" style={{fontSize: "18px"}}></i> 
-        <i className="fa-solid fa-bell" style={{fontSize: "18px"}}></i>
-          <Link to="/Questions"><i className="fa-solid fa-book-open-reader" style={{fontSize: "18px", color : "#0b57d0"}}></i></Link>
-        
-        </div>
-        <div className="headermiddle">
-        <input type="text" name="" id="" style={{height: "35px, width: 100%"}} className='dashboard-input' placeholder="search your favorite querry"/>
-        </div>
-        <div className="headerright">
-            <h6 style={{padding : "4px 8px", backgroundColor :"#0b57d0",color : "white", borderRadius : "20px"}} >{firstletter}</h6>
-            {user?<><h6 style={{color : "black",fontWeight : "400"}}>{user.slice(0,7)}..</h6></> : <>loading..</>}
-            
-              <button style={{backgroundColor :"white", fontSize : "13.5px",color : "black", border : "1px solid #dcd5d5"}} onClick={loginname}>userprofile</button>
-              <button style={{backgroundColor :"#0b57d0", fontSize : "13.5px"}} onClick={sessionend} >Logout</button>
-        </div>  
-        </div>  */}
+      
    <Header></Header>
       <div className="dashboardcontainer" >
         <div className="dashboard-1" style={lowopacity}>
-          {/* <div className="dash-1-boxsection">
-                      <h5 style={{color : "white", textAlign : "left"}}>Mostly search</h5>
-                 <div className="dash-1boxes">
-                    <div className="dash-1-boxes">
-                      <img  className='dash1-img' src={ai} alt="" />
-                      <h5 className='dash1-text' >Artificial intelligence <br /> AI </h5>
-                      
-                    </div>
-                    <div className="dash-1-boxes">
-                      <img className='dash1-img' src={stock} alt="" />
-                      <h5 className='dash1-text' >Stock market</h5>
-                    </div>
-                    <div className="dash-1-boxes">
-                      <img className='dash1-img' src={business} alt="" />
-                      <h5 className='dash1-text' >Business & Finance</h5>
-                    </div>
-                    <div className="dash-1-boxes">
-                      <img className='dash1-img' src={ev} alt="" />
-                      <h5 className='dash1-text' >Electric <br />EV</h5>
-                    </div>
-                    <div className="dash-1-boxes">
-                      <img className='dash1-img' src={technology} alt="" />
-                      <h5 className='dash1-text' >Science & Technology</h5>
-                    </div>
-                    <div className="dash-1-boxes">
-                      <img className='dash1-img' src={politics} alt="" />
-                      <h5 className='dash1-text' >Politics</h5>
-                    </div>
-                    </div>
-                   
-                 </div> */}
+         
 
-                  <div className="dashboard-1-top">
-                    <div className="dash-1-content">
-                      <h6 style={{color : "white", cursor : "pointer"}} onClick={()=> setcontextvalue("")}>All posts</h6>
+                  
+                  <div className="left" style={{color : "white", width : "100%"}}>
+        <div className="lists">
+             
+             <h5 style={{fontSize : "19px"}}  onClick={()=> setcontextvalue("")}> All posts</h5><hr />
+         
+               <div className="dash-1-boxes">
+                      <h5  onClick={()=> setcontextvalue("AI")}>Artificial intelligence AI</h5> 
+                      <img className='dash1-img' src={ai} alt=""  onClick={()=> setcontextvalue("AI")} />
+                      {/* <h5 className='dash1-text' >Politics</h5> */}
+                    </div> <hr />
+               <div className="dash-1-boxes">
+                      <h5 onClick={()=>setcontextvalue("Stock Market")}>Stock market</h5> 
+                      <img className='dash1-img' src={stock} alt="" onClick={()=>setcontextvalue("Stock Market")} />
+                      {/* <h5 className='dash1-text' >Politics</h5> */}
+                    </div> <hr />
+               <div className="dash-1-boxes">
+                      <h5 onClick={()=>setcontextvalue("Business & Startup")}>Business & Finance</h5> 
+                      <img className='dash1-img' src={business} alt="" onClick={()=>setcontextvalue("Business & Startup")} />
+                      {/* <h5 className='dash1-text' >Politics</h5> */}
+                    </div> <hr />
+               <div className="dash-1-boxes">
+                      <h5  onClick={()=>setcontextvalue("EV")}>Electric <br />EV</h5> 
+                      <img className='dash1-img' src={ev} alt=""  onClick={()=>setcontextvalue("EV")} />
+                      {/* <h5 className='dash1-text' >Politics</h5> */}
+                    </div> <hr />
+               <div className="dash-1-boxes">
+                      <h5 onClick={()=>setcontextvalue("Science & Technology")}>Science & Technology</h5> 
+                      <img className='dash1-img' src={technology} alt=""  onClick={()=>setcontextvalue("Science & Technology")}/>
+                      {/* <h5 className='dash1-text' >Politics</h5> */}
+                    </div> <hr />
+               <div className="dash-1-boxes">
+                      <h5>Politics</h5> 
+                      <img className='dash1-img' src={politics} alt="" />
+                      {/* <h5 className='dash1-text' >Politics</h5> */}
                     </div>
-                    <div className="dash-1-content">
-                    <h6 style={{textAlign : "left",color : "black",cursor: "pointer, fontWeight :500"}} onClick={()=> setcontextvalue("AI")} >AI</h6>
-                     {/* <img src={ai} alt="" /> */}
-                    </div>
-                    <div className="dash-1-content">
-                    <h6 style={{textAlign : "left", color : "black", cursor : "pointer"}} onClick={()=>setcontextvalue("EV")} >Electric vehicle</h6>
-                     {/* <img src={ev} alt="" /> */}
-                    </div>
-                    <div className="dash-1-content">
-                    <h6 style={{textAlign : "left", color : "black", cursor : 'pointer'}} onClick={()=>setcontextvalue("Stock Market")}>Stock market</h6>
-                     {/* <img src={stock} alt="" /> */}
-                    </div>
-                    <div className="dash-1-content">
-                    <h6 style={{textAlign : "left", color : "black", cursor :"pointer"}} onClick={()=>setcontextvalue("Business & Startup")}>Business & Startup</h6>
-                     {/* <img src={business} alt="" /> */}
-                    </div>
-                    <div className="dash-1-content">
-                    <h6 style={{textAlign : "left", color : "black", cursor : "pointer"}} onClick={()=>setcontextvalue("Science & Technology")}> Science & Technology</h6>
-                     {/* <img src={technology} alt="" /> */}
-                    </div>
-                    <div className="dash-1-content">
-                    <h6 style={{textAlign : "left", color : "black", cursor : "pointer"}} onClick={()=>setcontextvalue("Politics")}>Politics</h6>
-                     {/* <img src={politics} alt="" /> */}
-                    </div>
-                    <div className="dash-1-content">
-                    <h6 style={{textAlign : "left", color : "black", cursor : 'pointer'}} onClick={()=>setcontextvalue("Culture & Religion")}>Culture & Religion</h6>
-                     {/* <img src={culture} alt="" /> */}
-                    </div>
-                    <div className="dash-1-content">
-                    <h6 style={{textAlign : "left", color : "black", cursor : "pointer"}} onClick={()=>setcontextvalue("Fashion & Lifestylet")}>Fashion & Lifestyle</h6>
-                     {/* <img src={stock} alt="" /> */}
-                    </div>
-                    
-                    
-                   
-                  </div>
+        </div>
+             </div>
 
                  </div>
                  <div className="dashboard-2" style={lowopacity}>           
                     <div className="dash2-up">
 
                         <div className="dash-2-up-top">
-                    <h6 style={{padding : "4px 9px", backgroundColor :"#0b57d0",color : "white", borderRadius : "20px", width: '30px'}} >{firstletter}</h6>
+                    {/* <h6 style={{padding : "4px 9px", backgroundColor :"#0b57d0",color : "white", borderRadius : "20px", width: '30px'}} >{firstletter}</h6> */}
                     <input type="text" name="" id="" style={{height: "35px",color : "black", background : "white",border : "none", width : "100%", borderRadius : '20px'}} className='dashboard-input' placeholder="what do you want to ask or share "/>                       
                     </div>
                     <div className="dash-2-down">
@@ -694,25 +758,22 @@ if (aibot) {setaibot({ display  :"block"})}}
                       <div className="everyposts-section">
                          
                          {postdocuments.length > 0? ( postdocuments.map((listings)=> (
-                      <div className="Posts" style={{marginTop : "8px"}} key={listings.$id} >
+                      <div className="Posts" style={{marginTop : "8px"}} key={listings.$id}>
                       <div className="every-post">
                       <div className="onlycontent">
                         <div className="post-heading" style={{lineHeight: "10px"}} >
                           <h5 style={{color : "black"}}>{listings.posttitle}</h5> 
                           <div className="incdate" style={{display: "flex", justifyContent: "space-between"}}> 
                           <span style={{fontWeight: "400", fontSize: "14px", color: "black",textDecoration : "underline"}}>{listings.postcategory ? "category - " + listings.postcategory :listings.postcategory} </span>
-                          <span style={{fontWeight: "400", fontSize: "13.5px", color: "#0b57d0", borderRadius:"20px", padding : "7px 7px"}} >{listings.Date}</span>
+                          <span style={{fontWeight: "400", fontSize: "13.5px", color: "#0b57d0", borderRadius:"20px", padding : "7px 7px"}} >{listings.actualtime}</span>
                           </div> 
                         </div> 
-                         {/* <div className="post-category">
-                        
-                         <span style={{fontWeight: "500"}} >category : {listings.postcategory}</span>
-
-                         </div> */}
+                         
                         <div className="post-user" style={{display : "flex", justifyContent :"space-between", padding: "8px 0px",color : "#626161"}}>
                           <h6 onClick={()=> reduxsend(listings.authid,listings.postcreator)} style={{color :"#0b57d0", textDecoration: "underline",fontSize: "14px", cursor:"pointer"}}>{listings.postcreator}</h6>
-                            {/* <img src={listings.featuredimage} alt="" srcset="" /> */}
-                          {/* <i class="fa-solid fa-circle-xmark" onClick={()=>postdeletion(listings.$id)} style={deletepost}></i> */}
+
+                            
+                           
                         </div>   
                         
                         <div className="post-content"> 
@@ -728,66 +789,123 @@ if (aibot) {setaibot({ display  :"block"})}}
                       </div>
                       <div className="like-comment-section">
                          <div className="like-section"> 
-                          {/* {listings.Like.includes(authid) ?  <i class="fa-regular fa-heart" style={{color : "red"}} ></i>: <i class="fa-regular fa-heart"onClick={()=>likesincrease(listings.$id)}></i>} */}
-                           {/* <i className="fa-regular fa-heart"onClick={()=>likesincrease(listings.$id)} style={{color:"white"}}></i> */}
-                          {listings.Like.includes(authid)?<i class="fa-solid fa-heart" style={{color:"#d7329a", fontSize  : "14px", cursor : "pointer"}} onClick={()=>decreaselikeMutation.mutate({docid : listings.$id, Like : listings.Like})}></i> : <i class="fa-solid fa-heart" style={{color : "white", fontSize : "14px", cursor : "pointer"}} onClick={()=>likeMutation.mutate({ docid :listings.$id, Like : listings.Like})}></i>}  
-                          {/* >likeMutation.mutate({ docid : listings.$id, like : listings.Like}) */}  
-                                 {/* <i class="fa-solid fa-heart" style={{color : "red"}} ></i> */}
+                          
+                          {listings.Like.includes(authid)?<i class="fa-solid fa-heart" style={{color:"#e51b7b", fontSize  : "14px", cursor : "pointer"}} onClick={()=>decreaselikeMutation.mutate({docid : listings.$id, Like : listings.Like})}></i> : <i class="fa-solid fa-heart" style={{color : "white", fontSize : "14px", cursor : "pointer"}} onClick={()=>likeMutation.mutate({ docid :listings.$id, Like : listings.Like, creator : listings.authid,postname :listings.posttitle})}></i>}  
+                         
                         <div className="like-right" style={{color : "white"}}>
-  {/* {increaselike.includes(listings.$id)
-    ? listings.Like.length + 1    
-    : listings.Like.length}  */}  
-  {/* {listings.Like.includes(authid)
-    ? listings.Like.length    
-    : listings.Like.length}  */}
+ 
     {listings.Like.length}
      
   {/* {increaselike === listings.$id ? listings.Like.length +1 : listings.Like.length} */}    
                         </div>
                         </div> 
                         <div className="right-comment">
-                        <i className="fa-regular fa-comment" style={{color : "pink"}} onClick={addcomment}></i>
-                      {/* <button style={{background: "none", color :"#414040"}} onClick={()=>fetchcomments(listings.$id)}>list comments</button> */}
-                      {/* <h6 style={{background: "none", color :"white", cursor : "pointer", fontWeight : "400"}} onClick={()=>setSelectedPostId(listings.$id)}>list comments</h6>        */}
-                      <h6 style={{background: "none", color :"white", cursor : "pointer", fontWeight : "400"}} onClick={()=>fetchcomments({listingsi : listings.$id})}>list comments</h6>       
-                             
+                        <i className="fa-regular fa-comment" style={{color : "#514d4d"}} onClick={addcomment}></i>
+                     
+                      <h6 style={{background: "none", color :"#0b57d0", cursor : "pointer", fontWeight : "500", fontSize : "14px"}} onClick={()=>setselectcomment(listings.$id)}>list comments</h6>       
+
+                        <h6 style={{background: "none", color :"#0b57d0", cursor : "pointer", fontWeight : "500", fontSize : "14px"}}>{realcomments?.filter((display)=>display.postid === listings.$id).length} comments </h6>            
                          
                       </div>
                       </div>
-                      {/* <div className="comments" style={comments}> 
-                      <div className="message-section">
-              <p className='username'>{firstletter}</p>
-              <input type="text" name="" id="" className='dashboard-input' placeholder='Add comments' value={addcomments} onChange={(e)=>setaddcomments(e.target.value)} />
-              <div className="comments-right">
-              <i class="fa-solid fa-caret-right" style={{fontSize:"25px"}} onClick={()=>Addcomments(listings.$id)}></i>
-              </div>
-              </div>
-                </div> */}
+                     
               <div className="comments" style={comments}>
               <div className="dash-2-up-top">
                     <h6 style={{padding : "4px 9px", backgroundColor :"#0b57d0",color : "white", borderRadius : "20px", width: '30px'}} >{firstletter}</h6>
-                    <input type="text" name="" id="" style={{height: "35px",color: "white", background : "#474545",border : "none", width : "100%", borderRadius : '20px'}} className='dashboard-input' placeholder="Add comments " value={addcomments} onChange={(e)=>setaddcomments(e.target.value)}/>
+                    <input type="text" name="" id="" style={{height: "35px",color: "black", background : "#ffffff",border : "1px solid #dfdada", width : "100%", borderRadius : '20px'}} className='dashboard-input' placeholder="Add comments " value={addcomments} onChange={(e)=>setaddcomments(e.target.value)}/>
                     <div className="comments-right">
-              <i className="fa-solid fa-caret-right" style={{fontSize:"25px", color : "white"}} onClick={()=>commentsmutation.mutate({listingsid:listings.$id,addcomments,user,authid})}></i>
+              <i className="fa-solid fa-caret-right" style={{fontSize:"25px", color : "black"}} onClick={()=>commentsmutation.mutate({listingsid:listings.$id,addcomments,user,authid,postcreator:listings.authid,posttitle :listings.posttitle})}></i>
               </div>
               </div>
                     </div>
 
+                            
+                          <div className="showing-comments"style={{transition: "transform 0.9s ease"}}>
+                          <h6>
 
-                            <div className="showing-comments"style={{transition: "transform 0.9s ease"}} >
-                            {displaycommentss?.filter((comment) => comment.postid === listings.$id).map((comment) => ( // Only show comments for this post
-         
-
-      <div className="every-comment" style={{padding : "6px 20px",  }} key={comment.$id}>
+</h6>
+                            {displaycommentss?.map((comment) => comment.postid === listings.$id?(
+      <div className="every-comment" style={{padding : "6px 20px",}} key={comment.$id}>
         <div className="name-date" style={{display: "flex", justifyContent : "space-between"}}>
-        <h6 style={{color : "white",fontSize : "15px", color : "#b9b2b2" }}>{comment.name}</h6>
+        <h6 style={{color : "white",fontSize : "15px", color : "#2d2a2a" }}>{comment.name}</h6>
         {/* <h6 style={{fontSize : "12px"}}>{comment.date}</h6> */}
-        <span style={{fontWeight: "400", fontSize: "14px", color: "white", borderRadius:"20px", padding : "3px 7px"}} >{comment.date}</span></div>
-        <h6 style={{color: "white",fontWeight:"400", fontSize : "15px", letterSpacing : "0.3px", lineHeight : "20px"}}>{comment.comments}</h6><hr style={{color : "#686665", margin : "none"}} />
-                    
+        <span style={{fontWeight: "400", fontSize: "13.5px", color: "#2d2a2a", borderRadius:"20px", padding : "3px 7px"}} >{comment.actualtime}</span>
+        </div>
+        <div className="message-icon" style={{display : "flex", gap : "15px"}}>
+
+        <h6 style={{color: "black",fontWeight:"400", fontSize : "13.5px", letterSpacing : "0.3px", lineHeight : "20px"}}>{comment.comments}&nbsp; &nbsp; </h6>
+        <h6 style={{color : "blue", textDecoration : "underline", cursor : "pointer",color: "black",fontWeight:"400", fontSize : "13.5px",}}onClick={()=>{setcommentdisplay(comment.$id),setfetchreply(comment.$id)}}>reply</h6>
+        
+        {comment.authid === authid?( <><h6 style={{color: "black",fontWeight:"400", fontSize : "13.5px", cursor : "pointer"}} onClick={()=>deletemutation.mutate(comment.$id)}>delete</h6></>):(<></>)}
+
+
+        </div>
+
+
+    {displayreplycomments?.map((listings)=>(
+      <div className="reply-comments" key={comment.$id} style={{
+        display: commentdisplay === comment.$id ? "flex " : "none", flexDirection : "column", marginBottom : "10px"  
+      }}>
+        <>
+      <span style={{color : "blue",fontSize : "13.9px"}}>{listings.user}</span>
+      <div className="reply-box" style={{display : "flex", gap : "8px", cursor : "pointer",}}>
+    
+    
+  <div className="ggh" style={{width : "72%"}}>
+      <span style={{fontSize : "13.9px"}}>{listings.comment}</span>
+  </div>
+  {listings.authid === authid ?(
+    <>
+    <div className="ggg" style={{display : "flex", justifyContent : "space-between", padding : "0px 10px", width : "28%"}}>
+      <span style={{fontSize : "13.9px"}}>{listings.actualtime}</span>
+
+      {listings.authid === authid?(<><span style={{fontSize : "13.9px", textDecoration : "underline"}} onClick={()=>replydeletemutation.mutate(listings.$id)}>delete</span>
+      </>
+    ):(<>
+    
+    </>)}
+
+    </div>
+    </>
+  ) : (
+    <>
+    <div className="ggg" style={{textAlign : "right" , padding : "0px 10px", width : "28%"}}>
+      <span style={{fontSize : "13.9px"}}>{listings.actualtime}</span>
+
+      {listings.authid === authid?(<><span style={{fontSize : "13.9px", textDecoration : "underline"}} onClick={()=>replydeletemutation.mutate(listings.$id)}>delete</span>
+      </>
+    ):(<>
+    
+    </>)}
+
+    </div>
+    </>
+  )}
+
+
+      </div>
+        </>
       </div>
     ))}
+        
+  
+      
+      <div className="dash-2-up-top" key={comment.$id} style={{
+    display: commentdisplay === comment.$id ? "flex " : "none", padding :"20px"
+  }}>
+                    <input type="text" name="" id="" style={{height: "35px",color: "black", background : "#ffffff",border : "1px solid #dfdada", width : "100%", borderRadius : '20px'}} className='dashboard-input' placeholder="reply" value={replycomments} onChange={(e)=>setreplycomments(e.target.value)}/>
+                    <div className="comments-right">
+              <i className="fa-solid fa-caret-right" style={{fontSize:"25px", color : "black"}} onClick={()=>replymutation.mutate({commentsid:comment.$id,replycomments,user,authid})}></i>
+              </div>
+              </div>
+        
+
+        <hr style={{color : "#686665", margin : "2px"}} /> 
+      </div>
+    ):(<></>))
+    }
     </div>
+   
     </div>
             
             </div>
@@ -829,7 +947,7 @@ if (aibot) {setaibot({ display  :"block"})}}
 
 </div>
 
-         {online === true ? <h5>yes</h5> : <h5>no</h5>}
+         {/* {online === true ? <h5>yes</h5> : <h5>no</h5>} */}
             </div>      
 
               <div className="dash3-2">
@@ -848,7 +966,7 @@ if (aibot) {setaibot({ display  :"block"})}}
                              <input type="text" name="" id="" style={{height: "35px, width: 100%"}} className='dashboard-input' placeholder="Ask your favorite query"/>
  
                  </div> */}
-                 <Chat></Chat>
+                 {/* <Chat></Chat> */}
                  {/* <div className="dash3-2-bottom">
 
                  </div> */}

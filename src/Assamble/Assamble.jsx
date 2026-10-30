@@ -12,9 +12,12 @@ import Newdash from '../actions/mainmenu/dashnew/Newdash'
 import Userprofile from '../actions/mainmenu/userprofile/Userprofile'
 import Profileuser from '../actions/mainmenu/userprofile/Profileuser'
 import Questions from '../actions/mainmenu/Questions/Questions'
+import Status from '../actions/mainmenu/status/Status'
 import './Assamble.css'
 import authService from '../appwrite/auth'
-
+ import Notifications from '../actions/mainmenu/notifications/Notifications'
+//  import { Layout1 } from './Asa'
+//  import { Layout2 } from './Asa'
 //       }
 const useOnlineoffline = ()=>{
     const[online, setonline] = useState(navigator.onLine)
@@ -106,6 +109,8 @@ const useOnlineoffline = ()=>{
     
   return (
     <Routes>
+
+      {/* <Route   element = {<Layout1/>}> */}
 
       {/* ✅ HOME (FIXED LOGIC) */} 
       <Route
@@ -215,10 +220,27 @@ const useOnlineoffline = ()=>{
         path="/Questions"
         element={user ? <Questions /> : <Navigate to="/login" />}
       />
+      <Route
+        path="/notifications"
+        element={user ? <Notifications /> : <Navigate to="/login" />}
+      />
+
+ 
+{/* </Route> */}
+
+  {/* <Route element = {<Layout2/>} > */}
+   <Route
+        path="/status"
+        element={user ? <Status/> : <Navigate to="/login" />}
+      />
+  
+       
+       
+  {/* </Route> */}
 
     </Routes>  
 
   // <Newdash></Newdash>
   )
 }
-    export {useOnlineoffline} ;
+    export {useOnlineoffline};

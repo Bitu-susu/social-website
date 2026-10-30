@@ -1,0 +1,375 @@
+.status{
+        display: flex;
+        width: 96%;
+}
+.status-section{
+        width: 40%;
+        border-right: 0.4px solid #dcdcdc;
+        /* padding: 10px 15px; */
+}
+.status-content-section{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 101%;
+    height: 100vh;
+}
+.status-nav{
+    padding: 12px 17px;
+    border: 0.5px solid #cac1c1;
+    border-radius: 30px;
+        display: block;
+    position: absolute;
+    top: -59px;
+    right: 0px;
+}
+.status-content-bottom{
+        position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.statuscontainer{
+    display: flex;
+    width: 100%;
+}
+
+.headers{
+    width: 4%;
+}
+
+
+.status-page {
+  width: 100%;
+  min-height: 100vh;
+  /* background: radial-gradient(
+    circle at center,
+    #52616a,
+    #242424 75%
+  ); */
+  background-color: #243640;
+  /* display: flex;
+  justify-content: center;
+  align-items: center; */
+}
+
+.status-input {
+  width: 80%;
+  max-width: 700px;
+  background: transparent;
+  border: none;
+  outline: none;
+  resize: none;
+  color: white;
+  font-size: 48px;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  caret-color: white;
+  overflow: hidden;
+}
+
+.status-input::placeholder {
+  color: #eeeeee;
+  opacity: 1;
+}
+
+@media (max-width: 600px) {
+  .status-input {
+    font-size: 32px;
+    width: 90%;
+  }
+}
+
+
+.status-page {
+  position: relative;
+}
+
+.emoji-button {
+  /* position: absolute; */
+  bottom: 25px;
+  right: 25px;
+  background: transparent;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+.emoji-picker {
+  position: absolute;
+  bottom: 70px;
+  right: 20px;
+  z-index: 10;
+}
+
+.status-page-top{
+        display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px 60px;
+}
+
+.status-page-middle{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+}
+.status-page-bottom{
+    padding : 0px 60px;
+    display: flex;
+    justify-content: right;
+}
+
+.profile{
+  height: 100%;
+    /* height: 182px; */
+    background-size: cover;
+    border-radius: 135px;
+    /* border: 1px solid #12f436; */
+        display: flex;
+    gap: 10px;
+}
+.profileimage{
+    width: 55px;
+    height: 16px;
+    display: flex;
+    justify-content: center;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    align-items: center;
+    text-align: center;
+    color: wheat;
+    font-size: 14px;
+    cursor: pointer;
+    min-height: 56px;
+    /* border: 3px solid #12f436; */
+    /* border: 2px solid blue; */
+}
+.profile-user h6{
+   font-size: 1.2rem;
+   font-weight: 400;
+   color: white;
+}
+.profile-user span{
+  color: white;
+}
+
+.statusview-profile{
+  display: flex;
+  justify-content: space-between;
+}
+
+.icon-pause{
+  color: white;
+}
+
+.status-middle{
+  display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    padding: 0px 13px;
+}
+.profile-content{
+  text-align: left;
+    color: #373636;
+}
+
+.status-top{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding:11px 13px;
+}
+
+.aaf{
+   /* background: radial-gradient(
+    circle at center,
+    #343738,
+    #242424 75%
+  ); */
+  height: 100vh;
+}
+
+.fetchingstatus{
+  width: 100%;
+    /* display: flex;
+    justify-content: center; */
+}
+
+.liststatus{
+   /* width: 50%; */
+}
+
+.status-container{
+      display: flex;
+    /* gap: 20px;
+    justify-content: space-between; */
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 5px 10px;
+    background: white;
+    border-radius: 20px;
+}
+
+
+.color{
+        /* background-color: blue; */
+    width: 62px;
+    height: 47px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.both{
+      display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0px 15px;
+}
+.seen{
+      display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+
+.aaf{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 20px 10px;
+}
+
+.aan{
+      width: 100%;
+    display: flex;
+    justify-content: center;
+    height: 100vh;
+}
+.sasa-top{
+  height: 20%;
+}
+
+.sasa-middle{
+      height: 60%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+.sasa-bottom{
+      height: 20%;
+      display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+}
+
+.sasa{
+  width: 656px;
+  padding: 0px 20px;
+}
+
+.status-bottom{
+  margin-top: 30px;
+  padding: 0px 13px;
+}
+.recent-section{
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+  cursor: pointer;
+}
+
+.aaf-1{
+     width: 20%;
+}
+.aaf-2{
+     width: 80%;
+}
+
+
+
+.statusview-container{
+    width: 40%;
+}
+.statusview-content{
+  height: 70%;
+  display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.bar-section{
+  height: 4%;
+      gap: 4px;
+    display: flex;
+}
+.progress-bar{
+      flex: 1;
+    height: 2px;
+    background: #c6c2c2;
+    border-radius: 7px;
+    overflow: hidden;
+}
+.progress-fill{
+  background-color: white;
+  height: 100%;
+  width: 0%;
+}
+
+.progress-fill.completed {
+  /* background-color: white; */
+  width: 100%;
+}
+
+.progress-fill.active {
+  background-color: rgb(231, 228, 228);
+animation: fillprogress 3s linear forwards;
+}
+@keyframes fillprogress{
+  from{
+    width: 0%;
+  } to {
+    width: 100%;
+  }
+}
+
+.aaf{
+  display : none
+}
+/* .aaf.active{
+  display : flex;
+   background-color: rgb(215, 146, 146);
+} */
+.aaf.inactive{
+  display : none
+}
+
+.headers{
+        height: 100vh;
+    padding: 0px 3px;
+    width: 3.5%;
+    /* background-color: aliceblue; */
+   
+}
+.headerrleftt{
+           height: 100vh;
+    padding: 14px 14px;
+    border-right: 0.4 solid black;
+    border-right: 0.4px solid #e7e7e7;
+    display: flex;
+    flex-direction: column;
+    gap: 17px;
+}
+   .messages-section{
+
+       border-right: 0.4px solid #dcdcdc;
+    /* padding: 0px 5px; */
+    width: 40%;
+    height: 100vh;
+      
+   }

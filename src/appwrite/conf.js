@@ -18,7 +18,7 @@
 
 //   }
 //   export default conf  
-
+   
 const conf = {
   appwriteurl: import.meta.env.VITE_APPWRITE_URL,
   appwriteprojectid: import.meta.env.VITE_APPWRITE_PROJECT_ID,
@@ -38,6 +38,11 @@ const conf = {
   appwriteanswerid: import.meta.env.VITE_APPWRITE_ANSWER_ID,
   appwritechatid :import.meta.env.VITE_APPWRITE_CHAT_ID,
   appwritechatProfileid :import.meta.env.VITE_APPWRITE_CHAT_PROFILE_ID,
-  geminiapi :import.meta.env.VITE_GEMINI_API 
+  geminiapi :import.meta.env.VITE_GEMINI_API ,
+  appwritelikesid :import.meta.env.VITE_APPWRITE_LIKES_ID,
+  appwritereplyid : import.meta.env.VITE_APPWRITE_REPLY_ID,
+  appwritelastseenid : import.meta.env.VITE_APPWRITE_LASTSEEN_ID,
+  appwritechatlastseenid : import.meta.env.VITE_APPWRITE_CHATLASTSEEN_ID,
+  appwritestatusid : import.meta.env.VITE_APPWRITE_STATUS_ID
 };
-export default conf;
+export default conf; 

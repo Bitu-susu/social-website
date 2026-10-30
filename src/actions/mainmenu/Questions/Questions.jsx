@@ -33,16 +33,15 @@ function Questions() {
   const dispatch = useDispatch();
     //  let userss = Usecurrentuser()
      let [questionss, setquestionss] = useState([])
-
+       let [actual , setactual] = useState("all")
         const fetchingquestions = async()=>{
                 const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
                       const databases = new Databases(client); 
                             const fetchquestions = await databases.listDocuments(
  conf.appwritedatabaseid,conf.appwritequestionid,[Query.limit(100)] 
                             )    
-
-//     
-
+                           setactual("all")
+                           setcount(0)
                             setquestionss(fetchquestions.documents.slice(0,2))
                             console.log(fetchquestions.documents.slice(0,2));
                                                        
@@ -69,15 +68,21 @@ const[selectcategory, setselectcategory] = useState("")
 //  fetching questions with authid
  let[reply, setreply] = useState("yes")
 async function withauthquestions(){
+  setcount(0)
  const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
         const databases = new Databases(client);
         try {
               const authquestions = await databases.listDocuments(
-                conf.appwritedatabaseid,conf.appwritequestionid,[Query.equal("authid",authid)]
+                conf.appwritedatabaseid,conf.appwritequestionid,[Query.equal ("authid",authid)]  
               )
-              setquestionss(authquestions.documents)
+              // setquestionss(authquestions.documents)
               console.log(authquestions,"authquestions");
               setreply("yes")
+              setactual("myquestions")
+              console.log(actual, "actuallll");
+              
+              setquestionss(authquestions.documents.slice(0,2))
+
         } catch (error) {
           console.log("error in fetching authquestions", error);
         }
@@ -164,21 +169,21 @@ async function withauthquestions(){
       // }
 
       //  fetching answered questions
-     function answerequestion (){
-
-     }
-
 
       //   working with more button 
   let[count, setcount] = useState(0)   
   let[arrays,setarrays] = useState(0)
+ 
   async function morebutton(){
-       let n = 2;
+    console.log(actual, "actual123");      
+    
+       let n = 2 ;
       //  let c = 20
-           const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
+           const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid); 
         const databases = new Databases(client);
-        try{
-              const fetchquestions = await databases.listDocuments(
+        try{ 
+           if (actual === "all") {
+             const fetchquestions = await databases.listDocuments(
                       conf.appwritedatabaseid,conf.appwritequestionid,[Query.limit(100)]    
                     ) 
                     let totallength = fetchquestions.documents.length 
@@ -186,14 +191,42 @@ async function withauthquestions(){
                     console.log(count, "count");
                     if (count < totallength) {
                         setcount((count)=>count+n)  
-                        setarrays(count+n)
+                        // setarrays(count+n)
+                       }
+                        let normal =fetchquestions.documents.slice(0,4 + count)
+                          // let slicequestions = fetchquestions.documents.slice(4,arrays +n);
+                          // if (slicequestions) {
+                          //   setquestionss([...normal,...slicequestions])      
+                          // }
+                          
+                            setquestionss([...normal])      
+                          
+                          
+           }
+                
+           else if(actual === "myquestions") {
+         const authquestions = await databases.listDocuments(
+                conf.appwritedatabaseid,conf.appwritequestionid,[Query.equal("authid",authid)]
+              )
+              console.log(actual, "actualll");
+              
+              let totallength = authquestions.documents.length 
+                  
+                    console.log(count, "count");
+
+                    if (count < totallength) {
+                        setcount((count)=>count+n)  
+                        // setarrays(count+n)
                       }
-                        let normal =fetchquestions.documents.slice(0,4)
-                          let slicequestions = fetchquestions.documents.slice(4,arrays +n)
-                          if (slicequestions) {
-                            setquestionss([...normal,...slicequestions])      
-                          }
-                         
+                        let normal =authquestions.documents.slice(0,4+count)
+                        //   let slicequestions = authquestions.documents.slice(4,arrays +n)
+                          // if (slicequestions) {
+                          //   setquestionss([...normal,...slicequestions])      
+                          // }
+                          // if (slicequestions) {
+                            setquestionss([...normal])      
+                          
+             }             
 
         }catch (error) {
            console.log(error);
@@ -201,10 +234,11 @@ async function withauthquestions(){
         }
 
       }
-
+   
 
       //  questions  ianswered                     
       async function ianswered(){
+        setactual("myanswers")
            const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);
       const databases = new Databases(client);
       try {
@@ -287,20 +321,19 @@ async function withauthquestions(){
           </div>
           </div> */}
        
-       <Header></Header>
+       {/* <Header></Header> */}
       
       
 
 <div className="contents-section">
     <div className="left" style={{color : "white"}}>
-        <div className="lists">
-          
+        <div className="list">
+        
           {/* <h5 onClick={()=>setselectcategory("")}>Questions</h5> */}
           <h5 onClick={fetchingquestions}>Questions</h5>
           <h5 onClick={withauthquestions}>My Questions</h5>
           <h5 onClick={ianswered}>Answered Questions</h5>
-          {/* <h5 onClick={()=>setselectcategory("authid")} >Answered Questions</h5> */}
-          <h5>Drafts</h5>  
+         
         </div>
              </div>
     <div className="middle">
@@ -322,16 +355,19 @@ async function withauthquestions(){
                       <>
                       
                     <div className="questions-asked" key={question.$id}>
-                        {question.authid === authid ?(<h5 style={{color :"black",fontSize : "16.5px" ,fontWeight: "400", backgroundColor : "#832222"}}>{question.question}</h5>):(<h5 style={{color :"black",fontSize : "16.5px" ,fontWeight: "400"}}>{question.question}</h5>)}
+                      <div className="question-top" style={{display : "flex",justifyContent : "space-between"}}>
+                        {question.authid === authid ?(<h5 style={{color :"black",fontSize : "16.5px" ,fontWeight: "400"}}>{question.question}</h5>):(<h5 style={{color :"black",fontSize : "16.5px" ,fontWeight: "400"}}>{question.question}</h5>)}
                      {/* <h5 style={{color :"white",fontSize : "16.5px" ,fontWeight: "400"}}>{question.question}</h5> */}
+                      {reply === "yes" ?( <button className='question-button' style={{border : '1px solid #7d63ed',color : "white", background : "#0b57d0"}} onClick={()=>zoomquestion(question.$id, question.question)} >View</button>):( <button className='question-button' style={{border : '1px solid #7d63ed', color : "white", background : "#0b57d0"}} onClick={()=>zoomquestion(question.questionid, question.question)} >View</button>)}
+                     </div>
                      <div className="question-button" style={{display: "flex", justifyContent :"space-between",alignItems : "center"}}>
                         
-                     <span style={{color :"#0b57d0", fontSize: '16.0px', fontWeight : "500"}}> Asked : {question.creator}</span>
-       {reply === "yes" ?( <button className='question-button' style={{border : '1px solid #7d63ed',color : "white", background : "#0b57d0"}} onClick={()=>zoomquestion(question.$id, question.question)} >View</button>):( <button className='question-button' style={{border : '1px solid #7d63ed', color : "white", background : "#0b57d0"}} onClick={()=>zoomquestion(question.questionid, question.question)} >View</button>)}
+                     <span style={{color :"#0b57d0", fontSize: '16.0px', fontWeight : "500"}}>  {question.creator}</span>
+       {/* {reply === "yes" ?( <button className='question-button' style={{border : '1px solid #7d63ed',color : "white", background : "#0b57d0"}} onClick={()=>zoomquestion(question.$id, question.question)} >View</button>):( <button className='question-button' style={{border : '1px solid #7d63ed', color : "white", background : "#0b57d0"}} onClick={()=>zoomquestion(question.questionid, question.question)} >View</button>)} */}
             {/* <button className='question-button' style={{border : '1px solid #7d63ed'}} onClick={()=>zoomquestion(question.$id, question.question)} >View</button> */}
-                  
+        
                     </div>
-                    </div>  <hr />
+                    </div>  <hr style={ {margin : "0.3rem 0"}} />
                       </>
                 ))):(<div><h3>No questions yet</h3></div>)}
 
@@ -361,23 +397,23 @@ async function withauthquestions(){
     </div>
     <div className="right">
         {/* <h4>Questions</h4> */}
-        <h5 style={ {color : "black"}} >{getquestion}</h5>
+        <h5 style={ {color : "black", fontSize :"17px"}} >{getquestion}</h5>
         
         <div className="gettinganswers">
                 
              {listanswers.length > 0 ? listanswers.map((answer)=>(<>
 
-                <div className="every-answer" style={{lineHeight: "40px"}}key={answer.$id} >
+                <div className="every-answer" style={{lineHeight: "25px"}}key={answer.$id} >
                   {/* <h6>{answer.question}</h6> */}
-                  <span style={{padding: "2px 5px",borderRadius: '10px',fontSize : "14px", color : "black"}}>{answer.creator}</span>
-                  <h6 style={{color : "white", fontWeight: "400", padding: "4px 4px",borderRadius: "10px", background : "#0b57d0"}}>{answer.answer}</h6>
+                  <span style={{padding: "2px 5px",borderRadius: '10px',fontSize : "14px", color : "#afffbc"}}>{answer.creator}</span>
+                  <h6 style={{color : "white", fontWeight: "400", padding: "9px 8px",borderRadius: "10px", background : "#36373a", borderRadius : "0px 20px 20px 20px", fontSize : "14px"}}>{answer.answer}</h6>
                 </div>  
              </>
                 
              )) :<h6></h6>}
              <div className="reply-area" style={showreply}>
-             <textarea type="text"  placeholder='type your answer'rows='2'  value={answer} onChange={(e)=>setanswer(e.target.value)} style={{marginTop : "5px", width : '100%', borderRadius : "10px"}} ></textarea>
-              <button style={{backgroundColor :"#d7329a", fontSize : "13.5px", }} onClick={savinganswer}>post</button>
+             <textarea type="text"  placeholder='type your answer'rows='2'  value={answer} onChange={(e)=>setanswer(e.target.value)} style={{marginTop : "5px", width : '100%', borderRadius : "10px", backgroundColor : "white", color : "black"}} ></textarea>
+              <button style={{backgroundColor :"#0b57d0", fontSize : "13.5px", }} onClick={savinganswer}>post</button>
           </div>
             
           </div>

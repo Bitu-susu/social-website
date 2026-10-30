@@ -18,6 +18,7 @@ import './Userprofile.css'
 //   fetching current user from the react query 
 import '../../mainmenu/dashnew/Newdash.css'
 import Header from '../Customs/Increase/header/Header'
+import useComments from '../Customs/Increase/comments'
 
 
 //  importing custom hooks
@@ -152,10 +153,27 @@ const[ischange, setischange] = useState("")
 
   async function increasefollowers(data){
     try {
+      // let follows = "follow"
               setischange("yes")
       const getfollowers = await databases.listDocuments(
               conf.appwritedatabaseid, conf.appwritefollowersid,[Query.equal("reciever", data)] 
             )
+
+           const fetchdp = await databases.listDocuments(
+            conf.appwritedatabaseid, conf.appwritebiocollectionid,[Query.equal("authid", authid)]
+           )
+           console.log(fetchdp, "dppp");
+            let afterfilter
+           if (fetchdp.documents.length > 0) {
+               afterfilter = fetchdp?.documents.reverse()[0].picurl 
+          console.log(afterfilter, "afterfilter");
+          }
+          // let afterfilter = fetchdp?.documents.reverse()[0].picurl || null
+          // console.log(afterfilter, "afterfilter");
+            else{
+              afterfilter = null
+            }
+            
             console.log(getfollowers.documents)  
             let followerslist = getfollowers.documents   
             let listmapping = followerslist.map((list) => list.giver);
@@ -163,11 +181,13 @@ const[ischange, setischange] = useState("")
             // setfollowers(listmapping.length)
             if (!listmapping.includes(authid)) {
             
-              const addfollowers = await databases.createDocument(conf.appwritedatabaseid, conf.appwritefollowersid,ID.unique(),{
+            const addfollowers = await databases.createDocument(conf.appwritedatabaseid, conf.appwritefollowersid,ID.unique(),{
                        //  "giver": authid,
                         "giver": authid,
                         "reciever": data,
-                        "name" : user
+                        "name" : user,
+                        "call" : "follows",
+                        "giverpic" : afterfilter,
                
                       })
                        return addfollowers;          
@@ -277,35 +297,131 @@ let fetchprofilecredentials =async()=>{
 const [addcomments, setaddcomments] = useState('')
 const [commentcreator, setcommentcreator] = useState("")
 const [getcomments, setgetcomments] = useState([])
-async function Addcomments(commentid,) {
-  const client = new Client()
-    .setEndpoint(conf.appwriteurl)
-    .setProject(conf.appwriteprojectid);
-  const databases = new Databases(client);
-  try {
-    const getcreator = await authService.getcurrentuser();   
-    let creatorname = getcreator.name
-    // console.log(getcreator.name);
-    let date = new Date().toString()
-    setcommentcreator(getcreator.name)
-    const comments = await databases.createDocument(
-      conf.appwritedatabaseid, conf.appwritecommentsid, ID.unique(), {   
-      "comments": addcomments,
-      "postid": commentid,
-      "name": creatorname,
-      "date": date
+// async function Addcomments(commentid,) {
+//   const client = new Client()
+//     .setEndpoint(conf.appwriteurl)
+//     .setProject(conf.appwriteprojectid);
+//   const databases = new Databases(client);
+//   try {
+//     const getcreator = await authService.getcurrentuser();   
+//     let creatorname = getcreator.name
+//     // console.log(getcreator.name);
+//     let date = new Date().toString()
+//     setcommentcreator(getcreator.name)
+//     const comments = await databases.createDocument(
+//       conf.appwritedatabaseid, conf.appwritecommentsid, ID.unique(), {   
+//       "comments": addcomments,
+//       "postid": commentid,
+//       "name": creatorname,
+//       "date": date
 
-    }
-    )
-    setaddcomments("")
-    // setgetcomments(comments)
-    console.log("these are the comments", comments);
-  } catch (error) {
-    console.log("getting erro in adding comments", error);
-  }
-}
+//     }
+//     )
+//     setaddcomments("")
+//     // setgetcomments(comments)
+//     console.log("these are the comments", comments);
+//   } catch (error) {
+//     console.log("getting erro in adding comments", error);
+//   }
+// }
 
 //   adding commeent section 
+
+ const {fetchcomments} = useComments()
+
+      const[selectcomment, setselectcomment] = useState("")
+
+      const {data :displaycommentss} = useQuery({
+         queryKey:["displaycomments",selectcomment],
+          queryFn: ()=>fetchcomments({listingsi: selectcomment}),
+         staleTime :  5 * 60 * 1000,
+        //  enabled: !!selectedPostId,
+      })
+     const{ Addcomments} = useComments()
+       const commentsmutation = useMutation({
+  mutationFn: Addcomments,
+onSuccess: () => {
+    // console.log(successclosing, "comment added "),
+    // 🔥 THIS triggers posts API again
+    queryClient.invalidateQueries({ queryKey: ["displaycomments",selectcomment]}); 
+      queryClient.invalidateQueries({ queryKey: ["realcommentss"]}); 
+
+    setaddcomments("")
+  },
+}); 
+
+
+   const[commentdisplay, setcommentdisplay] = useState(null)
+
+  //  replying comments 
+
+  const [replycomments, setreplycomments] = useState("");
+  const[fetchreply, setfetchreply] = useState("")
+     
+   const{replycomment,fetchreplycomment} = useComments()
+     
+  
+   const {data :displayreplycomments} = useQuery({
+         queryKey:["replycommentss",fetchreply],
+          queryFn: ()=>fetchreplycomment({listingscomment:fetchreply}),
+         staleTime :  5 * 60 * 1000,
+        //  enabled: !!selectedPostId,
+      })
+
+       const replymutation = useMutation({
+  mutationFn: replycomment,
+  onSuccess: () => {
+    // console.log(successclosing, "comment added "),
+    // 🔥 THIS triggers posts API again
+    queryClient.invalidateQueries({ queryKey: ["replycommentss",fetchreply]}); 
+  
+
+     setreplycomments("");
+  },
+
+})
+
+      //  to display comment length in post 
+
+
+       async function fetchingcomments(){
+         const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);        
+              const databases = new Databases(client);
+     try {
+         const fetchingcommentslength = await databases.listDocuments(
+            conf.appwritedatabaseid,conf.appwritecommentsid,[Query.limit(100)] )
+            console.log(fetchingcommentslength.documents, "documentssss");
+         return fetchingcommentslength.documents
+            
+     } catch (error) {
+           console.log(error, "error in fetching comments");  
+     }
+    }
+       const{data : realcomments}= useQuery({
+        queryKey :["realcommentss"],
+        queryFn : fetchingcomments,
+         staleTime :  5 * 60 * 1000,
+       })
+
+  //   delete comment 
+
+     let {deletecomment,replycommentdelete} = useComments()
+     
+     const deletemutation = useMutation({
+      mutationFn : deletecomment,
+      onSuccess : ()=>{
+        queryClient.invalidateQueries({ queryKey: ["displaycomments"]}); 
+      }
+     })
+
+     const replydeletemutation = useMutation({
+       mutationFn : replycommentdelete,
+       onSuccess : ()=>{
+       queryClient.invalidateQueries({ queryKey: ["replycommentss",fetchreply]}); 
+       }
+     })
+
+
 
 const [comments, setcomments] = useState({
   display: "none"
@@ -324,24 +440,7 @@ function addcomment() {
 }
 //     fetching user comments 
 
-async function fetchcomments(id) {
- 
-  try {
-    const fetchingcomments = await databases.listDocuments(conf.appwritedatabaseid, conf.appwritecommentsid, [
-      Query.equal("postid", id)
-    ]
-    )
-    //  let reversingdocuments = fetchingcomments.documents.reverse()
-    setgetcomments(fetchingcomments.documents)
 
-    //  console.log("fetching comments", fetchingcomments.documents.length);
-
-
-  } catch (error) {
-    console.log("error in fetching comments", error);
-
-  }
-}
     
 
   const fetchingeducation = async()=>{
@@ -409,7 +508,7 @@ async function fetchcomments(id) {
       
               const getprofilepic = await databases.listDocuments( conf.appwritedatabaseid, conf.appwritebiocollectionid,[Query.equal("authid", selectorid)
              ])
-            //  console.log(getprofilepic, "getprofilepic");
+             console.log(getprofilepic, "getprofilepic");
              
              return getprofilepic.documents.reverse()
              
@@ -423,7 +522,9 @@ const {data :gettingprofilepic} = useQuery({
                  queryFn :getprofilepic, 
                  staleTime :  5 * 60 * 1000,
               }) 
-            let profilepic = gettingprofilepic?.[0].picurl || null
+            let profilepic = gettingprofilepic?.[0].picurl || null  
+
+              
    
 
 
@@ -570,7 +671,7 @@ let[inputstyle, setinputstyle] = useState({
   display : "flex", padding : "10px", borderTop: "1px solid #eee",alignItems: "center",background: "white", color :"black"
  })
 let[clickstyle, setclickstyle] = useState({
-   borderRadius : "100px", color : "black", display : "block",  opacity: "1",
+  borderRadius : "100px", color : "black", display : "block",  opacity: "1",
   transform: "scale(1)",
   transition: "all 0.3s ease",fontSize: "18px"
 
@@ -592,7 +693,7 @@ setopacity({padding:" 20px 180px",
           <div className="chat-container-in" >
         <div className="chat-header">
         <div className="avatar">
-           {gettingprofilepic ?<img  src={profilepic} alt=""   className="profile-left-top-img" /> :<></>}
+           {gettingprofilepic !==null ?<img  src={profilepic} alt=""   className="profile-left-top-img" /> :<></>}
         </div>
          <div className="chatheader-display" style={{display : "flex", justifyContent : "space-between", width : '90%'}}>
         <span>{creatorid}</span>
@@ -642,29 +743,14 @@ setopacity({padding:" 20px 180px",
      
   
          <Header></Header>
-        <div className="profile-section" style={opacity}>
-    <div className="profile-left">
-          <div className="profile-left-top">
-                   
-                      <div className="profile-left-top-image-box">
-                       
 
-                               {loading ? (
-  <div className="dot-loader"> <span></span>
-  <span></span>
-  <span></span> </div> // or null
-) : gettingprofilepic ? (
-  <img src={profilepic} alt="" className="profile-left-top-image" />
-) : (
-  <h5>no profile</h5>
-)}                  
-                      </div> 
- 
-                     <div className="profile-left-topcontent">
-                       <div className="profile-left-top1">
-                        {/* {user?<h3>{user}</h3>:<h3>loading..</h3>} */}
-                        <h3 style={{fontWeight : "400"}}>{creatorid}</h3>
-                   <div className="follow-chat"  style={{
+          <div className="profile-topimage" style={{height: "50vh",
+       background: "linear-gradient(#475aa6, #ccdfff) padding-box, linear-gradient(11deg, #c7a6bb, #0b57d0) border-box"
+       }}>
+        <div className="profile-content">
+            <h3 style={{fontWeight : "500", fontSize : "45px",color: "white"}}>{creatorid}</h3>
+
+                      <div className="follow-chat"  style={{
                       display: "flex",
     justifyContent: "center",
     alignItems : "center",
@@ -673,21 +759,19 @@ setopacity({padding:" 20px 180px",
              <div className="followbox">
 {selectorid !== authid && (
    checks.includes(authid) ? ( <button onClick={() => unfollowmutation.mutate()}
-      style={{ backgroundColor :"#0b57d0", fontSize : "13.5px" }}>Unfollow</button>) : (<button onClick={() => followmutation.mutate(selectorid)} style={{ backgroundColor :"#0b57d0", color : "white", fontSize : "13.5px" }}>follow
+      style={{ backgroundColor :"white", fontSize : "13.5px", color : "black" }}>Unfollow</button>) : (<button onClick={() => followmutation.mutate(selectorid)} style={{ backgroundColor :"white", color : "black", fontSize : "13.5px" }}>follow
     </button>
     
   )
 )}
               </div>     
      {selectorid !== authid ? <div className="messagebox">
-     <button style={{backgroundColor :"#d7329a", fontSize : "13.5px"}}  onClick={() =>chatconnection(authid,selectorid)}>chat</button>                  
+     <button style={{backgroundColor :"#0b57d0", fontSize : "13.5px",color : "white"}}  onClick={() =>chatconnection(authid,selectorid)}>chat</button>              
                        </div> :<></>}          
 
- </div>  
+ </div> 
 
-                       </div>
-                      
-                         <div className="getcredentials">
+                 <div className="getcredentials">
                           
                              <div className="credentialsline">
 
@@ -698,116 +782,154 @@ setopacity({padding:" 20px 180px",
                         
                        <div className="followersandfollowings">
                        <span>{fetchfollowings} followings</span> 
-                       <span>{fetchfollowers} followers </span> <br />
+                       <span>{fetchfollowers} followers </span> 
                        </div>
                       
                      </div>
 
-                 
-                   </div>
+                     
 
-               
-              </div>
-                <div className="everyposts-section">
+        </div> 
 
+         <div className="profile-left-top-image-box">
+                       
 
-     {!postdocumentsloading && !postdocumentserror &&(
-                      <div className="everyposts-section">
+                               {loading ? (
+  <div className="dot-loader"> <span></span>
+  <span></span>
+  <span></span> </div> // or null
+) : profilepic!==null ? (
+  <img src={profilepic} alt="" className="profile-left-top-image" />
+) : (
+  <h5>no profile</h5>
+)}                  
+                      </div> 
+
+          </div>
+
+        <div className="profile-section" style={opacity}>
+    <div className="profile-left">    
+        
+   
+           {!postdocumentsloading && !postdocumentserror &&(
+           postdocuments.length > 0 ? <>
+
+               <div className="everyposts-section">
                     { 
                     postdocuments.map((listings)=> (
                       <div className="Posts" style={{marginTop : "20px"}} key={listings.$id} >
                       <div className="every-post">
                       <div className="onlycontent">
-                        <div className="post-heading" style={{lineHeight: "10px"}} >
+                        <div className="post-heading" style={{lineHeight: "10px"}}>
                           <h5 style={{color : "black"}}>{listings.posttitle}</h5> 
                           <div className="incdate" style={{display: "flex", justifyContent: "space-between"}}> 
                           <span style={{fontWeight: "400", fontSize: "14px", color: "black",textDecoration : "underline"}}>{listings.postcategory ? "category - " + listings.postcategory :listings.postcategory} </span>
                           <span style={{fontWeight: "400", fontSize: "14px", color: "#0b57d0", borderRadius:"20px", padding : "7px 7px"}} >{listings.Date}</span>
                           </div> 
                         </div> 
-                       
-                        <div className="post-user" style={{display : "flex", justifyContent :"space-between", padding: "8px 0px",color : "#626161"}}>
-                          <h6 onClick={()=> reduxsend(listings.authid,listings.postcreator)} style={{color :"#0b57d0", textDecoration: "underline",fontSize: "14px", cursor:"pointer"}}>{listings.postcreator}</h6>
-                         
                         
+                        <div className="post-user" style={{display : "flex", justifyContent :"space-between", padding: "8px 0px",color : "#0b57d0"}}>
+                          <h6 onClick={()=> reduxsend(listings.authid,listings.postcreator)} style={{color :"#0b57d0", textDecoration: "underline",fontSize: "14px", cursor:"pointer"}}>{listings.postcreator}</h6>
+                     
                         </div>   
                       
                         <div className="post-content"> 
                        {gettingid === listings.$id ?(
-                         <h6 style={{color: "white",fontWeight:"400",lineHeight:"24px" }}>{nottrimcontent}</h6>
+                         <h6 style={{color: "black",fontWeight:"400",lineHeight:"24px" }}>{nottrimcontent}</h6>
                         ):( <h6 style={{color: "black",fontWeight:"400",lineHeight:"24px" }}>{listings.postcontent.slice(0,300)}</h6> )}
                         <h6 style={{cursor: "pointer", fontWeight : "300", color: "#0b57d0"}} onClick={()=>nottrim(listings.$id)}>{gettingid === listings.$id ?"" :"(... more⬇️)"}</h6>
                         
                         </div> 
                         </div>
-                        <div className="post-image" style={{display: "flex", justifyContent:"center"}}>
-                          <img src={listings.featuredimage} alt="image" style={{width:"95%",borderRadius : "21px"}} />
+                        <div className="post-image" style={{display: "flex", justifyContent:"center",}}>
+                          <img src={listings.featuredimage} alt="image" style={{width:"95%", borderRadius : "21px"}} />
                       </div>
                       <div className="like-comment-section">
                          <div className="like-section"> 
-                          {/* {listings.Like.includes(authid) ?  <i class="fa-regular fa-heart" style={{color : "red"}} ></i>: <i class="fa-regular fa-heart"onClick={()=>likesincrease(listings.$id)}></i>} */}
-                           {/* <i className="fa-regular fa-heart"onClick={()=>likesincrease(listings.$id)} style={{color:"white"}}></i> */}
-                          {/* {listings.Like.includes(authid)?<h6 style={{color : "blue", fontSize : "13px", cursor : "pointer"}} onClick={()=>decreaselikeMutation.mutate(listings.$id)}>Like</h6> : <h6 style={{color : "white", fontSize : "13px", cursor : "pointer"}} onClick={()=>likeMutation.mutate(listings.$id)}>Like</h6>}  */}
+                     
                           
+   {listings.Like.includes(authid)?<i class="fa-solid fa-heart" style={{color:"#d7329a", fontSize  : "14px", cursor : "pointer"}} onClick={()=>decreaselikeMutation.mutate({docid : listings.$id, Like : listings.Like})}></i> : <i class="fa-solid fa-heart" style={{color : "white", fontSize : "14px", cursor : "pointer"}} onClick={()=>likeMutation.mutate({ docid :listings.$id, Like : listings.Like})}></i>}
 
-                           {/* {listings.Like.includes(authid)?<i class="fa-solid fa-heart" style={{color:"#d7329a", fontSize  : "14px", cursor : "pointer"}} onClick={()=>decreaselikeMutation.mutate(listings.$id)}></i> : <i class="fa-solid fa-heart" style={{color : "white", fontSize : "14px", cursor : "pointer"}} onClick={()=>likeMutation.mutate(listings.$id)}></i>} */}
-
-                            {listings.Like.includes(authid)?<i class="fa-solid fa-heart" style={{color:"#d7329a", fontSize  : "14px", cursor : "pointer"}} onClick={()=>decreaselikeMutation.mutate({docid : listings.$id, Like : listings.Like})}></i> : <i class="fa-solid fa-heart" style={{color : "white", fontSize : "14px", cursor : "pointer"}} onClick={()=>likeMutation.mutate({ docid :listings.$id, Like : listings.Like})}></i>}
                                
                         <div className="like-right" style={{color : "white"}}>
-  {/* {increaselike.includes(listings.$id)
-    ? listings.Like.length + 1 
-    : listings.Like.length}  */}
-  {/* {listings.Like.includes(authid)
-    ? listings.Like.length 
-    : listings.Like.length}  */}
-     {listings.Like.length}
+ 
+      {listings.Like.length}
   {/* {increaselike === listings.$id ? listings.Like.length +1 : listings.Like.length} */}    
                         </div>
                         </div> 
                         <div className="right-comment">
-                        <i className="fa-regular fa-comment" style={{color : "white"}} onClick={addcomment}></i>
-                      {/* <button style={{background: "none", color :"#414040"}} onClick={()=>fetchcomments(listings.$id)}>list comments</button> */}
-                      <h6 style={{background: "none", color :"white", cursor : "pointer", fontWeight : "400"}} onClick={()=>fetchcomments(listings.$id)}>list comments</h6>     
-                      
+                        <i className="fa-regular fa-comment" style={{color : "#514d4d"}} onClick={addcomment}></i>
+                     
+                      <h6 style={{background: "none", color :"#0b57d0", cursor : "pointer", fontWeight : "500", fontSize : "14px"}} onClick={()=>setselectcomment(listings.$id)}>list comments</h6>       
+
+                        <h6 style={{background: "none", color :"#0b57d0", cursor : "pointer", fontWeight : "500", fontSize : "14px"}}>{realcomments?.filter((display)=>display.postid === listings.$id).length} comments </h6>            
                          
-                        </div>
                       </div>
-                      {/* <div className="comments" style={comments}>
-                      <div className="message-section">
-              <p className='username'>{firstletter}</p>
-              <input type="text" name="" id="" className='dashboard-input' placeholder='Add comments' value={addcomments} onChange={(e)=>setaddcomments(e.target.value)} />
-              <div className="comments-right">
-              <i class="fa-solid fa-caret-right" style={{fontSize:"25px"}} onClick={()=>Addcomments(listings.$id)}></i>
-              </div>
-              </div>
-                </div> */}
-                <div className="comments" style={comments}>
-               <div className="dash-2-up-top">
+                      </div>
+                     
+              <div className="comments" style={comments}>
+              <div className="dash-2-up-top">
                     <h6 style={{padding : "4px 9px", backgroundColor :"#0b57d0",color : "white", borderRadius : "20px", width: '30px'}} >{firstletter}</h6>
-                    <input type="text" name="" id="" style={{height: "35px",color: "white", background : "#474545",border : "none", width : "100%", borderRadius : '20px'}} className='dashboard-input' placeholder="Add comments " value={addcomments} onChange={(e)=>setaddcomments(e.target.value)}/>
+                    <input type="text" name="" id="" style={{height: "35px",color: "black", background : "#ffffff",border : "1px solid #dfdada", width : "100%", borderRadius : '20px'}} className='dashboard-input' placeholder="Add comments " value={addcomments} onChange={(e)=>setaddcomments(e.target.value)}/>
                     <div className="comments-right">
-              <i className="fa-solid fa-caret-right" style={{fontSize:"25px", color : "white"}} onClick={()=>Addcomments(listings.$id)}></i>
+              <i className="fa-solid fa-caret-right" style={{fontSize:"25px", color : "black"}} onClick={()=>commentsmutation.mutate({listingsid:listings.$id,addcomments,user,authid,postcreator:listings.authid,posttitle :listings.posttitle})}></i>
               </div>
               </div>
                     </div>
 
 
-                            <div className="showing-comments">
-                            {getcomments
-    .filter((comment) => comment.postid === listings.$id) // Only show comments for this post
-    .map((comment) => (
-        //  <h6>{comment.length}</h6> 
+                          <div className="showing-comments"style={{transition: "transform 0.9s ease"}} >
+                          <h6>
 
-      <div className="every-comment" style={{height: "100px",padding : "15px"}} key={comment.$id}>
+</h6>
+                            {displaycommentss?.map((comment) => comment.postid === listings.$id?(
+      <div className="every-comment" style={{padding : "6px 20px",}} key={comment.$id}>
         <div className="name-date" style={{display: "flex", justifyContent : "space-between"}}>
-        <h6 style={{color : "white",fontSize : "14px" }}>{comment.name}</h6>
+        <h6 style={{color : "white",fontSize : "15px", color : "#2d2a2a" }}>{comment.name}</h6>
         {/* <h6 style={{fontSize : "12px"}}>{comment.date}</h6> */}
-        <span style={{fontWeight: "400", fontSize: "12px", color: "white",background:"#0b57d0", borderRadius:"20px", padding : "3px 7px"}} >{listings.Date}</span></div>
-        <h6 style={{color: "white",fontWeight:"400", fontSize : "13px"}}>{comment.comments}</h6><hr style={{color : "#686665"}} />
-                    
+        <span style={{fontWeight: "400", fontSize: "13.5px", color: "#2d2a2a", borderRadius:"20px", padding : "3px 7px"}} >{comment.date}</span>
+        </div>
+        <div className="message-icon" style={{display : "flex", gap : "15px"}}>
+
+        <h6 style={{color: "black",fontWeight:"400", fontSize : "13.5px", letterSpacing : "0.3px", lineHeight : "20px"}}>{comment.comments}&nbsp; &nbsp; </h6>
+        <h6 style={{color : "blue", textDecoration : "underline", cursor : "pointer",color: "black",fontWeight:"400", fontSize : "13.5px",}}onClick={()=>{setcommentdisplay(comment.$id),setfetchreply(comment.$id)}}>reply</h6>
+        
+        {comment.authid === authid?( <><h6 style={{color: "black",fontWeight:"400", fontSize : "13.5px", cursor : "pointer"}} onClick={()=>deletemutation.mutate(comment.$id)}>delete</h6></>):(<></>)}
+
+        </div>
+
+
+    {displayreplycomments?.map((listings)=>(
+      <div className="reply-comments" key={comment.$id} style={{
+        display: commentdisplay === comment.$id ? "flex " : "none", flexDirection : "column"  
+      }}>
+        <>
+      <span style={{color : "blue",fontSize : "13.9px"}}>{listings.user}</span>
+      <div className="reply-box" style={{display : "flex", gap : "8px", cursor : "pointer",}}>
+      <span style={{fontSize : "13.9px"}}>{listings.comment}</span>
+      {listings.authid === authid?(<><span style={{fontSize : "13.9px", textDecoration : "underline"}} onClick={()=>replydeletemutation.mutate(listings.$id)}>delete</span></>):(<></>)}
+
+      </div>
+        </>
       </div>
     ))}
+        
+  
+      
+      <div className="dash-2-up-top" key={comment.$id} style={{
+    display: commentdisplay === comment.$id ? "flex " : "none", padding :"20px"
+  }}>
+                    <input type="text" name="" id="" style={{height: "35px",color: "black", background : "#ffffff",border : "1px solid #dfdada", width : "100%", borderRadius : '20px'}} className='dashboard-input' placeholder="reply" value={replycomments} onChange={(e)=>setreplycomments(e.target.value)}/>
+                    <div className="comments-right">
+              <i className="fa-solid fa-caret-right" style={{fontSize:"25px", color : "black"}} onClick={()=>replymutation.mutate({commentsid:comment.$id,replycomments,user,authid})}></i>
+              </div>
+              </div>
+        
+
+        <hr style={{color : "#686665", margin : "2px"}} /> 
+      </div>
+    ):(<></>))
+    }
     </div>
     </div>
        
@@ -815,10 +937,16 @@ setopacity({padding:" 20px 180px",
   
                 ))}
                     </div>
+            </> : <> <div style={{display : 'flex', alignItems : "center", height :"200px", gap : "10px"}}>
+               <h3 style={ {fontWeight : "400"}}>no posts yet</h3>  <h6 style={ {cursor : "pointer", textDecoration : "underline"}} onClick={opacitychanger}>add post</h6>
+               </div> </>
+
+
+
+                   
                      )} 
-               
-               
-                         </div>    
+
+
     </div>
    
     <div className="profile-right" style={{ width: "36%" }}>
@@ -833,28 +961,11 @@ setopacity({padding:" 20px 180px",
               {/* <h6 onClick={educationcredentialopen}  style={{ color: "white" }} > <i class="fa-solid fa-graduation-cap" style={{ color: "#0b57d0" }}> </i> Add Education credentials</h6> */}
               {educationcredentials && Object.keys(educationcredentials).length > 0 ?( <><h6 style={{color : "black", textDecoration: "underline"}}>Eduation credentials</h6></>):(<h6 style={{ color: "black" }} > <i className="fa-solid fa-graduation-cap" style={{ color: "#0b57d0" }}> </i> Education credentials</h6>)}
               <div className="education-credential-box">
-                {/* <form action="" className='education-form'>
-                  <i className="fa-solid fa-circle-xmark" style={{ float: "right", color: "black" }}></i>
-                  <div classname="mb-3">
-                    <label htmlFor="formGroupExampleInput" className="form-label" style={{color : "black"}}>Add schooling credentials</label>
-                    <input type="text" className="form-control" id="formGroupExampleInput" onChange={(e) => setschoolingname(e.target.value)} placeholder="school credentials" style={{marginBottom : "7px"}} />
-                    <input type="text" className="form-control" id="formGroupExampleInput" onChange={(e) =>setschoolpassout(e.target.value)} placeholder="school passout year" />
-                    
-                  </div>
-                  <div className="mb-3">
-                    <label htmlFor="formGroupExampleInput2" className="form-label" style={{color : "black"}}> Higher education credentials</label>
-                    <input type="text" className="form-control" id="formGroupExampleInput2" onChange={(e) => sethighereducation(e.target.value)} placeholder="Graduation credentials" style={{marginBottom : "7px"}}  />
-                    <input type="text" className="form-control" id="formGroupExampleInput" onChange={(e) => setgradutionpassout(e.target.value)} placeholder="Graduation passout year" />
-                  </div>
-                  <button type="submit" className='btn btn-primary'>Add</button>
-                </form> */}
+               
 
               </div>
               <div className="education-response">  
-                {/* {fetchingeducations ? (
-                  <><span>{fetchingeducations.schooling}</span><span style={{paddingLeft: "5px"}}>{fetchingeducations.schoolpassout}</span><br /><div className="graduation"><span>{fetchingeducations.highereducation}</span><span style={{paddingLeft: "5px"}}>{fetchingeducations.gradutionpassout}</span></div></>
-
-                ) : (<span>no credentials yet</span>)} */}
+             
                 {educationcredentials ? (
                   <><span>{schooling} -</span><span style={{paddingLeft: "5px"}}>{schoolpassout}</span><br /><div className="graduation"><span>{highereducation} -</span><span style={{paddingLeft: "5px"}}>{gradutionpassout}</span></div></>
 
@@ -865,33 +976,8 @@ setopacity({padding:" 20px 180px",
             <div className="employment-credentials">
               {/* <h6 style={{ color: "white" }} onClick={Employmentopen}> <i class="fa-solid fa-user" style={{ color: "#0b57d0" }}></i> Add Employment credentials</h6> */}
               {employmentcredentials && Object.keys(employmentcredentials).length > 0 ? (<><h6 style={{color: "black", textDecoration: "underline"}}>Employment credentials</h6><h6  style={{color : "black", textDecoration: "underline"}}></h6></>):(<h6   style={{ color: "black" }} > <i className="fa-solid fa-graduation-cap" style={{ color: "#0b57d0" }}> </i>  Employment credentials</h6>)}
-              {/* {Object.keys(fetchingeducations).length > 0 ? (
-  <h6 onClick={educationcredentialopen} style={{ color: "white", textDecoration: "underline" }}>
-    Edit credentials
-  </h6>
-) : (
-  <h6 onClick={educationcredentialopen} style={{ color: "white" }}>
-    <i className="fa-solid fa-graduation-cap" style={{ color: "#0b57d0" }}></i>
-    Add Education credentials
-  </h6>
-)} */}
-              {/* <div className="employment-credential-box">
-              <form action="" className='education-form'>
-                  <i class="fa-solid fa-circle-xmark"  style={{ float: "right", color: "black" }}></i>
-                  <div class="mb-3">
-                    <label for="formGroupExampleInput" class="form-label" style={{color : "black"}}>Add Employment credentials</label>
-                    <input type="text" class="form-control" id="formGroupExampleInput" onChange={(e) => setemployment(e.target.value)} placeholder="position and work" style={{marginBottom : "7px"}} />
-                    
-                    
-                  </div>
-                  <div class="mb-3">
-                    <label for="formGroupExampleInput2" class="form-label" style={{color : "black"}}>Experiance credentials</label>
-                    <input type="text" class="form-control" id="formGroupExampleInput2" onChange={(e) => setexperience(e.target.value)} placeholder="Working experiance" style={{marginBottom : "7px"}}  />
-        
-                  </div>
-                  <button type="submit"  className='btn btn-primary'>Add</button>
-                </form>
-              </div> */}
+         
+     
               <div className="education-response">  
                 {employmentcredentials ? (
                   <><span>{employment}</span><br /><span>{experiance}</span></>
@@ -904,16 +990,7 @@ setopacity({padding:" 20px 180px",
               {/* <h6 style={{ color: "white" }} onClick={Locationopen}> <i class="fa-solid fa-location-dot" style={{ color: "#0b57d0" }}></i> Add Location credentials</h6> */}
               {locationcredentials && Object.keys(locationcredentials).length > 0 ? (<><h6 style={{color: "black", textDecoration: "underline"}}>Location credentials</h6><h6  style={{color : "black", textDecoration: "underline"}}></h6></>):(<h6 style={{ color: "black" }} > <i className="fa-solid fa-location-dot" style={{ color: "#0b57d0" }}> </i> Add location credentials</h6>)}
               <div className="location-credential-box">
-                {/* <form action="" className='education-form'>
-                    <i className="fa-solid fa-circle-xmark" style={{ float: "right", color: "white" }}></i>
-                    <div className="mb-3">
-                      <label htmlFor="formGroupExampleInput" className="form-label" style={{color : "white"}}>Location credentials</label>
-                      <input type="text" className="form-control" id="formGroupExampleInput" onChange={(e) => setlocation(e.target.value)} placeholder="type city & state name" style={{marginBottom : "7px"}} />
-                      
-                      
-                    </div>
-                    <button type="submit" className='btn btn-primary'>Add</button>
-                  </form> */}
+              
                 </div>
                 <div className="education-response">  
                 {locationcredentials ? (

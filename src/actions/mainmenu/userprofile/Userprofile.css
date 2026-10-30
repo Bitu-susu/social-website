@@ -3,28 +3,23 @@
     height: 100%;
     /* height: 182px; */
     background-size: cover;
-    border-radius: 135px;
-    /* padding: 20px 9px;
-    /* background-repeat: no-repeat; */
-    /* border: 1px solid black; */
-    /* background-position: center; */
-    /* border: 1px solid white; */
+    /* border-radius: 135px; */
+    border: 3px solid #12f436;
   } 
   
   .profile-left-top-image-box{
-    width: 131px;
-    height: 106px;
+   width: 162px;
+    height: 158px;
     display: flex;
     justify-content: center;
      border-radius: 50%;
      border: 2px solid transparent;
-    background: linear-gradient(#000000, #3f3e3e) padding-box, linear-gradient(22deg, #d7329a, #0b57d0) border-box;
         align-items: center; 
     text-align: center;
     color: wheat;
     font-size: 14px;
     cursor: pointer;
-    min-height: 106px;
+    min-height: 150px;
   }
 
 .profile-left-topcontent{
@@ -59,6 +54,7 @@
     display: flex;
         gap: 10px;
         align-items: center;
+        justify-content: center;
 }
 .profilebox{
     /* height: 393px; */
@@ -319,4 +315,31 @@ posting section */
     align-items: center;
     gap: 10px;
     /* padding-top: 20px; */
+}
+
+
+.profile-topimage{
+      background: linear-gradient(#393535, #623a11) padding-box, linear-gradient(26deg, #d7329a, #0b57d0) border-box;
+          height: 50vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.profile-left-top{
+  display:  block;
+}
+
+.profile-left-top1 {
+  display:  block;
+}
+
+.profile-content{
+  text-align: center;
+  color : white
+}
+.profile-info h6{
+  color : white !important;
+  font-size: 20px;
 }

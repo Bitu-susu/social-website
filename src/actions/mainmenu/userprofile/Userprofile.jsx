@@ -23,9 +23,10 @@ import {likesincrease,likesdecrease} from '../Customs/Increase/increaselikes'
 // import authService from '../../../appwrite/auth'
 import useFetchall from '../Customs/Increase/userpostsallfetchs'
 import Header from '../Customs/Increase/header/Header'
-
+import useComments from '../Customs/Increase/comments'
 
 import usePosts from '../Customs/Increase/posts' 
+ 
 
      
 // }
@@ -97,21 +98,30 @@ function Userprofile() {
    }
 
    const{data : postdocuments, isLoading : postdocumentsloading, error :postdocumentserror} = useQuery({
-    queryKey :["documentss", authid],
+    queryKey :["documents", authid],
     queryFn : userdocuments,
     staleTime :  5 * 60 * 1000,
    })
+
+    //  delete post
+       let {deletepost} = usePosts()
+     
+        const deleteposts = useMutation({
+          mutationFn : deletepost,
+          onSuccess : ()=>{
+            queryClient.invalidateQueries({ queryKey: ["documents", authid]});
+          }
+        })
 
    //  for the post contents 
    const [nottrimcontent, setnottrimcontent] = useState("")
   const[gettingid, setgettingid] = useState("")
  async function nottrim(id) {
   try {
-     
     const nottrimcontent = await databases.listDocuments(
       conf.appwritedatabaseid,conf.appwritepostcollectionid,[Query.equal("$id", id)] 
       )
-    //  console.log(nottrimcontent);
+    //  console.log(nottrimcontent);  
        setnottrimcontent(nottrimcontent.documents[0].postcontent)
        setgettingid(nottrimcontent.documents[0].$id)
       } catch (error) {
@@ -136,7 +146,7 @@ function Userprofile() {
             },
           }); 
 
-          //   linking the mutation with the posts function and the likes decrease function
+         
    
  const decreaselikeMutation = useMutation({
   mutationFn: likesdecrease,
@@ -225,33 +235,130 @@ const editmutation = useMutation({
   const [addcomments, setaddcomments] = useState('')
   const [commentcreator, setcommentcreator] = useState("")
   const [getcomments, setgetcomments] = useState([])
-  async function Addcomments(commentid,) {
-    const client = new Client()
-      .setEndpoint(conf.appwriteurl)
-      .setProject(conf.appwriteprojectid);
-    const databases = new Databases(client);
-    try {
-      const getcreator = await authService.getcurrentuser();   
-      let creatorname = getcreator.name
-      // console.log(getcreator.name);
-      let date = new Date().toString()
-      setcommentcreator(getcreator.name)
-      const comments = await databases.createDocument(
-        conf.appwritedatabaseid, conf.appwritecommentsid, ID.unique(), {
-        "comments": addcomments,
-        "postid": commentid,
-        "name": creatorname,
-        "date": date
 
-      }
-      )
-      setaddcomments("")
-      // setgetcomments(comments)
-      // console.log("these are the comments", comments);
-    } catch (error) {
-      console.log("getting error in adding comments", error);
+
+      const {fetchcomments} = useComments()
+
+      const[selectcomment, setselectcomment] = useState("")
+
+      const {data :displaycommentss} = useQuery({
+         queryKey:["displaycomments",selectcomment],
+          queryFn: ()=>fetchcomments({listingsi: selectcomment}),
+         staleTime :  5 * 60 * 1000,
+        //  enabled: !!selectedPostId,
+      })
+     const{ Addcomments} = useComments()
+       const commentsmutation = useMutation({
+  mutationFn: Addcomments,
+onSuccess: () => {
+    // console.log(successclosing, "comment added "),
+    // 🔥 THIS triggers posts API again
+    queryClient.invalidateQueries({ queryKey: ["displaycomments",selectcomment]}); 
+      queryClient.invalidateQueries({ queryKey: ["realcommentss"]}); 
+
+    setaddcomments("")
+  },
+}); 
+
+
+   const[commentdisplay, setcommentdisplay] = useState(null)
+
+  //  replying comments 
+
+  const [replycomments, setreplycomments] = useState("");
+  const[fetchreply, setfetchreply] = useState("")
+     
+   const{replycomment,fetchreplycomment} = useComments()
+     
+  
+   const {data :displayreplycomments} = useQuery({
+         queryKey:["replycommentss",fetchreply],
+          queryFn: ()=>fetchreplycomment({listingscomment:fetchreply}),
+         staleTime :  5 * 60 * 1000,
+        //  enabled: !!selectedPostId,
+      })
+
+       const replymutation = useMutation({
+  mutationFn: replycomment,
+  onSuccess: () => {
+    // console.log(successclosing, "comment added "),
+    // 🔥 THIS triggers posts API again
+    queryClient.invalidateQueries({ queryKey: ["replycommentss",fetchreply]}); 
+  
+
+     setreplycomments("");
+  },
+
+})
+
+      //  to display comment length in post 
+
+
+       async function fetchingcomments(){
+         const client = new Client().setEndpoint(conf.appwriteurl).setProject(conf.appwriteprojectid);        
+              const databases = new Databases(client);
+     try {
+         const fetchingcommentslength = await databases.listDocuments(
+            conf.appwritedatabaseid,conf.appwritecommentsid,[Query.limit(100)] )
+            console.log(fetchingcommentslength.documents, "documentssss");
+         return fetchingcommentslength.documents
+            
+     } catch (error) {
+           console.log(error, "error in fetching comments");  
+     }
     }
-  }
+       const{data : realcomments}= useQuery({
+        queryKey :["realcommentss"],
+        queryFn : fetchingcomments,
+         staleTime :  5 * 60 * 1000,
+       })
+
+  //   delete comment 
+
+     let {deletecomment,replycommentdelete} = useComments()
+     
+     const deletemutation = useMutation({
+      mutationFn : deletecomment,
+      onSuccess : ()=>{
+        queryClient.invalidateQueries({ queryKey: ["displaycomments"]}); 
+      }
+     })
+
+     const replydeletemutation = useMutation({
+       mutationFn : replycommentdelete,
+       onSuccess : ()=>{
+       queryClient.invalidateQueries({ queryKey: ["replycommentss",fetchreply]}); 
+       }
+     })
+
+
+  // async function Addcomments(commentid,) {
+  //   const client = new Client()
+  //     .setEndpoint(conf.appwriteurl)
+  //     .setProject(conf.appwriteprojectid);
+  //   const databases = new Databases(client);
+  //   try {
+  //     const getcreator = await authService.getcurrentuser();   
+  //     let creatorname = getcreator.name
+  //     // console.log(getcreator.name);
+  //     let date = new Date().toString()
+  //     setcommentcreator(getcreator.name)
+  //     const comments = await databases.createDocument(
+  //       conf.appwritedatabaseid, conf.appwritecommentsid, ID.unique(), {
+  //       "comments": addcomments,
+  //       "postid": commentid,
+  //       "name": creatorname,
+  //       "date": date
+
+  //     }
+  //     )
+  //     setaddcomments("")
+  //     // setgetcomments(comments)
+  //     // console.log("these are the comments", comments);
+  //   } catch (error) {
+  //     console.log("getting error in adding comments", error);
+  //   }
+  // }
 
   //   adding commeent section 
 
@@ -272,28 +379,28 @@ const editmutation = useMutation({
   }
   //     fetching user comments 
 
-  async function fetchcomments(id) {
-    const client = new Client()
-      .setEndpoint(conf.appwriteurl)
-      .setProject(conf.appwriteprojectid);
-    const databases = new Databases(client);
-    try {
-      const fetchingcomments = await databases.listDocuments(
-        conf.appwritedatabaseid, conf.appwritecommentsid, [
-        Query.equal("postid", id)
-      ]
-      )
-      //  let reversingdocuments = fetchingcomments.documents.reverse()
-      setgetcomments(fetchingcomments.documents)
+  // async function fetchcomments(id) {
+  //   const client = new Client()
+  //     .setEndpoint(conf.appwriteurl)
+  //     .setProject(conf.appwriteprojectid);
+  //   const databases = new Databases(client);
+  //   try {
+  //     const fetchingcomments = await databases.listDocuments(
+  //       conf.appwritedatabaseid, conf.appwritecommentsid, [
+  //       Query.equal("postid", id)
+  //     ]
+  //     )
+  //     //  let reversingdocuments = fetchingcomments.documents.reverse()
+  //     setgetcomments(fetchingcomments.documents)
 
-      //  console.log("fetching comments", fetchingcomments.documents.length);
+  //     //  console.log("fetching comments", fetchingcomments.documents.length);
 
 
-    } catch (error) {
-      console.log("error in fetching comments", error);
+  //   } catch (error) {
+  //     console.log("error in fetching comments", error);
 
-    }
-  }
+  //   }
+  // }
 
   //   profile left 
  const [educationopen, seteducationopen] = useState(null)
@@ -476,62 +583,14 @@ function opacitychanger() {
   },
 }); 
 
+
+//   comments section 
+
+
   return (
     <div>
 
-        <div className="posting" style ={postdisplay}>
-         <div className="fullposting">
-         <div className="posting-top">
-         <h6 style={{padding : "4px 8px", backgroundColor :"#0b57d0",color : "white", borderRadius : "20px"}} >{firstletter}</h6>
-         
-            <h6 style={{color : "white"}}>{user}</h6>
-            <i className="fa-solid fa-xmark" onClick={postboxclose}  style={{color: "black",position: "absolute", right : "0px", zIndex:"4"}}></i>
-            </div>
-            <div className="posting-bottom">
-            <form action="" className='postform' onSubmit={addingposts}>
-          <div className="post-form-top">
-  <input type="text" name="" id="" required  value={title} onChange={(e)=>settitle(e.target.value)} placeholder='post content' style={{width :"70%", height:"40px", bordedr : "none", background : "white", color: "black", border:" 1px solid #b6b1b1"}}/>
-  <select name="" id="" required  value={category} style={{background : "white", color : 'black', border:" 1px solid #b6b1b1"}} onChange={(e)=>setcategory(e.target.value)}>
-    <option value="">Select post category</option>
-    <option value="AI">AI</option>                       
-    <option value="Science">Science & Technology</option>
-    <option value="EV">EV</option>
-    <option value="Business & Startup">Business & Startup</option>
-    <option value="Politics">Politics</option>
-    <option value="Stock Market">Stock Market</option>
-    <option value="Fashion & Lifestyle">Fashion & Lifestyle</option>
-    <option value="Culture">Culture</option>
-    <option value="Others">Others</option>
-  </select>
-  </div>
-  <JoditEditor 
-        ref={editor}
-        value={content}
-        onChange={setcontent}
-   
-         />
-         <div className="with-submit">
-         <div className="post-form-image" style={{marginTop : "10px"}}>
-         <label htmlFor="" style={{color : "white"}}>Cover image</label>
-         <input type="file" name="" id="uploader" style={{color : "white"}}  required />
-         </div>
-         <div className="popularreadings">
-          <button className='post-submit' style={{backgroundColor : "#0b57d0"}}>Submit</button>
-         </div>
-         </div>
-            <div className="post-form-result">
-
-              {/* <h6>{success}</h6> */}
-            </div>
-         </form>
-         
-              </div>
-              </div>
-          </div>
-
-
-
-
+       
       <div className="profilecredential"style={profileopen}>
         <div className="profilebox">
         <i className="fa-solid fa-circle-xmark"   style={{color: "white",position: "absolute", right : "0px",zIndex:"4"}} onClick={profileboxclose}></i>
@@ -559,7 +618,7 @@ function opacitychanger() {
               <h5>Edit credentials</h5>
               <p style={{fontSize : "15px"}}>Credentials add credibility to your content</p>
               <form action=""  onSubmit={(e) => { e.preventDefault(); editmutation.mutate(authid)}}>
-              {/* <input type="text" name="" id="" required ={true}  placeholder='Edit professional bio' style={{width :"100%", height:"40px", border: "2px solid #0b57d0", background : '#363434'}} value={credentials1}  onChange={(e)=>setcredentials1(e.target.value)} /> */}
+             
               <input type="text" name="" id="" required ={true}  placeholder='Edit professional bio' style={{width :"100%", height:"40px", border: "2px solid #0b57d0", background : '#363434'}}value={credentials1} onChange={(e)=>setcredentials1(e.target.value)} />
 
               <textarea name="" id="" style={{width : "100%", height : "154px", border: "1px solid white", background : '#363434', marginTop: "10px"}} placeholder='Edit personal bio' value={credentials2} onChange={(e)=>setcredentials2(e.target.value)} ></textarea>
@@ -579,10 +638,28 @@ function opacitychanger() {
       {/* <div className="header" id='header'>
            
         </div> */}
-<div className="profile-section" style={lowopacity}>
-    <div className="profile-left">    
-          <div className="profile-left-top">
-     
+       <div className="profile-topimage" style={{height: "50vh",
+       background: "linear-gradient(#475aa6, #ccdfff) padding-box, linear-gradient(11deg, #c7a6bb, #0b57d0) border-box"
+       }}>
+
+          <div className="profile-content">
+          {user?<h3 style={{fontWeight : "500", fontSize : "45px",color: "white"}}>{user}</h3>:<h3></h3>}
+           {profilecredentials?<div  onClick={Editboxopen} style={{cursor : "pointer", fontSize : "20px"}} >Edit credentials</div>:<span onClick={profileboxopen}style={{cursor :'pointer', fontSize : '20px'}}>Add Profile credentials</span>}
+           <div className="profile-info">
+
+            {profilecredentials?<h6 style={{color : "black", fontSize: "16px,", fontWeight :"400"}}>{credentials1}</h6>:<h6 style={{color : "white"}}></h6>}
+                           {profilecredentials?<h6 style={{color : "black", fontSize: "16px",fontWeight : "400"}}>{credentials2}</h6>:<h6 style={{color : "white"}}></h6>}
+           </div>
+                         </div>
+                       <div className="followersandfollowings">
+                        {!followingsloading && !followingserror && (  
+                          <span style={ { color : "black"}}>{fetchfollowings} followings</span>
+                        )}
+                        {!followersloading && !followerserror && (
+                          <span style={ {color : "black"}}>{fetchfollowers} followers</span>
+                        )}
+          </div>
+       
                       <div className="profile-left-top-image-box">
                        
                       {/* {profilecredentials ?<img  src={dp} alt=""   className="profile-left-top-image" /> :<> 
@@ -590,7 +667,7 @@ function opacitychanger() {
                         </>}  */}
                         {loading ? (
   <div className="dot-loader"> <span></span>
-  <span></span>
+  <span></span>                                     
   <span></span> </div> // or null
 ) : profilecredentials ? (
   <img src={dp} alt="" className="profile-left-top-image" />
@@ -599,43 +676,13 @@ function opacitychanger() {
 )}
                        
                       </div> 
-                    
-                      <div className="profile-left-topcontent">
-                       <div className="profile-left-top1">        
-                        {user?<h3 style={{fontWeight : "400"}}>{user}</h3>:<h3></h3>}
-                         {/* <span onClick={()=>increasefollowers(authid)}>Follow</span> */}
-                         {/* <button style={{backgroundColor :"#0b57d0", fontSize : "13.5px"}} onClick={increasefollowers(id)}>userprofile</button> */}
-                       {profilecredentials?<div  onClick={Editboxopen} style={{cursor : "pointer"}} >Edit credentials</div>:<span onClick={profileboxopen}style={{cursor :'pointer'}}>Add Profile credentials</span>}
-                       </div>
-                       {/* <span onClick={()=>setprofileopen({display : "block"})}>Add Profile credentials</span> */}
-                     
-                         <div className="getcredentials">
-                          {/* {profilecredentials? <div> <div className="credentialsline"> <h5 className='credentialshover' style={{fontSize: "1.1rem"}}>{credentials1}</h5><span className='credentialsvisible' onClick={profileboxopen}>Edit</span></div> </div> :<span></span>}      */}
-                          {/* {credentials? <div> <div className="credentialsline"> <h5 className='credentialshover' style={{fontSize: "1.1rem"}}>{credentials.profession}</h5></div> </div> :<span>loading</span>} */} 
-                          {profilecredentials?<h6 style={{color : "black", fontSize: "16px,", fontWeight :"400"}}>{credentials1}</h6>:<h6 style={{color : "white"}}></h6>}
-                           {profilecredentials?<h6 style={{color : "black", fontSize: "16px",fontWeight : "400"}}>{credentials2}</h6>:<h6 style={{color : "white"}}></h6>}
-                         </div>
-                       <div className="followersandfollowings">
-                        {!followingsloading && !followingserror && (  
-                          <span>{fetchfollowings} followings</span>
-                        )}
-                        {!followersloading && !followerserror && (
-                          <span>{fetchfollowers} followers</span>
-                        )}
-                       {/* <span>{followinglist} Followings</span> 
-                       <span>{followers} followers </span> <br /></div>   */}
-                        </div>
-                        
-                     </div>
-                   </div>
+         </div>
 
-                {/* <div className="profile-des" style={{padding:" 2px 24px 16px 29px"}}>
-                  {profilecredentials?<h6 style={{color : "white", fontSize: "16px"}}>{credentials2}</h6>:<h6 style={{color : "white"}}></h6>}
-                 
-                </div> */}
 
-                 
-          
+<div className="profile-section" style={lowopacity}>
+    <div className="profile-left">    
+        
+   
            {!postdocumentsloading && !postdocumentserror &&(
            postdocuments.length > 0 ? <>
 
@@ -645,7 +692,7 @@ function opacitychanger() {
                       <div className="Posts" style={{marginTop : "20px"}} key={listings.$id} >
                       <div className="every-post">
                       <div className="onlycontent">
-                        <div className="post-heading" style={{lineHeight: "10px"}} >
+                        <div className="post-heading" style={{lineHeight: "10px"}}>
                           <h5 style={{color : "black"}}>{listings.posttitle}</h5> 
                           <div className="incdate" style={{display: "flex", justifyContent: "space-between"}}> 
                           <span style={{fontWeight: "400", fontSize: "14px", color: "black",textDecoration : "underline"}}>{listings.postcategory ? "category - " + listings.postcategory :listings.postcategory} </span>
@@ -656,7 +703,7 @@ function opacitychanger() {
                         <div className="post-user" style={{display : "flex", justifyContent :"space-between", padding: "8px 0px",color : "#0b57d0"}}>
                           <h6 onClick={()=> reduxsend(listings.authid,listings.postcreator)} style={{color :"#0b57d0", textDecoration: "underline",fontSize: "14px", cursor:"pointer"}}>{listings.postcreator}</h6>
                          
-                         
+                        {listings.authid ===authid?(<><h6 style={{color :"black", textDecoration: "underline",fontSize: "14px", cursor:"pointer", fontWeight : "400"}} onClick={()=>deleteposts.mutate(listings.$id)} >deletepost</h6></>):(<></>)}
                         </div>   
                       
                         <div className="post-content"> 
@@ -673,66 +720,89 @@ function opacitychanger() {
                       <div className="like-comment-section">
                          <div className="like-section"> 
                      
-
-                          {/* {listings.Like.includes(authid)?<i class="fa-solid fa-heart" style={{color:"#d7329a", fontSize  : "14px", cursor : "pointer"}} onClick={()=>decreaselikeMutation.mutate(listings.$id)}></i> : <i class="fa-solid fa-heart" style={{color : "white", fontSize : "14px", cursor : "pointer"}} onClick={()=>likeMutation.mutate(listings.$id)}></i>} */}
                           
    {listings.Like.includes(authid)?<i class="fa-solid fa-heart" style={{color:"#d7329a", fontSize  : "14px", cursor : "pointer"}} onClick={()=>decreaselikeMutation.mutate({docid : listings.$id, Like : listings.Like})}></i> : <i class="fa-solid fa-heart" style={{color : "white", fontSize : "14px", cursor : "pointer"}} onClick={()=>likeMutation.mutate({ docid :listings.$id, Like : listings.Like})}></i>}
 
                                
                         <div className="like-right" style={{color : "white"}}>
-  {/* {increaselike.includes(listings.$id)
-    ? listings.Like.length + 1 
-    : listings.Like.length}  */}
-  {/* {listings.Like.includes(authid)
-    ? listings.Like.length 
-    : listings.Like.length}  */}
+ 
       {listings.Like.length}
   {/* {increaselike === listings.$id ? listings.Like.length +1 : listings.Like.length} */}    
                         </div>
                         </div> 
                         <div className="right-comment">
-                        <i className="fa-regular fa-comment" style={{color : "white"}} onClick={addcomment}></i>
-                      {/* <button style={{background: "none", color :"#414040"}} onClick={()=>fetchcomments(listings.$id)}>list comments</button> */}
-                      <h6 style={{background: "none", color :"white", cursor : "pointer", fontWeight : "400"}} onClick={()=>fetchcomments(listings.$id)}>list comments</h6>     
-                      
+                        <i className="fa-regular fa-comment" style={{color : "#514d4d"}} onClick={addcomment}></i>
+                     
+                      <h6 style={{background: "none", color :"#0b57d0", cursor : "pointer", fontWeight : "500", fontSize : "14px"}} onClick={()=>setselectcomment(listings.$id)}>list comments</h6>       
+
+                        <h6 style={{background: "none", color :"#0b57d0", cursor : "pointer", fontWeight : "500", fontSize : "14px"}}>{realcomments?.filter((display)=>display.postid === listings.$id).length} comments </h6>            
                          
-                        </div>
                       </div>
-                      {/* <div className="comments" style={comments}>
-                      <div className="message-section">
-              <p className='username'>{firstletter}</p>
-              <input type="text" name="" id="" className='dashboard-input' placeholder='Add comments' value={addcomments} onChange={(e)=>setaddcomments(e.target.value)} />
-              <div className="comments-right">
-              <i class="fa-solid fa-caret-right" style={{fontSize:"25px"}} onClick={()=>Addcomments(listings.$id)}></i>
-              </div>
-              </div>
-                </div> */}
+                      </div>
+                     
                 <div className="comments" style={comments}>
-               <div className="dash-2-up-top">
+              <div className="dash-2-up-top">
                     <h6 style={{padding : "4px 9px", backgroundColor :"#0b57d0",color : "white", borderRadius : "20px", width: '30px'}} >{firstletter}</h6>
-                    <input type="text" name="" id="" style={{height: "35px",color: "white", background : "#474545",border : "none", width : "100%", borderRadius : '20px'}} className='dashboard-input' placeholder="Add comments " value={addcomments} onChange={(e)=>setaddcomments(e.target.value)}/>
+                    <input type="text" name="" id="" style={{height: "35px",color: "black", background : "#ffffff",border : "1px solid #dfdada", width : "100%", borderRadius : '20px'}} className='dashboard-input' placeholder="Add comments " value={addcomments} onChange={(e)=>setaddcomments(e.target.value)}/>
                     <div className="comments-right">
-              <i className="fa-solid fa-caret-right" style={{fontSize:"25px", color : "white"}} onClick={()=>Addcomments(listings.$id)}></i>
+              <i className="fa-solid fa-caret-right" style={{fontSize:"25px", color : "black"}} onClick={()=>commentsmutation.mutate({listingsid:listings.$id,addcomments,user,authid,postcreator:listings.authid, posttitle : listings.posttitle})}></i>
               </div>
               </div>
                     </div>
 
 
-                            <div className="showing-comments">
-                            {getcomments
-    .filter((comment) => comment.postid === listings.$id) // Only show comments for this post
-    .map((comment) => (
-        //  <h6>{comment.length}</h6> 
+                          <div className="showing-comments"style={{transition: "transform 0.9s ease"}} >
+                          <h6>
 
-      <div className="every-comment" style={{height: "100px",padding : "15px"}} key={comment.$id}>
+</h6>
+                            {displaycommentss?.map((comment) => comment.postid === listings.$id?(
+      <div className="every-comment" style={{padding : "6px 20px",}} key={comment.$id}>
         <div className="name-date" style={{display: "flex", justifyContent : "space-between"}}>
-        <h6 style={{color : "white",fontSize : "14px" }}>{comment.name}</h6>
+        <h6 style={{color : "white",fontSize : "15px", color : "#2d2a2a" }}>{comment.name}</h6>
         {/* <h6 style={{fontSize : "12px"}}>{comment.date}</h6> */}
-        <span style={{fontWeight: "400", fontSize: "12px", color: "white",background:"#0b57d0", borderRadius:"20px", padding : "3px 7px"}} >{listings.Date}</span></div>
-        <h6 style={{color: "white",fontWeight:"400", fontSize : "13px"}}>{comment.comments}</h6><hr style={{color : "#686665"}} />
-                    
+        <span style={{fontWeight: "400", fontSize: "13.5px", color: "#2d2a2a", borderRadius:"20px", padding : "3px 7px"}} >{comment.date}</span>
+        </div>
+        <div className="message-icon" style={{display : "flex", gap : "15px"}}>
+
+        <h6 style={{color: "black",fontWeight:"400", fontSize : "13.5px", letterSpacing : "0.3px", lineHeight : "20px"}}>{comment.comments}&nbsp; &nbsp; </h6>
+        <h6 style={{color : "blue", textDecoration : "underline", cursor : "pointer",color: "black",fontWeight:"400", fontSize : "13.5px",}}onClick={()=>{setcommentdisplay(comment.$id),setfetchreply(comment.$id)}}>reply</h6>
+        
+        {comment.authid === authid?( <><h6 style={{color: "black",fontWeight:"400", fontSize : "13.5px", cursor : "pointer"}} onClick={()=>deletemutation.mutate(comment.$id)}>delete</h6></>):(<></>)}
+
+        </div>
+
+
+    {displayreplycomments?.map((listings)=>(
+      <div className="reply-comments" key={comment.$id} style={{
+        display: commentdisplay === comment.$id ? "flex " : "none", flexDirection : "column"  
+      }}>
+        <>
+      <span style={{color : "blue",fontSize : "13.9px"}}>{listings.user}</span>
+      <div className="reply-box" style={{display : "flex", gap : "8px", cursor : "pointer",}}>
+      <span style={{fontSize : "13.9px"}}>{listings.comment}</span>
+      {listings.authid === authid?(<><span style={{fontSize : "13.9px", textDecoration : "underline"}} onClick={()=>replydeletemutation.mutate(listings.$id)}>delete</span></>):(<></>)}
+
+      </div>
+        </>
       </div>
     ))}
+        
+  
+      
+      <div className="dash-2-up-top" key={comment.$id} style={{
+    display: commentdisplay === comment.$id ? "flex " : "none", padding :"20px"
+  }}>
+                    <input type="text" name="" id="" style={{height: "35px",color: "black", background : "#ffffff",border : "1px solid #dfdada", width : "100%", borderRadius : '20px'}} className='dashboard-input' placeholder="reply" value={replycomments} onChange={(e)=>setreplycomments(e.target.value)}/>
+                    <div className="comments-right">
+              <i className="fa-solid fa-caret-right" style={{fontSize:"25px", color : "black"}} onClick={()=>replymutation.mutate({commentsid:comment.$id,replycomments,user,authid})}></i>
+              </div>
+              </div>
+        
+
+        <hr style={{color : "#686665", margin : "2px"}} /> 
+      </div>
+    ):(<></>))
+    }
     </div>
     </div>
        
@@ -751,7 +821,7 @@ function opacitychanger() {
 
 
     </div>
-     {/* </div> */}
+    
     <div className="profile-right" style={{ width: "36%" }}>
           <div className="profile-right-top">
             <h5 style={{color : "black"}}>

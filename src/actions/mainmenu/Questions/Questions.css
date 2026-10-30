@@ -2,6 +2,8 @@
 
 .question-button{
     text-decoration: none;
+    /* padding: 0px; */
+   padding: 3px 7px;
 }
 
 
@@ -90,21 +92,36 @@
 
     /*  left section  */
 
-    .lists{
+    .list{
         position: sticky;
         top: 0px;
-            background: #0b57d0;
-    padding: 16px 26px;
+             background: #0b57d0;
+     padding: 16px 26px; 
     line-height: 10px;
     border-radius: 10px;
     }
-    .lists h5{
+    .list h5{
         color: white;
-        font-weight:  400;
-        font-size: 16px;
+        font-weight: 400;
+        font-size: 15px;
         cursor: pointer;
     }
     /* .lists h5:hover{
        background-color: #404242;
     } */
-   
+
+    .every-answer{
+        border-radius: 20px 20px 20px;
+    /* background: rgb(52 56 63); */
+    background-color: #36373a;
+    width: fit-content;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    margin : 15px 0px;
+    padding: 6px;
+    line-height: 29px;
+    }
+    
+    .list h5:hover {
+        color : rgb(204, 198, 198)
+    }

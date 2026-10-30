@@ -6,6 +6,7 @@ import { databases, storage } from "./appwritesdk";
 import { useState } from "react";
 
 
+
 //   its a custom hook 
 
 const useProfile = ()=>{
@@ -21,7 +22,7 @@ const useProfile = ()=>{
             e.preventDefault()
             try {
                        const user = await authService.getcurrentuser();
-       const authid = user.$id 
+        const authid = user.$id 
       const fileInput = document.getElementById('profileupload');
    const profile = await storage.createFile(conf.appwriteprofileid,ID.unique(),fileInput.files[0]
                );
@@ -56,6 +57,7 @@ const useProfile = ()=>{
                        let profileid = profile.$id 
 
                        console.log(profileid, "profileid");
+                       
                        
                        let picurl =`https://cloud.appwrite.io/v1/storage/buckets/67af2d5d0023c5596848/files/${profileid}/view?project=677eb42f003e041a0476`
       

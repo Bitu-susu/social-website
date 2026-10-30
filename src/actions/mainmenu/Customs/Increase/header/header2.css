@@ -1,0 +1,16 @@
+
+.headers{
+        height: 100vh;
+    padding: 0px 3px;
+    width: 3.5%;
+   
+}
+.headerrleftt{
+           height: 100vh;
+    padding: 14px 14px;
+    border-right: 0.4 solid black;
+    border-right: 0.4px solid #e7e7e7;
+    display: flex;
+    flex-direction: column;
+    gap: 17px;
+}
