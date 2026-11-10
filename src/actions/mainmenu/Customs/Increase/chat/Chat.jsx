@@ -497,7 +497,7 @@ let[ailoading, setailoading] = useState("")
         {activechat === true? (<div className="tabchat1">
         <div className="dash3-2-top">
 
-                  <h5>Chat</h5>
+                  <h5 style={{color : "black", fontWeight : "500"}}>Messages</h5>
                     <div className="dash3-2-top-right">
                       {user? <p style={{fontSize : "15px", marginBottom : "0rem"}}> {user.slice(0,6)}...</p> : <p></p>}
                      <div className="profileimage">
@@ -511,7 +511,7 @@ let[ailoading, setailoading] = useState("")
                     </div>
                  </div>
          <div className="dash3-2-middle">
-                             <input type="text" name="" id="" style={{height: "35px, width: 100%"}} className='dashboard-input' placeholder="Ask your favorite query"/>
+                             <input type="text" name="" id="" style={{height: "35px, width: 100%"}} className='my-input' placeholder="Ask your favorite query"/>
  
                  </div>
 
@@ -635,18 +635,18 @@ let[ailoading, setailoading] = useState("")
 
           <div className="chatcontent">
             <div className="chatcontentleft">
-              <h6 style={{ fontSize: "17px", color: "black" }}>
+              <h6 style={{ fontSize: "16px", color: "black" , fontWeight : "600",fontFamily : "lexend"}}>
                 {element.sender === authid
                   ? element.recievername
                   : element.sendername}
               </h6>
 
               {element.message.length > 28 ? (
-                <span style={{ fontSize: "13.5px" }}>
+                <span style={{ fontSize: "13.5px", color : "#878787", fontFamily : "lexend" }}>
                   {element.message.slice(0, 28)}...
                 </span>
               ) : (
-                <span style={{ fontSize: "13.5px" }}>
+                <span style={{ fontSize: "13.5px", color : "#878787", fontFamily : "lexend" }}>
                   {element.message}
                 </span>
               )}

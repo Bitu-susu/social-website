@@ -296,9 +296,9 @@ const queryClient =  useQueryClient();
 });
 console.log(for24, "for23432");
 
-if (selectedstatus.length > 0) {
-  setdisplay({display : "flex", backgroundColor : "#ff8a8c"})
-}
+// if (selectedstatus.documents.length > 0) {
+//   setdisplay({display : "flex", backgroundColor : "#ff8a8c"})
+// }
 
 
                     let filtermapping = await for24.map((objects)=>{
@@ -445,81 +445,10 @@ useEffect(() => {
     
   return (
 <>
-{/* <Header></Header> */}
-
-   <div className="aaf" style={display}>
 
 
-{/* <div className="aaf-1">
-  <div className="seected-status">
-      <div className="fetchingstatus">              
-                {selectedstatus?.length > 0? ( 
-            <>
-              
-
-
-            <div className="liststatus">
-                 {selectedstatus.filter(Boolean).map((status)=>(
-                  <div className="status-container">
-                     <div className="color" >
-                      <h6>{status.content.slice(0,8)}..</h6>
-                     </div>
-                     <div className="both">
-
-                    
-                     <div className="time">
-                      <span>{status.actualtime}</span>
-                     </div>
-                     <div className="seen">
-                      <i className="fa-solid fa-eye"/>
-                      {status.seen.length}
-                     </div>
-                      </div>
-                  </div>
-                 ))}
-            </div>
-            </>
-                ):(<>no status yet</>)}
-              </div>
-  </div>  
-</div>
-    <div className="aaf-2">
-
-    
- {selectedstatus?.length >0? (<>
-   
-     
-
- <div className="aan" >
-
-
-     <div className="sasa">
-         <div className="sasa-top">
-            <div className="status-middle" style={{marginTop : "10px"}}>
-            <div className="profile">
-             
-              <img src={selectedstatus[2].url} alt="" className='profileimage' />
-               <div className="profile-user">
-                 <h6>{selectedstatus[2].name}</h6>
-
-               </div>
-            </div>
-          </div>
-   
-           
-         </div>
-         <div className="sasa-middle">
-          <h4>{selectedstatus[2].content}</h4>
-         </div>
-         <div className="sasa-bottom">
-          <i className="fa-solid fa-eye"/>
-                       <h5>{selectedstatus[2].seen.length}</h5>
-         </div>
-     </div>
-      </div>
- </>):(<></>)}
- </div> */}
-
+{selectedstatus?.length >0 ?(<>
+  <div className="aaf" style={display}>
 
 <div className="statusview-container">
       <div className="bar-section">
@@ -598,6 +527,10 @@ useEffect(() => {
 </div>
 
    </div>
+</>) :(<></>)}
+
+   
+
 
   <div className="dfd" style={{display : first}}>
  <div className="status-page" style={{backgroundColor : bagcolor}}>
@@ -646,27 +579,25 @@ useEffect(() => {
      
    <div className="statuscontainer" >
     {/* <Header2></Header2>  */}
-
+ 
     <div className="headers" id='headers' >
             <div className="headerrleftt">
-
-        {/* <i className="fa-solid fa-house" style={{fontSize: "18px"}}></i> */}
-        <Link to="/"><i className="fa-solid fa-house" style={{fontSize: "20px", color : "#0b57d0"}}></i></Link>
-        {/* <i className="fa-solid fa-users-line" style={{fontSize: "20px"}} ></i>  */}
-        <i className="fa-solid fa-comment" onClick={()=>setmydisplay("message")}></i>
-        <i className="fa-solid fa-circle-dot" onClick={()=>setmydisplay("status")}></i>
-          {/* <div className="with-notification" style={{display : "flex", position : "relative"}}>
-         <Link to="/notifications"> <i className="fa-solid fa-bell" style={{fontSize: "20px", color : "#0b57d0"}}></i></Link>
-        
-          </div> */}
-
-        <i className="fa-solid fa-book-open-reader" style={{fontSize: "20px"}}></i>
+             
+             <div className="headerleftt-content">
+                  <h4>M</h4>
+             </div>
+          
         </div>
       
-        <div className="headerright">
-            {/* <h6 style={{padding : "4px 8px", backgroundColor :"#0b57d0",color : "white", borderRadius : "20px"}}>{firstletter}</h6>
-            {user?<><h6 style={{color : "black",fontWeight : "400"}}>{user.slice(0,7)}..</h6></> : <>loading..</>} */}
-            {/* <h6 style={{color : "black",fontWeight : "400"}}>{user}</h6> */}
+        <div className="headerrightt">
+             <Link to="/"><i className="fa-solid fa-house" ></i></Link>
+           
+        <i className="fa-solid fa-comment" onClick={()=>setmydisplay("message")}></i>
+        <i className="fa-solid fa-circle-dot" onClick={()=>setmydisplay("status")}></i>
+        
+        
+
+        <i className="fa-solid fa-book-open-reader" style={{fontSize: "20px"}}></i>
            
         </div>  
         </div> 
@@ -682,8 +613,8 @@ useEffect(() => {
             <div className="profile">
               {profile?<><img src={profile?.picurl} alt="" className='profileimage' /></>:<></>}
             </div>
-            <div className="profile-content" onClick={()=>setdifferentid(authid)}>
-            {/* <div className="profile-content" onClick={()=>{setdifferentid(authid),setdisplay({display : "flex", backgroundColor : "#ff8a8c"})}}> */}
+            {/* <div className="profile-content" onClick={()=>setdifferentid(authid)}> */}
+            <div className="profile-content" onClick={()=>{setdifferentid(authid),setdisplay({display : "flex", backgroundColor : "#ff8a8c"})}}>
             <h5>My Status</h5>
             <h6 style={{fontWeight : "400"}}>Click to add status update</h6>
             </div>
@@ -823,3 +754,75 @@ useEffect(() => {
 }
 
 export default Status
+
+
+
+{/* <div className="aaf-1">
+  <div className="seected-status">
+      <div className="fetchingstatus">              
+                {selectedstatus?.length > 0? ( 
+            <>
+              
+
+
+            <div className="liststatus">
+                 {selectedstatus.filter(Boolean).map((status)=>(
+                  <div className="status-container">
+                     <div className="color" >
+                      <h6>{status.content.slice(0,8)}..</h6>
+                     </div>
+                     <div className="both">
+
+                    
+                     <div className="time">
+                      <span>{status.actualtime}</span>
+                     </div>
+                     <div className="seen">
+                      <i className="fa-solid fa-eye"/>
+                      {status.seen.length}
+                     </div>
+                      </div>
+                  </div>
+                 ))}
+            </div>
+            </>
+                ):(<>no status yet</>)}
+              </div>
+  </div>  
+</div>
+    <div className="aaf-2">
+
+    
+ {selectedstatus?.length >0? (<>
+   
+     
+
+ <div className="aan" >
+
+
+     <div className="sasa">
+         <div className="sasa-top">
+            <div className="status-middle" style={{marginTop : "10px"}}>
+            <div className="profile">
+             
+              <img src={selectedstatus[2].url} alt="" className='profileimage' />
+               <div className="profile-user">
+                 <h6>{selectedstatus[2].name}</h6>
+
+               </div>
+            </div>
+          </div>
+   
+           
+         </div>
+         <div className="sasa-middle">
+          <h4>{selectedstatus[2].content}</h4>
+         </div>
+         <div className="sasa-bottom">
+          <i className="fa-solid fa-eye"/>
+                       <h5>{selectedstatus[2].seen.length}</h5>
+         </div>
+     </div>
+      </div>
+ </>):(<></>)}
+ </div> */}

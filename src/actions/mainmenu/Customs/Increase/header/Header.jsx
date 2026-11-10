@@ -152,17 +152,17 @@ function Header() {
             <div className="headerrleft">
 
         {/* <i className="fa-solid fa-house" style={{fontSize: "18px"}}></i> */}
-        <Link to="/"><i className="fa-solid fa-house" style={{fontSize: "18px", color : "#0b57d0"}}></i></Link>
-        <Link to="/status"> <i className="fa-solid fa-users-line" style={{fontSize: "18px"}} ></i></Link>
+        <Link to="/"><i className="fa-solid fa-house" style={{fontSize: "20px", color : "#0b57d0"}}></i></Link>
+        <Link to="/status"> <i className="fa-solid fa-users-line" style={{fontSize: "20px"}} ></i></Link>
          
           <div className="with-notification" style={{display : "flex", position : "relative"}}>
-         <Link to="/notifications"> <i className="fa-solid fa-bell" style={{fontSize: "18px", color : "#0b57d0"}}onClick={lastseen} ></i></Link>
+         <Link to="/notifications"> <i className="fa-solid fa-bell" style={{fontSize: "20px", color : "#0b57d0"}}onClick={lastseen} ></i></Link>
          <div className="notification-no" style={{padding : "3px"}}>
            <h6 style={{color : "black",position : "absolute", right :'-1px', top :"-5px",fontWeight : "600", fontSize : '16px' }}>{notifications}</h6>
          </div>
           </div>
 
-          <Link to="/Questions"><i className="fa-solid fa-book-open-reader" style={{fontSize: "18px", color : "#0b57d0"}}></i></Link>
+          <Link to="/Questions"><i className="fa-solid fa-book-open-reader" style={{fontSize: "20px", color : "#0b57d0"}}></i></Link>
         {/* <i className="fa-solid fa-book-open-reader" style={{fontSize: "18px"}}></i> */}
         </div>
         <div className="headermiddle">

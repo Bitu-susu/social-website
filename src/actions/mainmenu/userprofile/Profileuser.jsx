@@ -34,7 +34,8 @@ function Profileuser() {
        const navigate = useNavigate()
     const selectorid = useSelector((state) => state.sendingname.username)
     const creatorid = useSelector((state) => state.sendingname.creatorname)
-
+    
+      
 
    const {data :currentusers} = useQuery({
          queryKey:["currentuser"],
@@ -151,9 +152,11 @@ const getfollowers = await databases.listDocuments(
 
 const[ischange, setischange] = useState("")
 
-  async function increasefollowers(data){
+  async function increasefollowers({data, recievername, recpic}){
     try {
       // let follows = "follow"
+    
+      
               setischange("yes")
       const getfollowers = await databases.listDocuments(
               conf.appwritedatabaseid, conf.appwritefollowersid,[Query.equal("reciever", data)] 
@@ -188,6 +191,8 @@ const[ischange, setischange] = useState("")
                         "name" : user,
                         "call" : "follows",
                         "giverpic" : afterfilter,
+                        "recievername" : recievername,
+                        "recpic" :recpic
                
                       })
                        return addfollowers;          
@@ -201,7 +206,7 @@ const[ischange, setischange] = useState("")
     }
 
         const followmutation = useMutation({
-        mutationFn : increasefollowers,
+        mutationFn :  increasefollowers,
 
         onMutate: async () => {
     await queryClient.cancelQueries(["followers", selectorid]);
@@ -742,7 +747,7 @@ setopacity({padding:" 20px 180px",
     </div>
      
   
-         <Header></Header>
+       <Header></Header>
 
           <div className="profile-topimage" style={{height: "50vh",
        background: "linear-gradient(#475aa6, #ccdfff) padding-box, linear-gradient(11deg, #c7a6bb, #0b57d0) border-box"
@@ -759,7 +764,7 @@ setopacity({padding:" 20px 180px",
              <div className="followbox">
 {selectorid !== authid && (
    checks.includes(authid) ? ( <button onClick={() => unfollowmutation.mutate()}
-      style={{ backgroundColor :"white", fontSize : "13.5px", color : "black" }}>Unfollow</button>) : (<button onClick={() => followmutation.mutate(selectorid)} style={{ backgroundColor :"white", color : "black", fontSize : "13.5px" }}>follow
+      style={{ backgroundColor :"white", fontSize : "13.5px", color : "black" }}>Unfollow</button>) : (<button onClick={() => followmutation.mutate({data : selectorid, recievername : creatorid, recpic : profilepic ?? null})} style={{ backgroundColor :"white", color : "black", fontSize : "13.5px" }}>follow
     </button>
     
   )
@@ -797,7 +802,7 @@ setopacity({padding:" 20px 180px",
                                {loading ? (
   <div className="dot-loader"> <span></span>
   <span></span>
-  <span></span> </div> // or null
+  <span></span> </div> // or null 
 ) : profilepic!==null ? (
   <img src={profilepic} alt="" className="profile-left-top-image" />
 ) : (

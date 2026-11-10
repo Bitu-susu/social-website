@@ -7,9 +7,10 @@
       min-height: 100vh;
        padding: 36px 159px;
        opacity: 1;
+      background: #f7f7f8;
     }
     .left{
-        width: 16%;
+        width: 19%;
     }
     .middle{
      width: 62%;

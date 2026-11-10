@@ -29,6 +29,7 @@ import { useSelector } from 'react-redux'
 import { QueryClient, useQuery } from "@tanstack/react-query";  
 // import { useNavigate } from 'react-router-dom'
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import usesuggestion from '../Customs/Increase/suggestion'
 
 
 //  importing custom hoooks 
@@ -57,7 +58,7 @@ import Chat from '../Customs/Increase/chat/Chat'
        
     }
      const currentuser = async()=>{
-       const getuser = await authService.getcurrentuser();
+       const getuser = await authService.getcurrentuser()
        return getuser;
      }
                   
@@ -610,8 +611,20 @@ if (aibot) {setaibot({ display  :"block"})}}
        queryClient.invalidateQueries({ queryKey: ["replycommentss",fetchreply]}); 
        }
      })
+
+    //   dashboard -3 
+
+  //   suggestkion box
+
+  const {addingsuggestion} = usesuggestion() 
+      
+   const{data : mysuggestions}= useQuery({
+        queryKey :["realsuggestions", authid],
+        queryFn : addingsuggestion,
+         staleTime :  5 * 60 * 1000,
+       })
      
-     
+
 
   return (   
     <div>
@@ -699,10 +712,10 @@ if (aibot) {setaibot({ display  :"block"})}}
          
 
                   
-                  <div className="left" style={{color : "white", width : "100%"}}>
+                  <div className="left" style={{color : "white", width : "100%", position : "sticky", top : "0px"}}>
         <div className="lists">
              
-             <h5 style={{fontSize : "19px"}}  onClick={()=> setcontextvalue("")}> All posts</h5><hr />
+             <h5 style={{fontSize : "17px"}}  onClick={()=> setcontextvalue("")}> All posts</h5><hr />
          
                <div className="dash-1-boxes">
                       <h5  onClick={()=> setcontextvalue("AI")}>Artificial intelligence AI</h5> 
@@ -743,11 +756,11 @@ if (aibot) {setaibot({ display  :"block"})}}
 
                         <div className="dash-2-up-top">
                     {/* <h6 style={{padding : "4px 9px", backgroundColor :"#0b57d0",color : "white", borderRadius : "20px", width: '30px'}} >{firstletter}</h6> */}
-                    <input type="text" name="" id="" style={{height: "35px",color : "black", background : "white",border : "none", width : "100%", borderRadius : '20px'}} className='dashboard-input' placeholder="what do you want to ask or share "/>                       
+                    <input type="text" name="" id="" style={{height: "35px",color : "black", background : "#f7f7f8",border : "none", width : "100%", borderRadius : '20px'}} className='dashboard-input' placeholder="what do you want to ask or share "/>                       
                     </div>
                     <div className="dash-2-down">
-                         <button className='dash-2-buttons' style={{borderRight : '1px solid white'}} onClick={opacitychanger}>Post</button>
-                         <button className='dash-2-buttons' onClick={asksection}>Ask</button>
+                         <button className='dash-2-buttons' style={{borderRight : '1px solid #716464', color : "black", backgroundColor : "aliceblue"}} onClick={opacitychanger}>Post</button>
+                         <button className='dash-2-buttons' style={{color : "black", backgroundColor : "aliceblue"}} onClick={asksection}>Ask</button>
                          {/* <button className='dash-2-buttons' style={{borderLeft : '1px solid white'}}>Ask</button> */}
                     </div>
 
@@ -762,9 +775,9 @@ if (aibot) {setaibot({ display  :"block"})}}
                       <div className="every-post">
                       <div className="onlycontent">
                         <div className="post-heading" style={{lineHeight: "10px"}} >
-                          <h5 style={{color : "black"}}>{listings.posttitle}</h5> 
+                          <h5 style={{color : "black", fontSize : "1.0rem", fontWeight : "500"}}>{listings.posttitle}</h5> 
                           <div className="incdate" style={{display: "flex", justifyContent: "space-between"}}> 
-                          <span style={{fontWeight: "400", fontSize: "14px", color: "black",textDecoration : "underline"}}>{listings.postcategory ? "category - " + listings.postcategory :listings.postcategory} </span>
+                          <span style={{fontWeight: "400", fontSize: "13px", color: "black",textDecoration : "underline"}}>{listings.postcategory ? "category - " + listings.postcategory :listings.postcategory} </span>
                           <span style={{fontWeight: "400", fontSize: "13.5px", color: "#0b57d0", borderRadius:"20px", padding : "7px 7px"}} >{listings.actualtime}</span>
                           </div> 
                         </div> 
@@ -910,7 +923,7 @@ if (aibot) {setaibot({ display  :"block"})}}
             
             </div>
   
-                ))):(  <div className='nocount'><h2 style={{color : 'white'}}>No posts yet</h2> </div> )}
+                ))):( <div className='nocount'><h2 style={{color : 'white'}}>No posts yet</h2> </div> )}
 
                     </div> 
                         
@@ -919,60 +932,50 @@ if (aibot) {setaibot({ display  :"block"})}}
                       
                  </div>
                  <div className="dashboard-3">
-                    <div className="dash3-1">
-                 <div className="top-upbox"  style={{display :submitshown === true ? " block" : 'none'}}>
-                   <div className="top-upbox-content">
-                 <p>{submit}</p>
- <div class="dot-loader">
-  <span></span>
-  <span></span>
-  <span></span>
-</div>
-                   </div>
+                
+                 <div className="dashboard3-top">
+                  <span>Suggestions for you</span>  
+                  <div className="suggestion-box">
+                   {
+                    mysuggestions?.length > 0 ? (<>
+                       {
+                        mysuggestions.map((data)=>(
+                        <div className="my-suggestions">
+                              {data.dp !== null ? (
+                            <div className="suggestion-pic" style={ {background : "none"}}>
+                                <img src={data.dp} alt="" />
+                            </div>
 
+                              ):(
+                                <div className="suggestion-pic">
+                                  <h5>{data.name.slice(0,1)}</h5>
+                                </div>
+                                
+                              )}
+                            <div className="combine-suggestion">
 
+                           
+                            <div className="suggestion-1">
 
-</div>
-                 <div className="top-upbox"  style={{display :questiondisplay === true ? " block" : 'none'}}>
-                   <div className="top-upbox-content">
-                 <p>{submitquestion}</p>
- <div class="dot-loader">
-  <span></span>
-  <span></span>
-  <span></span>
-</div>
-                   </div>
-
-
-
-</div>
-
-         {/* {online === true ? <h5>yes</h5> : <h5>no</h5>} */}
-            </div>      
-
-              <div className="dash3-2">
-                 
-                 {/* <div className="dash3-2-top">
-
-                  <h5>Chat</h5>
-                    <div className="dash3-2-top-right">
-                     <div className="dash-3-2top-right-img"></div>
-                     <span>Ask</span>
-                   
-                     <span>...</span>
-                    </div>
-                 </div> */}
-                 {/* <div className="dash3-2-middle">
-                             <input type="text" name="" id="" style={{height: "35px, width: 100%"}} className='dashboard-input' placeholder="Ask your favorite query"/>
- 
-                 </div> */}
-                 {/* <Chat></Chat> */}
-                 {/* <div className="dash3-2-bottom">
-
-                 </div> */}
-              </div>
-              <div className="dash3-3">
-              </div>
+                             <div className="suggestion-content">
+                             <h5 style={{color : "black", fontSize : "1.0rem", fontWeight : "500"}}>{data.name}</h5> 
+                             </div>
+                             <div className="suggestion-mutual">
+                              <span style={{fontweight: "400", fontSize: "13px",color: "black", }}>{data.mutual} mutual connection</span>
+                             </div>
+                        </div>
+                        <div className="suggestion-2">
+                          <button style={{background : "#0b57d0", fontWeight : "400", fontSize : "13px", color : "white", padding : "12px 10px"}}>follow</button>
+                        </div>
+                            </div>
+                             </div>
+                        ))
+                       }
+                    </>):(<></>)
+                   }
+                  </div>
+                 </div>
+           
 
 
                  </div>

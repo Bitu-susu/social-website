@@ -1,6 +1,6 @@
 
 .headerr{
-  padding: 7px 107px;
+  padding: 1px 107px;
     background: #ffffff;
     display: flex;
     justify-content: space-evenly;
@@ -13,9 +13,9 @@
 }
 .headerrleft{
     display: flex;
-    gap: 24px;
+    gap: 28px;
     color: #0b57d0;
-    width: 12%;
+    width: 15%;
     /* color: #000000; */
     align-items: center;
        

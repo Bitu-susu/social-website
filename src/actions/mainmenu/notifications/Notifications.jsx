@@ -314,7 +314,7 @@ async function fetchcomments(){
                 key={listings.$id}
                 style={{ padding: "9px 9px", marginBottom: "8px" }}
               >
-                <div className="dp" style={{ width: "55px", height: "53px" }}>
+                <div className="dp" style={{ width: "48px", minHeight: "53px", display : "flex", alignItems : "center" }}>
                   {listings.giverpic !== null ? (
                     <img
                       src={listings.giverpic}
@@ -331,7 +331,7 @@ async function fetchcomments(){
                 </div>
 
                 <div className="notification-bottom" style={{ width: "100%" }}>
-                  <h5 style={{ fontSize: "16px" }}>
+                  <h5 style={{ fontSize: "15px", fontWeight : "500" }}>
                     {listings.name} likes your post..&nbsp;&nbsp;&nbsp;
                     <span style={{ fontSize: "14px", color: "blue", textDecoration: "underline" }}>
                       view
@@ -339,7 +339,7 @@ async function fetchcomments(){
                   </h5>
 
                   <div className="follow-content" style={{ display: "flex", justifyContent: "space-between" }}>
-                    <h6 style={{ marginBottom: "7px", fontWeight: "400" }}>
+                    <h6 style={{ marginBottom: "7px", fontWeight: "450", color :"black" ,fontSize : "15px"}}>
                       {listings.postname.slice(0, 56)}.....
                     </h6>
                     <span style={{ fontSize: "14px" }}>{listings.actualtime}</span>
@@ -366,7 +366,7 @@ async function fetchcomments(){
                   justifyContent: "space-between"
                 }}
               >
-                <div className="dp" style={{ width: "55px", height: "53px" }}>
+                <div className="dp"  style={{ width: "48px", minHeight: "53px", display : "flex", alignItems : "center" }}>
                   <img
                     src={listings.giverpic}
                     alt=""
@@ -375,7 +375,7 @@ async function fetchcomments(){
                 </div>
 
                 <div className="follow-content">
-                  <h5 style={{ fontSize: "15px" }}>
+                  <h5 style={{ fontSize: "15px", fontWeight : "500" }}>
                     {listings.name} starts following you
                   </h5>
                   <span style={{ fontSize: "14px" }}>{listings.actualtime}</span>
@@ -393,9 +393,9 @@ async function fetchcomments(){
               <div
                 className="notification-box"
                 key={listings.$id}
-                style={{ padding: "9px 9px", marginBottom: "8px" }}
+                style={{ padding: "9px 9px", marginBottom: "8px",backgroundColor : "beige" }}
               >
-                <div className="dp" style={{ width: "55px", height: "53px" }}>
+                <div className="dp"  style={{ width: "48px", minHeight: "53px", display : "flex", alignItems : "center" }}>
                   {listings.giverpic !== null ? (
                     <img
                       src={listings.giverpic}
@@ -412,7 +412,7 @@ async function fetchcomments(){
                 </div>
 
                 <div className="notification-bottom" style={{ width: "100%" }}>
-                  <h5 style={{ fontSize: "16px" }}>
+                  <h5 style={{ fontSize: "15px", fontWeight : "500" }}>
                     {listings.name} commented on your post..&nbsp;&nbsp;&nbsp;
                     <span style={{ fontSize: "14px", color: "blue", textDecoration: "underline" }}>
                       view
@@ -420,7 +420,7 @@ async function fetchcomments(){
                   </h5>
 
                   <div className="follow-content" style={{ display: "flex", justifyContent: "space-between" }}>
-                    <h6 style={{ marginBottom: "7px", fontWeight: "400" }}>
+                    <h6 style={{ marginBottom: "7px", fontWeight: "450", color :"black" ,fontSize : "15px" }}>
                       {listings.post}.....
                     </h6>
                     <span style={{ fontSize: "14px" }}>{listings.actualtime}</span>
@@ -441,7 +441,7 @@ async function fetchcomments(){
                 key={listings.$id}
                 style={{ padding: "9px 9px", marginBottom: "8px" }}
               >
-                <div className="dp" style={{ width: "55px", height: "53px" }}>
+                <div className="dp"  style={{ width: "48px", minHeight: "53px", display : "flex", alignItems : "center" }}>
                   {listings.giverpic !== null ? (
                     <img
                       src={listings.giverpic}
@@ -456,9 +456,9 @@ async function fetchcomments(){
                     </div>
                   )}
                 </div>
-          <p>d</p>
+          
                 <div className="notification-bottom" style={{ width: "100%" }}>
-                  <h5 style={{ fontSize: "16px" }}>
+                  <h5 style={{ fontSize: "15px", fontWeight : "500" }}>
                     {listings.name} likes on your post..&nbsp;&nbsp;&nbsp;
                     <span style={{ fontSize: "14px", color: "blue", textDecoration: "underline" }}>
                       view
@@ -466,7 +466,7 @@ async function fetchcomments(){
                   </h5>
 
                   <div className="follow-content" style={{ display: "flex", justifyContent: "space-between" }}>
-                    <h6 style={{ marginBottom: "7px", fontWeight: "400" }}>
+                    <h6 style={{ marginBottom: "7px", fontWeight: "450", color :"black" ,fontSize : "15px"  }}>
                       {listings.postname.slice(0, 56)}.....
                     </h6>
                     <span style={{ fontSize: "14px" }}>{listings.actualtime}</span>
@@ -485,7 +485,7 @@ async function fetchcomments(){
                   justifyContent: "space-between"
                 }}
               >
-                <div className="dp" style={{ width: "55px", height: "53px" }}>
+                <div className="dp" style={{ width: "48px", minHeight: "53px", display : "flex", alignItems : "center"}}>
                   <img
                     src={listings.giverpic}
                     alt=""
@@ -506,7 +506,7 @@ async function fetchcomments(){
                 key={listings.$id}
                 style={{ padding: "9px 9px", marginBottom: "8px" }}
               >
-                <div className="dp" style={{ width: "55px", height: "53px" }}>
+                <div className="dp" style={{ width: "48px", minHeight: "53px", display : "flex", alignItems : "center" }}>
                   {listings.giverpic !== null ? (
                     <img
                       src={listings.giverpic}
@@ -523,7 +523,7 @@ async function fetchcomments(){
                 </div>
 
                 <div className="notification-bottom" style={{ width: "100%" }}>
-                  <h5 style={{ fontSize: "16px" }}>
+                  <h5 style={{ fontSize: "15px", fontWeight : "500" }}>
                     {listings.name} commented on your post..&nbsp;&nbsp;&nbsp;
                     <span style={{ fontSize: "14px", color: "blue", textDecoration: "underline" }}>
                       view
@@ -531,7 +531,7 @@ async function fetchcomments(){
                   </h5>
 
                   <div className="follow-content" style={{ display: "flex", justifyContent: "space-between" }}>
-                    <h6 style={{ marginBottom: "7px", fontWeight: "400" }}>
+                    <h6 style={{ marginBottom: "7px", fontWeight: "450", color :"black" ,fontSize : "15px"  }}>
                       {listings.post.slice(0, 56)}.....
                     </h6>
                     <span style={{ fontSize: "14px" }}>{listings.actualtime}</span>
