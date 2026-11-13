@@ -62,7 +62,9 @@ const useOnlineoffline = ()=>{
             }
             
           } catch (error) {
-            setuser(null);
+            // setuser(null);
+            console.log(error);
+            
           } 
     //       finally{
        
