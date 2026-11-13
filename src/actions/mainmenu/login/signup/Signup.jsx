@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import  './signup.css';
 import leftlogo from '../../../../images/blogpost_logo-removebg-preview.png'
-import authservice from '../../../../appwrite/auth';
+import authService from '../../../../appwrite/auth';
 import google from '../../../../images/google-removebg-preview.png'
 import { Link } from 'react-router-dom';
 import Login from '../../Logg/Login';
@@ -48,14 +48,16 @@ async function submitsignup(e) {
         containersin.style.opacity = "0.2"  
       }
      try {
-       const newaccount = await authservice.accountcreate(inputemail, inputpassword, inputname);
+       const newaccount = await authService.accountcreate(inputemail, inputpassword, inputname);
        console.log(newaccount.name)
        dispatch(valueplace(newaccount.name))
        if (newaccount) {
          try {
-           const sessionstart = await authservice.accountlogin(inputemail, inputpassword);
+           const sessionstart = await authService.accountlogin(inputemail, inputpassword);
            console.log( "your session start", sessionstart)
-           localStorage.setItem("user", JSON.stringify(sessionstart.name));
+             const gettinguser = await authService.getcurrentuser(); 
+
+           localStorage.setItem("user", JSON.stringify(gettinguser.name));
            setredirecting("redirecting...") 
 
            setTimeout( ()=>{
@@ -81,6 +83,7 @@ async function submitsignup(e) {
      try {
       const Google = await authservice.gogooglelogin()
       console.log(Google)
+      localStorage.setItem("user", JSON.stringify(google.name));
      } catch (error) {
          console.log("error in logging with google", error);
      }

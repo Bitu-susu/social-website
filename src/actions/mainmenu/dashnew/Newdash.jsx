@@ -628,8 +628,21 @@ if (aibot) {setaibot({ display  :"block"})}}
 
   return (   
     <div>
+
+    
+
       
          <div className="dash-section">
+
+           <div className="offlinesection" style={{display :online === true ? "none" : "block"}}>
+            <div className="offline-box">
+
+            <i className='fas fa-unlink' style={{fontSize : "40px",color: "#3253cd", marginBottom : "10px"}}></i>
+        <h4>You're offline</h4>
+        <p style={{textAlign : "center"}}>The console needs an internet connection, We'll restore the page automatically when you are back online.</p>
+            </div>
+     </div>
+
          <div className="posting" style ={postdisplay}>
          <div className="fullposting">
          <div className="posting-top">
@@ -923,7 +936,7 @@ if (aibot) {setaibot({ display  :"block"})}}
             
             </div>
   
-                ))):( <div className='nocount'><h2 style={{color : 'white'}}>No posts yet</h2> </div> )}
+                ))):( <div className='nocount'><h2 style={{color : 'black'}}>No posts yet</h2> </div> )}
 
                     </div> 
                         
@@ -932,14 +945,14 @@ if (aibot) {setaibot({ display  :"block"})}}
                       
                  </div>
                  <div className="dashboard-3">
-                
+                   
                  <div className="dashboard3-top">
                   <span>Suggestions for you</span>  
                   <div className="suggestion-box">
                    {
                     mysuggestions?.length > 0 ? (<>
                        {
-                        mysuggestions.map((data)=>(
+                        mysuggestions.slice(0,5).map((data)=>(
                         <div className="my-suggestions">
                               {data.dp !== null ? (
                             <div className="suggestion-pic" style={ {background : "none"}}>
@@ -958,7 +971,7 @@ if (aibot) {setaibot({ display  :"block"})}}
                             <div className="suggestion-1">
 
                              <div className="suggestion-content">
-                             <h5 style={{color : "black", fontSize : "1.0rem", fontWeight : "500"}}>{data.name}</h5> 
+                             <h5 style={{color : "#292727", fontSize : "1.0rem", fontWeight : "500"}}>{data.name}</h5> 
                              </div>
                              <div className="suggestion-mutual">
                               <span style={{fontweight: "400", fontSize: "13px",color: "black", }}>{data.mutual} mutual connection</span>
@@ -971,18 +984,24 @@ if (aibot) {setaibot({ display  :"block"})}}
                              </div>
                         ))
                        }
-                    </>):(<></>)
+                    </>):(<>
+                          <div className="loading-box">
+      <div className="loading-spinner"></div>
+    </div>
+                    </>)
                    }
                   </div>
                  </div>
            
-
+                 
 
                  </div>
       </div>
 
         
     </div>
+
+    
     </div>
   )
 }

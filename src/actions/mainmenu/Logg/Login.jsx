@@ -37,7 +37,9 @@ function Login() {
     try {
       const logindetails = await authService.accountlogin(email, password);
     
-        localStorage.setItem("user", JSON.stringify(logindetails.name));
+       let gettinguser = await authService.getcurrentuser(); 
+
+        localStorage.setItem("user", JSON.stringify(gettinguser.name));
            window.location.href = '/Newdash'; 
     
       console.log(logindetails);

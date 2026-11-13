@@ -24,23 +24,26 @@ const useOnlineoffline = ()=>{
         useEffect(() => {   
     window.addEventListener("online", ()=>setonline(true)); 
     window.addEventListener("offline", ()=> setonline(false));
-    
+         console.log(online, "onlineoffline");
+         
     return () => {
       window.removeEventListener("online", ()=> setonline(true)); // ✅ FIX
       window.removeEventListener("offline", ()=>setonline(false)); // ✅ FIX
     };
-  }, []);
+  }, [online]);
          
   return {online}
  }
 
       export default function Assamble() {
         
-  const [user, setuser] = useState(null); // ✅ simple
+  const [user, setuser] = useState(()=>(localStorage.getItem("user")) || null); // ✅ simple
   const [loading, setLoading] = useState(true);
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [isOnline, setIsOnline] = useState(navigator.onLine); 
    
-  
+  const data = localStorage.getItem("user")
+     console.log(data, "tygui");
+     
   // 🔥 fetch user
   async function restrict() {
       try {
@@ -48,9 +51,10 @@ const useOnlineoffline = ()=>{
       
           let gettinguser = await authService.getcurrentuser(); 
           console.log(gettinguser, "getting");
-
+          
           if (gettinguser) {
-              setuser(gettinguser);
+            setuser(gettinguser);
+            localStorage.setItem("user", JSON.stringify(gettinguser.name));
                  setLoading(false);
             } else {
               setuser(null);
